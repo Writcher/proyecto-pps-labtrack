@@ -3,7 +3,7 @@
 import { signIn, signOut } from "../lib/auth";
 
 export async function doLogin(formData: FormData) {
-    const action = formData.get("action");
+    const action = formData.get("action")!;
     await signIn(action, { redirectTo: "/dashboard" });
     console.log(action);
 }
