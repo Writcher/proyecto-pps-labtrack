@@ -2,12 +2,12 @@
 
 import { signIn, signOut } from "../lib/auth";
 
-export async function doLogin(formData) {
+export async function doLogin(formData: FormData) {
     const action = formData.get("action");
     await signIn(action, { redirectTo: "/dashboard" });
     console.log(action);
 }
 
 export async function doLogout() {
-    await signOut({ redirectTo: "/"});
+    await signOut({ redirectTo: "/" });
 }
