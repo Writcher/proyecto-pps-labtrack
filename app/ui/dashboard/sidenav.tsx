@@ -22,7 +22,7 @@ export default async function SideNav() {
         <div className="hidden h-auto w-full grow rounded-md bg-gray-100 md:block"/>
         <div className="flex flex-row items-center justify-center h-[100px] w-full rounded-md bg-gray-100">
           <div className="flex flex-row h-20 w-20 pl-2">
-            <Image src={session?.user?.image} alt={session?.user?.name} width={75} height={75} className="flex rounded-full border-2 border-gray-300"></Image>
+            <Image src={session?.user?.image} alt={session?.user?.name ?? "User Image"} width={75} height={75} className="flex rounded-full border-2 border-gray-300"></Image>
           </div>
           <p className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm text-blue-900 font-medium md:flex-none md:justify-start md:p-2 md:px-3">
             {session?.user?.name}
