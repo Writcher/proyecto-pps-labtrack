@@ -46,7 +46,7 @@ export default function LoginForm() {
                 </button>
             </form>
             <p className="block font-medium text-gray-700 text-center mb-2">O inicia sesión con:</p>
-            <form action={doLogin} className="flex gap-5">
+{/*            <form action={doLogin} className="flex gap-5">
                 <button type="submit" name="action" value="google" className="flex flex-1 self-start justify-center items-center gap-5 rounded-lg bg-gray-100 border-2 border-orange-400 px-6 py-3 h-[75px] text-sm font-medium text-gray-600 transition-colors hover:bg-orange-300 md:text-base">
                     <span>
                         Google
@@ -59,7 +59,7 @@ export default function LoginForm() {
                     </span>
                     <ArrowRightIcon className="w-5 h-5 shrink-0"/>
                 </button>
-            </form>
+            </form>*/}
         </div>
     )
 }
