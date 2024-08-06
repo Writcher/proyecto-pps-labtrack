@@ -25,16 +25,16 @@ export async function fetchLab() {
     }
 }
 
-//const users = [
-//    {
-//        email: "joaquingim77@gmail.com",
-//        password: "123456",
-//        name: "Joaquin Gimenez"
-//    }
-//]
+const users = [
+    {
+        email: "joaquingim77@gmail.com",
+        password: "123456",
+        name: "Joaquin Gimenez"  
+    }
+]
 
 
-//export const getUserByEmail = email => {
-//    const found = users.find(user => user.email === email);
-//    return found;
-//}
+export const getUserByEmail = (email: string) => {
+    const found = users.find(user => user.email === email);
+    return found;
+}
