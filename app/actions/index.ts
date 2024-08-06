@@ -15,3 +15,20 @@ export async function doLogin(formData: FormData) {
 export async function doLogout() {
     await signOut({ redirectTo: "/" });
 }
+
+export async function doCredentialLogin(formData: FormData) {
+    try{
+        const response = await signIn("credentials", {
+            email: formData.get("email"),
+            password: formData.get("password"),
+            redirect: false
+        });
+        return response;
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error("Error desconocido, la cagaste");
+        }
+    } 
+}
