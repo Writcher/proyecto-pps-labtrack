@@ -39,7 +39,8 @@ export const {
             async authorize(credentials) {
                 if(credentials === null) return null;
                 try {
-                    const user = getUserByEmail(credentials?.email);
+                    const email = credentials?.email as string;
+                    const user = getUserByEmail(email);
                     if (user) {
                         const isMatch = user?.password === credentials?.password;
                         if (isMatch) {
