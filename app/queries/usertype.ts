@@ -1,0 +1,12 @@
+import { sql } from '@vercel/postgres';
+import { Usertype } from '../lib/definitions';
+
+export async function fetchUserType() {
+    try {
+        const {rows} = await sql<Usertype>`SELECT * FROM usertype`;
+        return rows;
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener usertype");
+    }
+}

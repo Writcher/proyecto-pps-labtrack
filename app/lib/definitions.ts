@@ -10,10 +10,19 @@ export type Laboratory = {
 
 export type User = {   //Usuarios
     id: number;
-    nombre: string;
+    name: string;
     email: string;
     password: string;
-    legajo: string;
+    file: string;
+    usertype_id: number;
+    laboratory_id: number;
+}
+
+export type NewUser = {   //Usuarios
+    name: string;
+    email: string;
+    password: string;
+    file: string;
     usertype_id: number;
     laboratory_id: number;
 }

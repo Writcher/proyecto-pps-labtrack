@@ -1,7 +1,9 @@
 import LabTrackLogo from "../ui/labtrack-logo";
 import RegisterForm from "../ui/register-form";
+import { fetchLab } from "../queries/laboratory";
 
-export default function Register() {
+export default async function Register() {
+    const laboratories = await fetchLab();
     return (
         <div className="flex h-screen bg-cover items-center justify-center bg-gray-200 bg-opacity-70" style={{ backgroundImage: "url('/research-background.png')" }}>
             <div className="absolute inset-0 bg-black opacity-10"/>
@@ -11,7 +13,7 @@ export default function Register() {
                 </div>
                 <div className="flex flex-col shrink-0 items-end items-center justify-center rounded-lg bg-gray-200 border-2 border-gray-300 p-6 mt-6 gap-6 md:w-[50%]">
                     <h2 className="flex text-center text-blue-900 text-xl md:text-3xl font-medium"> Registro </h2>
-                    <RegisterForm />
+                    <RegisterForm  laboratories={laboratories}/>
                 </div>
             </div>
         </div>

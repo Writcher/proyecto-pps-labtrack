@@ -2,8 +2,9 @@ import NextAuth from "next-auth";
 import google from "next-auth/providers/google";
 import github from "next-auth/providers/github";
 import credentials from "next-auth/providers/credentials";
-
-import { getUserByEmail } from "./data";
+import { getUserByEmail } from "../queries/user";
+import { User } from "./definitions";
+import bcrypt from "bcrypt";
 
 export const {
     handlers: { GET, POST },
@@ -21,8 +22,8 @@ export const {
 
             authorization: {
                 prompt: "consent",
-                acces_type: "offline",
-                ressponse_type: "code",
+                access_type: "offline",
+                response_type: "code",
             }
         }),
         github({
@@ -31,18 +32,22 @@ export const {
 
             authorization: {
                 prompt: "consent",
-                acces_type: "offline",
-                ressponse_type: "code",
+                access_type: "offline",
+                response_type: "code",
             }
         }),
         credentials({
             async authorize(credentials) {
                 if(credentials === null) return null;
                 try {
-                    const email = credentials?.email as string;
-                    const user = getUserByEmail(email);
+                    const user = await getUserByEmail(credentials?.email as string);
                     if (user) {
-                        const isMatch = user?.password === credentials?.password;
+                        const hashedPassword = user.password;
+
+                        const isMatch = await bcrypt.compare(
+                            credentials.password as string,
+                            hashedPassword
+                        );
                         if (isMatch) {
                             return user;
                         } else {

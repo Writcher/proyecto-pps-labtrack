@@ -9,7 +9,7 @@ export default function Login() {
                 <div className="flex shrink-0 p-6 items-end items-center justify-center rounded-lg bg-gray-200 border-2 border-gray-300 p-6 h-[100px] mt-6">
                     <LabTrackLogo />
                 </div>
-                <div className="flex flex-col shrink-0 items-end items-center justify-center rounded-lg bg-gray-200 border-2 border-gray-300 p-6 mt-6 gap-6 md:w-[40%]">
+                <div className="flex flex-col shrink-0 items-end items-center justify-center rounded-lg bg-gray-200 border-2 border-gray-300 p-6 mt-6 gap-6 md:w-[50%]">
                     <h2 className="flex text-center text-blue-900 text-xl md:text-3xl font-medium"> Iniciar Sesión </h2>
                     <LoginForm />
                 </div>
