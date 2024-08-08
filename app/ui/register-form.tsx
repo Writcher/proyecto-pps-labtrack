@@ -1,9 +1,13 @@
 "use client"
 
-import { ArrowRightIcon } from "@heroicons/react/24/outline";
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import { FormEvent, use, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Laboratory } from "../lib/definitions";
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import MenuItem from '@mui/material/MenuItem';
+import React from 'react';
 
 interface RegisterFormProps {
     laboratories: Laboratory[];
@@ -17,16 +21,11 @@ export default function RegisterForm({ laboratories }: RegisterFormProps) {
         try {
             const formData = new FormData(event.currentTarget);
             const name = formData.get("name");
-            const file = formData.get("file");
+            const file = formData.get("file") as string;
             const laboratory_id = formData.get("lab");
             const email = formData.get("email") as string;
             const password = formData.get("password") as string;
             const confPassword = formData.get("confirmPassword");
-
-            if (password !== confPassword) {
-                setError("Las contraseñas no coinciden");
-                return; // Salir de la función si las contraseñas no coinciden
-            }
 
             const emailDomainRegexDocente = /@docentes\.frm\.utn\.edu\.ar$/;
             const emailDomainRegexAlumno = /@alumnos\.frm\.utn\.edu\.ar$/;
@@ -35,7 +34,8 @@ export default function RegisterForm({ laboratories }: RegisterFormProps) {
             if (emailDomainRegexDocente.test(email)) {
                 usertype_id = 2; // ID correspondiente para docentes
             } else if (emailDomainRegexAlumno.test(email)) {
-                usertype_id = 3; // ID correspondiente para alumnos
+                setError("Debes ser un docente");
+                return;
             } else {
                 setError("Debes utilizar tu correo institucional");
                 return;
@@ -43,7 +43,12 @@ export default function RegisterForm({ laboratories }: RegisterFormProps) {
 
             const passwordValidationRegex = /^(?=.*\d).{12,}$/;
             if (!passwordValidationRegex.test(password)) {
-                setError("La contraseña debe tener al menos 12 caracteres y contener al menos un número.");
+                setError("La contraseña debe tener al menos 12 caracteres y contener al menos un número");
+                return;
+            }
+
+            if (password !== confPassword) {
+                setError("Las contraseñas no coinciden");
                 return;
             }
 
@@ -74,91 +79,39 @@ export default function RegisterForm({ laboratories }: RegisterFormProps) {
     }
 
     return (
-        <div className="flex flex-col gap-5 justify-center">
-            <div className="flex items-end items-center justify-center text-center text-red-500 p-2">{error}</div>
-            <form className="flex flex-col justify-center" onSubmit={handleRegisterFormSubmit}>
-                <div className="flex flex-row gap-5 justify-center">
+        <div className="flex flex-col w-64 md:w-2/5 gap-12">
+            <form className="flex flex-col" onSubmit={handleRegisterFormSubmit}>
+                <div className="flex flex-row gap-16 justify-center">
                     <div className="mb-4">
-                        <label htmlFor="name" className="block font-medium text-gray-700 text-center mb-2">Nombre y Apellido</label>
-                        <input
-                            type="string"
-                            id="name"
-                            name="name"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-center"
-                            placeholder="Ingresa tu nombre y apellido"
-                            required
-                            autoComplete="on"
-                        />
+                        <TextField id="name" name="name" label="Nombre y Apellido" helperText="Ingresa tu Nombre y Apellido" type="text" variant="outlined" color="warning" fullWidth required/>
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="file" className="block font-medium text-gray-700 text-center mb-2">Legajo</label>
-                        <input
-                            type="string"
-                            id="file"
-                            name="file"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-center"
-                            placeholder="Ingresa tu legajo"
-                            required
-                            autoComplete="on"
-                        />
+                        <TextField id="file" name="file" label="Legajo" helperText="Ingresa tu Legajo" type="text" variant="outlined" color="warning" fullWidth required/>
                     </div>
                 </div>
-                <div className="flex flex-col justify-center">
+                <div className="flex flex-col">
                     <div className="mb-4">
-                        <label htmlFor="lab" className="block font-medium text-gray-700 text-center mb-2">Laboratorio</label>
-                        <select id="lab" name="lab" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-center" required>
-                            <option value="" className="sm:text-sm text-center">Seleciona un laboratorio</option>
+                        <TextField id="lab" name="lab" label="Laboratorio" helperText="Selecciona tu Laboratorio" type="text" variant="outlined" color="warning" select fullWidth required>
                             {laboratories.map(Laboratory => (
-                                <option key={Laboratory.id} value={Laboratory.id}>
-                                    {Laboratory.name}
-                                </option>
+                                <MenuItem key={Laboratory.id} value={Laboratory.id}>{Laboratory.name}</MenuItem>
                             ))}
-                        </select>
+                        </TextField>
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="email" className="block font-medium text-gray-700 text-center mb-2">Correo Electronico</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-center"
-                            placeholder="Ingressa tu email"
-                            autoComplete="on"
-                            required
-                        />
+                        <TextField id="email" name="email" label="Email" helperText="Ingresa tu Email" type="email" variant="outlined" color="warning" fullWidth required/>
                     </div>
                     <div className="mb-6">
-                        <label htmlFor="password" className="block font-medium text-gray-700 text-center mb-2">Contraseña</label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-center"
-                            placeholder="Ingresa tu contraseña"
-                            required
-                            autoComplete="off"
-                        />
+                        <TextField id="password" name="password" label="Contraseña" helperText="Ingresa tu Contraseña" type="password" variant="outlined" color="warning" fullWidth required/>
                     </div>
                     <div className="mb-6">
-                        <label htmlFor="confirmPassword" className="block font-medium text-gray-700 text-center mb-2">Confirmar Contraseña</label>
-                        <input
-                            type="password"
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-center"
-                            placeholder="Repite tu contraseña"
-                            required
-                            autoComplete="off"
-                        />
+                        <TextField id="confirmPassword" name="confirmPassword" label="Confirmar Contraseña" helperText="Ingresa tu Contraseña" type="password" variant="outlined" color="warning" fullWidth required/>
                     </div>
-                    <button type="submit" className="flex flex-1 self-start justify-center items-center gap-5 rounded-lg bg-orange-400 px-6 py-3 h-[75px] text-sm font-medium text-white transition-colors hover:bg-orange-300 md:text-base w-full">
-                        <span>
-                            Registrarse
-                        </span>
-                        <ArrowRightIcon className="w-5 h-5 shrink-0"/>
-                    </button>
+                    <Button variant="contained" size="large" color="warning" disableElevation endIcon={<KeyboardArrowRightIcon />} fullWidth>
+                        <input type="submit" value="REGISTRARSE"/>
+                    </Button>
                 </div>
             </form>
+            <div className='text-center tex-xl font-medium text-red-700'>{error}</div>
         </div>
     )
 }

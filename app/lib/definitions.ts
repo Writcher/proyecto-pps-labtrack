@@ -1,3 +1,30 @@
+export type IDandNAME = {
+    id: number;
+    name: string;
+}
+
+export type Supplytype = {
+    id: number;
+    name: string;
+}
+
+export type NewSupplytype = {
+    name: string;
+}
+
+export type Proyecttype = {
+    id: number;
+    name: string;
+}
+
+
+
+
+
+
+
+
+
 export type Usertype = {
     id: number;
     name: string;

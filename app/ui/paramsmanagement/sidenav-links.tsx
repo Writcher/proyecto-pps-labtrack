@@ -3,15 +3,13 @@
 import { usePathname } from 'next/navigation';//Para ressaltar el link activo.
 import clsx from 'clsx';//Para aplicar estilos condicionalmente. Los dos se usan para resaltar el link activo
 import Link from 'next/link';
-
-import GroupIcon from '@mui/icons-material/Group';
-import BuildIcon from '@mui/icons-material/Build';
 import HomeIcon from '@mui/icons-material/Home';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const links = [
     { name: 'Inicio', href: '/dashboard', icon: HomeIcon },
-    { name: 'Becarios', href: '/dashboard/scholars', icon: GroupIcon },
-    { name: 'Gestion de Parametros', href: '/paramsmanagement', icon: BuildIcon },
+    { name: 'ABM Tipo de Insumo', href: '/paramsmanagement/supplytype', icon: SettingsIcon },
+    
     
     //Añadir links segun necesario aca.
 ];

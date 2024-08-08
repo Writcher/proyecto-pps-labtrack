@@ -1,7 +1,7 @@
 import { sql } from '@vercel/postgres';
 import { Usertype } from '../lib/definitions';
 
-export async function fetchUserType() {
+export async function gethUserType() {
     try {
         const {rows} = await sql<Usertype>`SELECT * FROM usertype`;
         return rows;

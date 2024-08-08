@@ -22,7 +22,6 @@ export async function createUser(user: NewUser){
         return client.sql`
         INSERT INTO "user" (name, file, email, password, laboratory_id, usertype_id)
         VALUES (${user.name}, ${user.file}, ${user.email}, ${user.password}, ${user.laboratory_id}, ${user.usertype_id})
-        RETURNING id;
         `;
     } catch(error) {
         console.error("Error de Base de Datos:", error);

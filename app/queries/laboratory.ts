@@ -1,7 +1,7 @@
 import { sql } from '@vercel/postgres';
 import { Laboratory } from '../lib/definitions';
 
-export async function fetchLab() {
+export async function getLabs() {
     try {
         const {rows} = await sql<Laboratory>`SELECT * FROM laboratory`;
         return rows;
