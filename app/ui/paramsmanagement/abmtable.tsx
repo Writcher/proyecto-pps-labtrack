@@ -6,17 +6,13 @@ import { FormEvent, use, useState } from "react";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Button from "@mui/material/Button";
 
-interface ABMTableSupplytypes {
-    items: Supplytype[];
+interface ABMTableProps<T> {
+    items: T[];
 }
 
-interface ABMTableSupplytypes {
-    items: Proyecttype[];
-}
+type ItemType = Proyecttype | Supplytype;
 
-type ABMTableProps = ABMTableSupplytypes | ABMTableSupplytypes;
-
-export default function ABMTable({ items }: ABMTableProps) {
+export default function ABMTable<T extends ItemType>({ items }: ABMTableProps<T>) {
     const [error, setError] = useState("");
     const router = useRouter();
 
