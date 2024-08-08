@@ -76,8 +76,6 @@ export default function ABMTable({ table }: ABMTableProps) {
     const handleOpenModal = () => setModalOpen(true);
 
     const handleCloseModal = () => {
-        setModalOpen(false);
-        window.location.reload();
     };
 
     //placeholders
