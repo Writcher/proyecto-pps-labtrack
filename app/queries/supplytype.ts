@@ -7,7 +7,7 @@ export async function getSupplyTypes() {
         const result = await client.sql`
         SELECT * FROM "supplytype"
         `;
-        return result.rows;
+        return result.rows as Supplytype[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el supplytype");
