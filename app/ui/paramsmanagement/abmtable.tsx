@@ -15,7 +15,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import CreateModal from "./createmodal";
 import TablePagination from '@mui/material/TablePagination';
-import debounce from 'lodash.debounce';
+import debounce from "lodash.debounce";
+
 
 interface ABMTableProps {
     table: string;
@@ -31,14 +32,13 @@ export default function ABMTable({ table }: ABMTableProps) {
         event.preventDefault();
     };
 
-    async function fetchData() {
+    async function fetchData(searchTerm: string) {
         try {
-            const response = await fetch(`/api/paramsmanagement?name=${encodeURIComponent(search)}&table=${encodeURIComponent(table)}`, {
+            const response = await fetch(`/api/paramsmanagement?name=${encodeURIComponent(searchTerm)}&table=${encodeURIComponent(table)}`, {
                 method: 'GET',
             });
             const fetchedData = await response.json();
             setData(fetchedData);
-
         } catch (error) {
             if (error instanceof Error) {
                 console.error(error.message);
@@ -48,7 +48,10 @@ export default function ABMTable({ table }: ABMTableProps) {
         }
     }
 
-    const debouncedFetchData = useCallback(debounce(fetchData, 300), [table]);
+    const debouncedFetchData = useCallback(
+        debounce((searchTerm: string) => fetchData(searchTerm), 300),
+        [table]
+    );
 
     useEffect(() => {
         debouncedFetchData(search);
@@ -73,8 +76,7 @@ export default function ABMTable({ table }: ABMTableProps) {
     };
 
     //modales
-    const [modalOpen, setModalOpen] = useState(false)
-    ;
+    const [modalOpen, setModalOpen] = useState(false);
     const handleOpenModal = () => setModalOpen(true);
 
     const handleCloseModal = () => {
