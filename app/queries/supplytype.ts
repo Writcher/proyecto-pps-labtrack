@@ -19,7 +19,7 @@ export async function getSupplyTypeByName(name: string){
     try {
         const result = await client.sql`
         SELECT * FROM "supplytype"
-        WHERE name = ${name}
+        WHERE name ILIKE ${`%${name}%`}
         `;
         return result;
     } catch (error) {

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { FormEvent, useState } from "react";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import TableContainer from "@mui/material/TableContainer";
@@ -15,8 +15,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import CreateModal from "./createmodal";
 import TablePagination from '@mui/material/TablePagination';
-
-
+import debounce from 'lodash.debounce';
 
 interface ABMTableProps {
     table: string;
@@ -32,25 +31,28 @@ export default function ABMTable({ table }: ABMTableProps) {
         event.preventDefault();
     };
 
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const response = await fetch(`/api/paramsmanagement?name=${encodeURIComponent(search)}&table=${encodeURIComponent(table)}`, {
-                    method: 'GET',
-                });
-                const fetchedData = await response.json();
-                setData(fetchedData);
+    async function fetchData() {
+        try {
+            const response = await fetch(`/api/paramsmanagement?name=${encodeURIComponent(search)}&table=${encodeURIComponent(table)}`, {
+                method: 'GET',
+            });
+            const fetchedData = await response.json();
+            setData(fetchedData);
 
-            } catch (error) {
-                if (error instanceof Error) {
-                    console.error(error.message);
-                } else {
-                    console.error("Error desconocido");
-                }
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error(error.message);
+            } else {
+                console.error("Error desconocido");
             }
         }
-        fetchData();
-    }, [search, table]);
+    }
+
+    const debouncedFetchData = useCallback(debounce(fetchData, 300), [table]);
+
+    useEffect(() => {
+        debouncedFetchData(search);
+    }, [search, debouncedFetchData]);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);

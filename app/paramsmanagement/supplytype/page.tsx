@@ -1,6 +1,6 @@
 import ABMTable from "@/app/ui/paramsmanagement/abmtable";
 
-export default async function ABMtipoInsumo() {
+export default function ABMtipoInsumo() {
     return (
         <main className="flex flex-col w-full">
             <div className="flex flex-col items-center justify-center mb-8">
