@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react";
+import React, { useEffect } from "react";
 import { FormEvent, useState } from "react";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import TableContainer from "@mui/material/TableContainer";
@@ -18,42 +18,67 @@ import TablePagination from '@mui/material/TablePagination';
 
 
 
-interface ABMTableProps<T> {
-    items: T[];
+interface ABMTableProps {
     table: string;
 }
 
-export default function ABMTable<T extends { id: number; name: string }>({ items, table }: ABMTableProps<T>) {
+export default function ABMTable({ table }: ABMTableProps) {
+    const [data, setData] = useState<{ id: number; name: string }[]>([]);
+
+    //busqueda
+    const [search, setSearch] = useState("");
+    
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+    };
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const response = await fetch(`/api/paramsmanagement?name=${encodeURIComponent(search)}&table=${encodeURIComponent(table)}`, {
+                    method: 'GET',
+                });
+                const fetchedData = await response.json();
+                setData(fetchedData);
+
+            } catch (error) {
+                if (error instanceof Error) {
+                    console.error(error.message);
+                } else {
+                    console.error("Error desconocido");
+                }
+            }
+        }
+        fetchData();
+    }, [search, table]);
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(e.target.value);
+    };
+    
     //paginacion
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const paginatedItems = items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+    const paginatedItems = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setPage(newPage);
-      };
+    };
       
-      const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
-      };
+    };
 
     //modales
-    const [modalOpen, setModalOpen] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false)
+    ;
     const handleOpenModal = () => setModalOpen(true);
+
     const handleCloseModal = () => {
         setModalOpen(false);
         window.location.reload();
     };
-
-    //busqueda
-    const [search, setSearch] = useState("");
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        handleSearch(search);
-    };
-    async function handleSearch(name: string) {
-        console.log("Searching for item called:", name);
-    }
 
     //placeholders
     async function handleDeleteButton(id: number) {
@@ -77,7 +102,7 @@ export default function ABMTable<T extends { id: number; name: string }>({ items
                         color="warning"
                         fullWidth
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={handleSearchChange}
                     />
                 </form>
                 <div className="flex grow" />
@@ -89,7 +114,7 @@ export default function ABMTable<T extends { id: number; name: string }>({ items
                             color="success"
                             disableElevation
                             startIcon={<AddIcon />}
-                            onClick={handleOpenModal} // Open modal on button click
+                            onClick={handleOpenModal}
                         >
                             AÑADIR
                         </Button>
@@ -149,7 +174,7 @@ export default function ABMTable<T extends { id: number; name: string }>({ items
                 <TablePagination
                     rowsPerPageOptions={[5, 10]}
                     component="div"
-                    count={items.length}
+                    count={data.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

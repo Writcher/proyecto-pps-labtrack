@@ -71,7 +71,7 @@ export default function CreateModal({ open, handleClose, table }: CreateModalPro
                     <TextField id="name" name="name" label="Nombre" helperText="Nombre de Nuevo Tipo" type="text" variant="outlined" color="warning" fullWidth required/>
                 </DialogContent>
                 <DialogActions>
-                <   Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCEL</Button>
+                    <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
                     <Button variant="contained" size="large" color="success" disableElevation endIcon={<CloseIcon />} type="submit">GUARDAR</Button>
                 </DialogActions>
             </Dialog>

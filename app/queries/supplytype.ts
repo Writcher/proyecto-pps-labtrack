@@ -21,7 +21,7 @@ export async function getSupplyTypeByName(name: string){
         SELECT * FROM "supplytype"
         WHERE name = ${name}
         `;
-        return result.rows;
+        return result;
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el supplytype");
