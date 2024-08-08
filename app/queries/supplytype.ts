@@ -1,4 +1,4 @@
-import { db, sql } from '@vercel/postgres';
+import { db } from '@vercel/postgres';
 import { Supplytype, NewSupplytype } from '../lib/definitions';
 
 export async function getSupplyTypes() {
@@ -13,6 +13,21 @@ export async function getSupplyTypes() {
         throw new Error("No se pudo obtener el supplytype");
     }
 }
+
+export async function getSupplyTypeByName(name: string){
+    const client = await db.connect();
+    try {
+        const result = await client.sql`
+        SELECT * FROM "supplytype"
+        WHERE name = ${name}
+        `;
+        return result.rows;
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el supplytype");
+    }
+}
+
 
 export async function getSupplyTypeById(id: number){
     const client = await db.connect();

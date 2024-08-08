@@ -1,5 +1,5 @@
-import { db, sql } from '@vercel/postgres';
-import { User, NewUser } from "../lib/definitions";
+import { db } from '@vercel/postgres';
+import {NewUser } from "../lib/definitions";
 
 
 

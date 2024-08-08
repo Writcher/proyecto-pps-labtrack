@@ -106,8 +106,8 @@ export default function RegisterForm({ laboratories }: RegisterFormProps) {
                     <div className="mb-6">
                         <TextField id="confirmPassword" name="confirmPassword" label="Confirmar Contraseña" helperText="Ingresa tu Contraseña" type="password" variant="outlined" color="warning" fullWidth required/>
                     </div>
-                    <Button variant="contained" size="large" color="warning" disableElevation endIcon={<KeyboardArrowRightIcon />} fullWidth>
-                        <input type="submit" value="REGISTRARSE"/>
+                    <Button variant="contained" size="large" color="warning" disableElevation endIcon={<KeyboardArrowRightIcon />} fullWidth type='submit'>
+                        REGISTRARSE
                     </Button>
                 </div>
             </form>

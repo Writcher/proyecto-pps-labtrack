@@ -22,9 +22,9 @@ export default function SideNavLinks() {
         const LinkIcon = link.icon;
         return (
           <Link key={link.name} href={link.href} className={clsx(
-            'flex h-16 grow items-center justify-center gap-2 text-white p-3 text-sm font-medium hover:bg-gradient-to-l hover:from-orange-500 hover:to-transparent md:flex-none md:justify-start md:p-2 md:px-3',
+            'flex h-16 grow items-center justify-center gap-2 text-white p-3 text-sm font-medium hover:bg-gradient-to-t hover:from-orange-500 hover:to-transparent md:hover:bg-gradient-to-l md:hover:from-orange-500 md:hover:to-transparent md:flex-none md:justify-start md:p-2 md:px-3',
             {
-              'bg-gradient-to-l from-orange-500 to-transparent': pathname === link.href, //esto se aplica cuando el link esta activo
+              'bg-gradient-to-t from-orange-500 to-transparent md:bg-gradient-to-l md:from-orange-500 md:to-transparent': pathname === link.href, //esto se aplica cuando el link esta activo
             },
           )}
           >

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { createUser } from "@/app/queries/user";
 import bcrypt from "bcrypt";
-import { NewUser } from "@/app/lib/definitions";
 import { db } from "@vercel/postgres";
 
 export const POST = async (request: Request) => {
@@ -24,13 +23,13 @@ export const POST = async (request: Request) => {
         try {
             await createUser(user)
         } catch(error) {
-            console.error("Error handling POST request:", error);
+            console.error("Error manejando POST:", error);
             return new NextResponse("Error al crear usuario", { status: 500 });
         }
 
         return new NextResponse("Usuario creado", { status: 201 });
     } catch (error) {
-        console.error("Error handling POST request:", error);
+        console.error("Error manejando POST:", error);
         return new NextResponse("Error al crear usuario", { status: 500 });
     }
 };

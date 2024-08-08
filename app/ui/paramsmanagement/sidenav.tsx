@@ -7,6 +7,7 @@ import { doLogout } from "@/app/actions";
 import LabTrackLogoWhite from "../labtrack-logo";
 import Button from "@mui/material/Button";
 import LogoutIcon from '@mui/icons-material/Logout';
+import IconButton from "@mui/material/IconButton";
 
 export default async function SideNav() {
   const session = await auth();
@@ -27,15 +28,16 @@ export default async function SideNav() {
           </p>
         </div>
         <form action={doLogout}>
-          <div className="hidden md:block">
-            <Button variant="contained" size="large" color="error" disableElevation startIcon={<LogoutIcon />} fullWidth>
+          <div className="flex items-center justify-center gap-2 text-white p-3 text-sm font-medium hover:bg-gradient-to-l hover:from-red-700 hover:to-transparent hidden md:block">
+            <Button variant="text" size="large" color="inherit" disableElevation startIcon={<LogoutIcon />} fullWidth>
               <input type="submit" value="CERRAR SESIÓN"/>
             </Button>
           </div>
-          <div className="block md:hidden">
-            <Button variant="contained" size="large" color="error" disableElevation startIcon={<LogoutIcon />} fullWidth>
+          <div className="flex h-16 grow items-center justify-center gap-2 block md:hidden">
+            <IconButton color="error">
+              <LogoutIcon/>
               <input type="submit" value=" "/>
-            </Button>
+            </IconButton>
           </div>
         </form>
       </div>

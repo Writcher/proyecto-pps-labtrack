@@ -24,7 +24,7 @@ export default function Login() {
                 <div className="flex block md:hidden">
                     <LabTrackLogoBlack />
                 </div>
-                <div className="flex">
+                <div className="flex mb-8">
                     <p className="text-xl md:text-3xl text-gray-700 font-medium">
                         <strong className="text-gray-700">
                             INICIAR SESIÓN

@@ -1,6 +1,6 @@
-export type IDandNAME = {
-    id: number;
+export type ABMcreate = {
     name: string;
+    table: string;
 }
 
 export type Supplytype = {

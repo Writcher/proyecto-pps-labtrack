@@ -5,6 +5,6 @@ export default async function Dashboard() {
     const session = await auth();
     if (!session?.user) redirect("/");
     return (
-        <div> vista de parametros</div>
+        <div></div>
     )
 }
