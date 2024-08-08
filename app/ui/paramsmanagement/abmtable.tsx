@@ -1,14 +1,20 @@
 "use client"
 
-import { IDandNAME, Supplytype} from "@/app/lib/definitions";
+import { Proyecttype, Supplytype} from "@/app/lib/definitions";
 import { useRouter } from "next/navigation";
 import { FormEvent, use, useState } from "react";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Button from "@mui/material/Button";
 
-interface ABMTableProps {
-    items: IDandNAME[];
+interface ABMTableSupplytypes {
+    items: Supplytype[];
 }
+
+interface ABMTableSupplytypes {
+    items: Proyecttype[];
+}
+
+type ABMTableProps = ABMTableSupplytypes | ABMTableSupplytypes;
 
 export default function ABMTable({ items }: ABMTableProps) {
     const [error, setError] = useState("");
