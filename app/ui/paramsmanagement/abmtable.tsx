@@ -10,9 +10,11 @@ interface ABMTableProps<T> {
     items: T[];
 }
 
-type ItemType = Proyecttype | Supplytype;
 
-export default function ABMTable<T extends ItemType>({ items }: ABMTableProps<T>) {
+
+
+export default function ABMTable<T extends { id: number; name: string }>({ items }: ABMTableProps<T>) {
+
     const [error, setError] = useState("");
     const router = useRouter();
 
