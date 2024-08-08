@@ -83,6 +83,12 @@ export default function ABMTable({ table }: ABMTableProps) {
         setModalOpen(false);
     };
 
+    useEffect(() => {
+        if (!modalOpen) {
+            debouncedFetchData(search);
+        }
+    }, [modalOpen]);
+
     //placeholders
     async function handleDeleteButton(id: number) {
         console.log("Deleting item with id:", id, "from table:", table);
