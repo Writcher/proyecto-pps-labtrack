@@ -8,6 +8,12 @@ export type ABMdelete = {
     table: string;
 }
 
+export type ABMedit = {
+    name: string;
+    id: number;
+    table: string;
+}
+
 export type Supplytype = {
     id: number;
     name: string;

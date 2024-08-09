@@ -1,48 +1,37 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent } from 'react';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
-import SaveIcon from '@mui/icons-material/Save';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
-interface CreateModalProps {
+interface DeleteModalProps {
     open: boolean;
     handleClose: () => void;
     table: string;
+    id: number;
+    name: string;
 }
 
-export default function CreateModal({ open, handleClose, table }: CreateModalProps) {
+export default function DeleteModal({ open, handleClose, table, id, name }: DeleteModalProps) {
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         try {
-            const formData = new FormData(event.currentTarget);
-            const name = formData.get("name") as string;
+            const response = await fetch(`/api/dashboard/paramsmanagement?id=${encodeURIComponent(id)}&table=${encodeURIComponent(table)}`, {
+                method: 'DELETE',
+            });
 
-            const response = await fetch("/api/paramsmanagement", {
-                method: 'POST',
-                headers: {
-                    "content-type": "application/json"
-                },
-                body: JSON.stringify({
-                    name,
-                    table
-                })
-            })
-
-            if (response.status === 201) {
+            if (response.status === 200) {
                 handleClose();
             }
 
         } catch (error) {
             if (error instanceof Error) {
                 throw new Error(error.message);
-                handleClose();
             } else {
                 throw new Error("Error desconocido, la cagaste");
-                handleClose();
             }
         }
     };
@@ -69,7 +58,7 @@ export default function CreateModal({ open, handleClose, table }: CreateModalPro
             >
                 <DialogTitle>
                     <div className='text-gray-700 font-medium text-3xl mb-2'>
-                        Crear nuevo  
+                        ¿Eliminar {name} de la tabla
                         {(() => {
                             switch (table) {
                                 case "supplytype":
@@ -82,16 +71,21 @@ export default function CreateModal({ open, handleClose, table }: CreateModalPro
                                     return "";
                             }
                         })()}
+                        ?
                     </div>
                 </DialogTitle>
                 <DialogContent>
                     <div className='mt-2'>
-                        <TextField id="name" name="name" label="Nombre" helperText="Nombre de Nuevo Tipo" type="text" variant="outlined" color="warning" fullWidth required/>
+                        <div className='text-gray-700 font-medium text-xl mb-2'>
+                            Esto eliminara la entrada para siempre, ¿Esta seguro?
+                        </div>
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
-                    <Button variant="contained" size="large" color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
+                    <div className='flex m-4 gap-4'>
+                        <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                        <Button variant="contained" size="large" color="success" disableElevation endIcon={<DeleteForeverIcon />} type="submit">BORRAR</Button>
+                    </div>
                 </DialogActions>
             </Dialog>
     );

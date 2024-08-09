@@ -1,13 +1,14 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent } from 'react';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import SaveIcon from '@mui/icons-material/Save';
 
-interface DeleteModalProps {
+interface EditModalProps {
     open: boolean;
     handleClose: () => void;
     table: string;
@@ -15,13 +16,24 @@ interface DeleteModalProps {
     name: string;
 }
 
-export default function DeleteModal({ open, handleClose, table, id, name }: DeleteModalProps) {
+export default function EditModal({ open, handleClose, table, id, name }: EditModalProps) {
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         try {
-            const response = await fetch(`/api/paramsmanagement?id=${encodeURIComponent(id)}&table=${encodeURIComponent(table)}`, {
-                method: 'DELETE',
-            });
+            const formData = new FormData(event.currentTarget);
+            const name = formData.get("name") as string;
+
+            const response = await fetch("/api/dashboard/paramsmanagement", {
+                method: 'PUT',
+                headers: {
+                    "Content-type": "application/json"
+                },
+                body: JSON.stringify({
+                    name,
+                    id,
+                    table
+                })
+            })
 
             if (response.status === 200) {
                 handleClose();
@@ -30,10 +42,8 @@ export default function DeleteModal({ open, handleClose, table, id, name }: Dele
         } catch (error) {
             if (error instanceof Error) {
                 throw new Error(error.message);
-                handleClose();
             } else {
                 throw new Error("Error desconocido, la cagaste");
-                handleClose();
             }
         }
     };
@@ -60,32 +70,32 @@ export default function DeleteModal({ open, handleClose, table, id, name }: Dele
             >
                 <DialogTitle>
                     <div className='text-gray-700 font-medium text-3xl mb-2'>
-                        ¿Eliminar {name} de la tabla
+                        Editar  
                         {(() => {
                             switch (table) {
                                 case "supplytype":
-                                    return " Tipo de Insumo";
+                                    return " Tipo de Insumo ";
                                 case "projecttype":
                                     return " Tipo de Proyecto";
                                 case "anotherType":
-                                    return " Another Description";
+                                    return " Another Description ";
                                 default:
                                     return "";
                             }
                         })()}
-                        ?
+                        con ID {id}: {name}
                     </div>
                 </DialogTitle>
                 <DialogContent>
                     <div className='mt-2'>
-                        <div className='text-gray-700 font-medium text-xl mb-2'>
-                            Esto eliminara la entrada para siempre, ¿Esta seguro?
-                        </div>
+                        <TextField id="name" name="name" label="Nombre" helperText="Nombre de Nuevo Tipo" type="text" variant="outlined" color="warning" fullWidth required/>
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
-                    <Button variant="contained" size="large" color="success" disableElevation endIcon={<DeleteForeverIcon />} type="submit">BORRAR</Button>
+                    <div className='flex m-4 gap-4'>
+                        <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                        <Button variant="contained" size="large" color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
+                    </div>
                 </DialogActions>
             </Dialog>
     );

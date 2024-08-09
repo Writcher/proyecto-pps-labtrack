@@ -10,7 +10,7 @@ import HomeIcon from '@mui/icons-material/Home';
 const links = [
     { name: 'Inicio', href: '/dashboard', icon: HomeIcon },
     { name: 'Becarios', href: '/dashboard/scholars', icon: GroupIcon },
-    { name: 'Gestion de Parametros', href: '/paramsmanagement', icon: BuildIcon },
+    { name: 'Gestion de Parametros', href: '/dashboard/paramsmanagement', icon: BuildIcon },
     
     //Añadir links segun necesario aca.
 ];

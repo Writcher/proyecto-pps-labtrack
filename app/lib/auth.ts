@@ -3,7 +3,7 @@ import google from "next-auth/providers/google";
 import github from "next-auth/providers/github";
 import credentials from "next-auth/providers/credentials";
 import { getUserByEmail } from "../queries/user";
-import bcrypt from "bcrypt";
+import bcrypt from 'bcryptjs';
 
 export const {
     handlers: { GET, POST },

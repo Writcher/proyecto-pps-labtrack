@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createUser } from "@/app/queries/user";
-import bcrypt from "bcrypt";
+import bcrypt from 'bcryptjs';
 import { db } from "@vercel/postgres";
 
 export const POST = async (request: Request) => {

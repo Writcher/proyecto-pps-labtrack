@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@vercel/postgres";
-import { createInstance, deleteInstance, getAllInstances, searchInstance } from "@/app/queries/abm";
+import { createInstance, deleteInstance, editInstance, getAllInstances, searchInstance } from "@/app/queries/abm";
 
 export const POST = async (request: Request) => {
     try {
@@ -28,6 +28,36 @@ export const POST = async (request: Request) => {
     } catch(error) {
         console.error("Error manejando POST:", error);
         return new NextResponse("Error al crear instancia", { status: 500 });
+    }
+};
+
+export const PUT = async (request: Request) => {
+    try {
+        const { name, id, table } = await request.json();
+
+        if (typeof id !== 'number' || typeof name !== 'string' || typeof table !== 'string') {
+            return new NextResponse("Parametros no validos", { status: 400 });
+        }
+
+        await db.connect();
+
+        const query = {
+            name,
+            id,
+            table
+        }
+
+        try {
+            await editInstance(query)
+        } catch(error) {
+            console.error("Error manejando PUT:", error);
+            return new NextResponse("Error al editar instancia", { status: 500 });
+        } 
+        
+        return new NextResponse("Instancia editada", { status: 200 });
+    } catch(error) {
+        console.error("Error manejando PUT:", error);
+        return new NextResponse("Error al editar instancia", { status: 500 });
     }
 };
 

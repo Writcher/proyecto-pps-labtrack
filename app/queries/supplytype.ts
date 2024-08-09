@@ -68,16 +68,16 @@ export async function dropSupplyType(id: number){
     }
 }
 
-export async function updateSupplyType(id: number, supplytype: NewSupplytype){
+export async function updateSupplyType(supplytype: Supplytype){
     const client = await db.connect();
     try {
         return client.sql`
         UPDATE "supplytype"
-        SET (name = ${supplytype.name})
-        WHERE id = ${id}
+        SET name = ${supplytype.name}
+        WHERE id = ${supplytype.id}
         `;
     } catch(error) {
         console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo crear el supplytype");
+        throw new Error("No se pudo editar el supplytype");
     }
 }

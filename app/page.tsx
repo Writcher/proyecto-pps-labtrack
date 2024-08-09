@@ -14,7 +14,7 @@ export default function Principal() {
       </div>
       <div className="w-screen h-2 bg-gradient-to-b from-orange-500 to-orange-400"/>
       <div className="flex flex-col md:flex-row items-center justify-center grow">
-        <div className="flex-col md:w-2/5 p-16">
+        <div className="flex-col w-8/10 md:w-2/5 p-16">
           <p className="text-xl md:text-3xl text-gray-700 font-medium">
             <strong className="text-orange-500">
               Bienbenido a LabTrack.
@@ -31,8 +31,8 @@ export default function Principal() {
           </div>
         </div>
         <div className="flex justify-center md:w-3/5">
-          <Image src="/research-desktop.png" width={810} height={900} className="hidden md:block" alt="Versión Escritorio Imagen"/>
-          <Image src="/research-mobile.png" width={126} height={140} className="block md:hidden" alt="Versión Mobile Imagen"/>
+          <Image src="/research-desktop.png" width={410} height={450} className="hidden md:block" alt="Versión Escritorio Imagen"/>
+          <Image src="/research-mobile.png" width={189} height={210} className="block md:hidden" alt="Versión Mobile Imagen"/>
         </div>
       </div>
       <div className="w-screen h-2 bg-gradient-to-t from-orange-500 to-orange-400"/>
