@@ -58,7 +58,7 @@ export default function CreateModal({ open, handleClose, table }: CreateModalPro
                         handleClose(); //solo cierra si la rason no es un click en el fondo
                     }
                 }}
-                maxWidth="md" 
+                maxWidth="xl" 
                 PaperProps={{ 
                     component: 'form',
                     onSubmit: handleSubmit,
@@ -74,8 +74,14 @@ export default function CreateModal({ open, handleClose, table }: CreateModalPro
                                     return " Tipo de Insumo";
                                 case "projecttype":
                                     return " Tipo de Proyecto";
-                                case "anotherType":
-                                    return " Another Description";
+                                case "supplystatus":
+                                    return " Estado de Insumo";
+                                case "projectstatus":
+                                    return " Estado de Proyecto";
+                                case "scholarshiptype":
+                                    return " Tipo de Beca";
+                                case "grade":
+                                    return " Calificación";
                                 default:
                                     return "";
                             }

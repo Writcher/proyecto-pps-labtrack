@@ -77,8 +77,14 @@ export default function EditModal({ open, handleClose, table, id, name }: EditMo
                                     return " Tipo de Insumo ";
                                 case "projecttype":
                                     return " Tipo de Proyecto";
-                                case "anotherType":
-                                    return " Another Description ";
+                                case "supplystatus":
+                                    return " Estado de Insumo";
+                                case "projectstatus":
+                                    return " Estado de Proyecto";
+                                case "scholarshiptype":
+                                    return " Tipo de Beca";
+                                case "grade":
+                                    return " Calificación";
                                 default:
                                     return "";
                             }

@@ -1,5 +1,5 @@
 import { sql } from '@vercel/postgres';
-import { Usertype } from '../lib/definitions';
+import { Usertype } from '../definitions';
 
 export async function gethUserType() {
     try {

@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@vercel/postgres";
-import { createInstance, deleteInstance, editInstance, getAllInstances, searchInstance } from "@/app/queries/abm";
+import { createInstance, deleteInstance, editInstance, getAllInstances, searchInstance } from "@/app/lib/abm";
 
 export const POST = async (request: Request) => {
     try {
@@ -9,8 +8,6 @@ export const POST = async (request: Request) => {
         if (typeof name !== 'string' || typeof table !== 'string') {
             return new NextResponse("Parametros no validos", { status: 400 });
         }
-
-        await db.connect();
 
         const query = {
             name,
@@ -38,8 +35,6 @@ export const PUT = async (request: Request) => {
         if (typeof id !== 'number' || typeof name !== 'string' || typeof table !== 'string') {
             return new NextResponse("Parametros no validos", { status: 400 });
         }
-
-        await db.connect();
 
         const query = {
             name,
@@ -70,8 +65,6 @@ export const GET = async (request: Request) => {
         if (typeof name !== 'string' || typeof table !== 'string') {
             return new NextResponse("Mandastte cualquier parametro loco", { status: 400 });
         }
-
-        await db.connect();
 
         const query = {
             name,
