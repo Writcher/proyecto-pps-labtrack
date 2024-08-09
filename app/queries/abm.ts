@@ -1,9 +1,14 @@
-import { ABMcreate, ABMdelete, ABMedit, NewSupplytype, Supplytype } from '../lib/definitions';
+import { ABMcreate, ABMdelete, ABMedit, Grade, NewGrade, NewProjecttype, NewScolarchiptype, NewSupplystatus, NewSupplytype, Projectstatus, Projecttype, Scolarshiptype, Supplystatus, Supplytype } from '../lib/definitions';
+import { createGrade, dropGrade, getGradeByName, getGrades, updateGrade } from './grade';
+import { createProjectStatus, dropProjectStatus, getProjectStatusByName, getProjectStatuses, updateProjectStatus } from './projectstatus';
+import { createProjectType, dropProjectType, getProjectTypeByName, getProjectTypes, updateProjectType } from './projecttype';
+import { createScolarshipType, dropScolarshipType, getScolarshipTypeByName, getScolarshipTypes, updateScolarshipType } from './scolarshiptype';
+import { createSupplyStatus, dropSupplyStatus, getSupplyStatusByName, getSupplyStatuses, updateSupplyStatus } from './supplystatus';
 import { createSupplyType, dropSupplyType, getSupplyTypeByName, getSupplyTypes, updateSupplyType } from './supplytype';
 
 export async function createInstance(query: ABMcreate) {
     try {
-        const allowedTables = ["supplytype", "projecttype", "anotherType"]; // Adjust this list based on your actual tables
+        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scolarshiptype", "grade"];
         if (!allowedTables.includes(query.table)) {
             throw new Error(`Tabla no valida: ${query.table}`);
         }
@@ -15,7 +20,36 @@ export async function createInstance(query: ABMcreate) {
                 };
                 await createSupplyType(newSupplyType);
                 break;
-            // Add more cases as needed for other table types
+            case "supplystatus":
+                const newSupplyStatus: NewSupplystatus = {
+                    name: query.name,
+                };
+                await createSupplyStatus(newSupplyStatus);
+                break;
+            case "projecttype":
+                const newProjectType: NewProjecttype = {
+                    name: query.name,
+                }
+                await createProjectType(newProjectType);
+                break;
+            case "projectstatus":
+                const newProjectStatus: NewSupplystatus = {
+                    name: query.name,
+                }
+                await createProjectStatus(newProjectStatus);
+                break;
+            case "scolarshiptype":
+                const newScolarshipType: NewScolarchiptype = {
+                    name: query.name,
+                }
+                await createScolarshipType(newScolarshipType);
+                break;
+            case "grade":
+                const newGrade: NewGrade = {
+                    name: query.name,
+                }
+                await createGrade(newGrade);
+                break;
             default:
                 throw new Error(`No se puede manejar la tabla: ${query.table}`);
         }
@@ -30,7 +64,7 @@ export async function createInstance(query: ABMcreate) {
 
 export async function deleteInstance(query: ABMdelete) {
     try {
-        const allowedTables = ["supplytype", "projecttype", "anotherType"]; // Adjust this list based on your actual tables
+        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scolarshiptype", "grade"];
         if (!allowedTables.includes(query.table)) {
             throw new Error(`Tabla no valida: ${query.table}`);
         }
@@ -39,7 +73,21 @@ export async function deleteInstance(query: ABMdelete) {
             case "supplytype":
                 await dropSupplyType(query.id);
                 break;
-            // Add more cases as needed for other table types
+            case "supplystatus":
+                await dropSupplyStatus(query.id);
+                break;
+            case "projecttype":
+                await dropProjectType(query.id);
+                break;
+            case "projectstatus":
+                await dropProjectStatus(query.id);
+                break;
+            case "scolarshiptype":
+                await dropScolarshipType(query.id);
+                break;
+            case "grade":
+                await dropGrade(query.id);
+                break;
             default:
                 throw new Error(`No se puede manejar la tabla: ${query.table}`);
         }
@@ -54,7 +102,7 @@ export async function deleteInstance(query: ABMdelete) {
 
 export async function editInstance(query: ABMedit) {
     try {
-        const allowedTables = ["supplytype", "projecttype", "anotherType"]; // Adjust this list based on your actual tables
+        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scolarshiptype", "grade"];
         if (!allowedTables.includes(query.table)) {
             throw new Error(`Tabla no valida: ${query.table}`);
         }
@@ -67,7 +115,41 @@ export async function editInstance(query: ABMedit) {
                 };
                 await updateSupplyType(editSupplyType);
                 break;
-            // Add more cases as needed for other table types
+            case "supplystatus":
+                const editSupplyStatus: Supplystatus = {
+                    name: query.name,
+                    id: query.id
+                };
+                await updateSupplyStatus(editSupplyStatus);
+                break;
+            case "projecttype":
+                const editProjectType: Projecttype = {
+                    name: query.name,
+                    id: query.id
+                }
+                await updateProjectType(editProjectType);
+                break;
+            case "projectstatus":
+                const editProjectStatus: Projectstatus = {
+                    name: query.name,
+                    id: query.id
+                }
+                await updateProjectStatus(editProjectStatus);
+                break;
+            case "scolarshiptype":
+                const editScolarshipType: Scolarshiptype = {
+                    name: query.name,
+                    id: query.id
+                }
+                await updateScolarshipType(editScolarshipType);
+                break;
+            case "grade":
+                const editGrade: Grade = {
+                    name: query.name,
+                    id: query.id    
+                }
+                await updateGrade(editGrade);
+                break;
             default:
                 throw new Error(`No se puede manejar la tabla: ${query.table}`);
         }
@@ -83,7 +165,7 @@ export async function editInstance(query: ABMedit) {
 export async function getAllInstances(table: string) {
     let data;
     try {
-        const allowedTables = ["supplytype", "projecttype", "anotherType"]; // Adjust this list based on your actual tables
+        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scolarshiptype", "grade"];
         if (!allowedTables.includes(table)) {
             throw new Error(`Tabla no valida: ${table}`);
         }
@@ -92,7 +174,21 @@ export async function getAllInstances(table: string) {
             case "supplytype":
                 data = await getSupplyTypes();
                 break;
-            // Add more cases as needed for other table types
+            case "supplystatus":
+                data = await getSupplyStatuses();
+                break;
+            case "projecttype":
+                data = await getProjectTypes();
+                break;
+            case "projectstatus":
+                data = await getProjectStatuses();
+                break;
+            case "scolarshiptype":
+                data = await getScolarshipTypes();
+                break;
+            case "grade":
+                data = await getGrades();
+                break;
             default:
                 throw new Error(`No se puede manejar la tabla: ${table}`);
         }
@@ -107,18 +203,38 @@ export async function getAllInstances(table: string) {
 
 export async function searchInstance(query: ABMcreate) {
     let data;
+    let name;
     try {
-        const allowedTables = ["supplytype", "projecttype", "anotherType"]; // Adjust this list based on your actual tables
+        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scolarshiptype", "grade"];
         if (!allowedTables.includes(query.table)) {
             throw new Error(`Tabla no valida: ${query.table}`);
         }
 
         switch (query.table) {
             case "supplytype":
-                const name = query.name as string;
+                name = query.name as string;
                 data = await getSupplyTypeByName(name);
                 break;
-            // Add more cases as needed for other table types
+            case "supplystatus":
+                name = query.name as string;
+                data = await getSupplyStatusByName(name);
+                break;
+            case "projecttype":
+                name = query.name as string;
+                data = await getProjectTypeByName(name);
+                break;
+            case "projectstatus":
+                name = query.name as string;
+                data = await getProjectStatusByName(name);
+                break;
+            case "scolarshiptype":
+                name = query.name as string;
+                data = await getScolarshipTypeByName(name);
+                break;
+            case "grade":
+                name = query.name as string;
+                data = await getGradeByName(name);
+                break;
             default:
                 throw new Error(`No se puede manejar la tabla: ${query.table}`);
         }
