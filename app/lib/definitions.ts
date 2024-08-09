@@ -1,6 +1,17 @@
-export type IDandNAME = {
-    id: number;
+export type ABMcreate = {
     name: string;
+    table: string;
+}
+
+export type ABMdelete = {
+    id: number;
+    table: string;
+}
+
+export type ABMedit = {
+    name: string;
+    id: number;
+    table: string;
 }
 
 export type Supplytype = {

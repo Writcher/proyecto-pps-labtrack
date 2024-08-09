@@ -1,4 +1,4 @@
-import { db, sql } from '@vercel/postgres';
+import { db } from '@vercel/postgres';
 import { Supplytype, NewSupplytype } from '../lib/definitions';
 
 export async function getSupplyTypes() {
@@ -7,7 +7,21 @@ export async function getSupplyTypes() {
         const result = await client.sql`
         SELECT * FROM "supplytype"
         `;
-        return result.rows;
+        return result.rows as Supplytype[];
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el supplytype");
+    }
+}
+
+export async function getSupplyTypeByName(name: string){
+    const client = await db.connect();
+    try {
+        const result = await client.sql`
+        SELECT * FROM "supplytype"
+        WHERE name ILIKE ${`%${name}%`}
+        `;
+        return result;
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el supplytype");
@@ -54,16 +68,16 @@ export async function dropSupplyType(id: number){
     }
 }
 
-export async function updateSupplyType(id: number, supplytype: NewSupplytype){
+export async function updateSupplyType(supplytype: Supplytype){
     const client = await db.connect();
     try {
         return client.sql`
         UPDATE "supplytype"
-        SET (name = ${supplytype.name})
-        WHERE id = ${id}
+        SET name = ${supplytype.name}
+        WHERE id = ${supplytype.id}
         `;
     } catch(error) {
         console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo crear el supplytype");
+        throw new Error("No se pudo editar el supplytype");
     }
 }
