@@ -3,6 +3,11 @@ export type ABMcreate = {
     table: string;
 }
 
+export type ABMdelete = {
+    id: number;
+    table: string;
+}
+
 export type Supplytype = {
     id: number;
     name: string;

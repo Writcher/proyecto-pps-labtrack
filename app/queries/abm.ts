@@ -1,11 +1,11 @@
-import { ABMcreate, NewSupplytype } from '../lib/definitions';
-import { createSupplyType, getSupplyTypeByName, getSupplyTypes } from './supplytype';
+import { ABMcreate, ABMdelete, NewSupplytype } from '../lib/definitions';
+import { createSupplyType, dropSupplyType, getSupplyTypeByName, getSupplyTypes } from './supplytype';
 
 export async function createInstance(query: ABMcreate) {
     try {
         const allowedTables = ["supplytype", "projecttype", "anotherType"]; // Adjust this list based on your actual tables
         if (!allowedTables.includes(query.table)) {
-            throw new Error(`Invalid table name: ${query.table}`);
+            throw new Error(`Tabla no valida: ${query.table}`);
         }
 
         switch (query.table) {
@@ -25,6 +25,30 @@ export async function createInstance(query: ABMcreate) {
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo crear instancia (profundo)");
+    }
+}
+
+export async function deleteInstance(query: ABMdelete) {
+    try {
+        const allowedTables = ["supplytype", "projecttype", "anotherType"]; // Adjust this list based on your actual tables
+        if (!allowedTables.includes(query.table)) {
+            throw new Error(`Tabla no valida: ${query.table}`);
+        }
+
+        switch (query.table) {
+            case "supplytype":
+                await dropSupplyType(query.id);
+                break;
+            // Add more cases as needed for other table types
+            default:
+                throw new Error(`No se puede manejar la tabla: ${query.table}`);
+        }
+
+        return { success: true };
+
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("Error al eliminar la tabla (profundo)");
     }
 }
 

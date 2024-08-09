@@ -16,6 +16,7 @@ import AddIcon from '@mui/icons-material/Add';
 import CreateModal from "./createmodal";
 import TablePagination from '@mui/material/TablePagination';
 import debounce from "lodash.debounce";
+import DeleteModal from "./deletemodal";
 
 
 interface ABMTableProps {
@@ -43,7 +44,7 @@ export default function ABMTable({ table }: ABMTableProps) {
             if (error instanceof Error) {
                 console.error(error.message);
             } else {
-                console.error("Error desconocido");
+                console.error("Error desconocido, la cagaste");
             }
         }
     }
@@ -76,23 +77,36 @@ export default function ABMTable({ table }: ABMTableProps) {
     };
 
     //modales
-    const [modalOpen, setModalOpen] = useState(false);
-    const handleOpenModal = () => setModalOpen(true);
-
-    const handleCloseModal = () => {
-        setModalOpen(false);
+        //create
+    const [modalOpenCreate, setModalOpenCreate] = useState(false);
+    const handleOpenCreateModal = () => setModalOpenCreate(true);
+    const handleCloseCreateModal = () => {
+        setModalOpenCreate(false);
     };
-
     useEffect(() => {
-        if (!modalOpen) {
+        if (!modalOpenCreate) {
             debouncedFetchData(search);
         }
-    }, [modalOpen]);
+    }, [modalOpenCreate]);
+        //delete
+    const [modalOpenDelete, setModalOpenDelete] = useState(false);
+    const [selectedRowId, setSelectedRowId] = useState<number | null>(null);
+    const [selectedRowName, setSelectedRowName] = useState<string | null>(null);
+    const handleOpenDeleteModal = (id: number, name: string) => {
+        setSelectedRowId(id);
+        setSelectedRowName(name);
+        setModalOpenDelete(true);
+    }
+    const handleCloseDeleteModal = () => {
+        setModalOpenDelete(false);
+    };
+    useEffect(() => {
+        if (!modalOpenDelete) {
+            debouncedFetchData(search);
+        }
+    }, [modalOpenDelete]);
 
     //placeholders
-    async function handleDeleteButton(id: number) {
-        console.log("Deleting item with id:", id, "from table:", table);
-    }
     async function handleEditButton(id: number) {
         console.log("Editing item with id:", id, "from table:", table);
     }
@@ -123,7 +137,7 @@ export default function ABMTable({ table }: ABMTableProps) {
                             color="success"
                             disableElevation
                             startIcon={<AddIcon />}
-                            onClick={handleOpenModal}
+                            onClick={handleOpenCreateModal}
                         >
                             AÑADIR
                         </Button>
@@ -167,7 +181,7 @@ export default function ABMTable({ table }: ABMTableProps) {
                                     </TableCell>
                                     <TableCell align="right">
                                         <div className="flex flex-row justify-end gap-5 text-gray-700">
-                                            <IconButton color="error" onClick={() => handleDeleteButton(row.id)}>
+                                            <IconButton color="error" onClick={() => handleOpenDeleteModal(row.id, row.name)}>
                                                 <DeleteForeverIcon />
                                             </IconButton>
                                             <IconButton color="inherit" onClick={() => handleEditButton(row.id)}>
@@ -190,9 +204,16 @@ export default function ABMTable({ table }: ABMTableProps) {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </div>
+            <DeleteModal
+                open={modalOpenDelete}
+                handleClose={handleCloseDeleteModal}
+                table={table}
+                id={selectedRowId!}        
+                name={selectedRowName!}        
+            />
             <CreateModal
-                open={modalOpen}
-                handleClose={handleCloseModal}
+                open={modalOpenCreate}
+                handleClose={handleCloseCreateModal}
                 table={table}
             />
         </main>

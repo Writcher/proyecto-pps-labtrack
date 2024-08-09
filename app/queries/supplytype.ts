@@ -28,7 +28,6 @@ export async function getSupplyTypeByName(name: string){
     }
 }
 
-
 export async function getSupplyTypeById(id: number){
     const client = await db.connect();
     try {
