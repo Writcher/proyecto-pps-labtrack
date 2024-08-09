@@ -4,7 +4,7 @@ export default function ABMestadoProyecto() {
     return (
             <div className="flex flex-col w-ful items-center justify-center">
                 <ABMTable 
-                    table="proyectstatus"   
+                    table="projectstatus"   
                 />
             </div>
     );

@@ -1,8 +1,9 @@
 import { db } from '@vercel/postgres';
-import { Grade, NewGrade } from '../lib/definitions'; 
+import { Grade, NewGrade } from '../definitions'; 
+
+const client = db;
 
 export async function getGrades() {
-    const client = await db.connect();
     try {
         const result = await client.sql`
         SELECT * FROM "grade"
@@ -14,8 +15,7 @@ export async function getGrades() {
     }
 }
 
-export async function getGradeByName(name: string){
-    const client = await db.connect();
+export async function getGradeByName(name: string) {
     try {
         const result = await client.sql`
         SELECT * FROM "grade"
@@ -28,8 +28,7 @@ export async function getGradeByName(name: string){
     }
 }
 
-export async function getGradeById(id: number){
-    const client = await db.connect();
+export async function getGradeById(id: number) {
     try {
         const result = await client.sql`
         SELECT * FROM "grade"
@@ -42,8 +41,7 @@ export async function getGradeById(id: number){
     }
 }
 
-export async function createGrade(grade: NewGrade){
-    const client = await db.connect();
+export async function createGrade(grade: NewGrade) {
     try {
         return client.sql`
         INSERT INTO "grade" (name)
@@ -55,8 +53,7 @@ export async function createGrade(grade: NewGrade){
     }
 }
 
-export async function dropGrade(id: number){
-    const client = await db.connect();
+export async function dropGrade(id: number) {
     try {
         return client.sql`
         DELETE FROM "grade"
@@ -68,8 +65,8 @@ export async function dropGrade(id: number){
     }
 }
 
-export async function updateGrade(grade: Grade){
-    const client = await db.connect();
+export async function updateGrade(grade: Grade) {
+
     try {
         return client.sql`
         UPDATE "grade"

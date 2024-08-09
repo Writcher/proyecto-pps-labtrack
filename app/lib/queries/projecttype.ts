@@ -1,8 +1,9 @@
 import { db } from '@vercel/postgres';
-import { Projecttype, NewProjecttype } from '../lib/definitions';
+import { Projecttype, NewProjecttype } from '../definitions';
+
+const client = db;
 
 export async function getProjectTypes() {
-    const client = await db.connect();
     try {
         const result = await client.sql`
         SELECT * FROM "projecttype"
@@ -14,8 +15,7 @@ export async function getProjectTypes() {
     }
 }
 
-export async function getProjectTypeByName(name: string){
-    const client = await db.connect();
+export async function getProjectTypeByName(name: string) {
     try {
         const result = await client.sql`
         SELECT * FROM "projecttype"
@@ -28,8 +28,7 @@ export async function getProjectTypeByName(name: string){
     }
 }
 
-export async function getProjectTypeById(id: number){
-    const client = await db.connect();
+export async function getProjectTypeById(id: number) {
     try {
         const result = await client.sql`
         SELECT * FROM "projecttype"
@@ -42,8 +41,7 @@ export async function getProjectTypeById(id: number){
     }
 }
 
-export async function createProjectType(projecttype: NewProjecttype){
-    const client = await db.connect();
+export async function createProjectType(projecttype: NewProjecttype) {
     try {
         return client.sql`
         INSERT INTO "projecttype" (name)
@@ -55,8 +53,7 @@ export async function createProjectType(projecttype: NewProjecttype){
     }
 }
 
-export async function dropProjectType(id: number){
-    const client = await db.connect();
+export async function dropProjectType(id: number) {
     try {
         return client.sql`
         DELETE FROM "projecttype"
@@ -68,8 +65,7 @@ export async function dropProjectType(id: number){
     }
 }
 
-export async function updateProjectType(projecttype: Projecttype){
-    const client = await db.connect();
+export async function updateProjectType(projecttype: Projecttype) {
     try {
         return client.sql`
         UPDATE "projecttype"

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createUser } from "@/app/queries/user";
+import { createUser } from "@/app/lib/queries/user";
 import bcrypt from 'bcryptjs';
 import { db } from "@vercel/postgres";
 

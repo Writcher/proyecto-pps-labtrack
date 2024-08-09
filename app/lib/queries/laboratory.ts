@@ -1,5 +1,5 @@
 import { sql } from '@vercel/postgres';
-import { Laboratory } from '../lib/definitions';
+import { Laboratory } from '../definitions';
 
 export async function getLabs() {
     try {

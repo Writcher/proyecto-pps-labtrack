@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import google from "next-auth/providers/google";
 import github from "next-auth/providers/github";
 import credentials from "next-auth/providers/credentials";
-import { getUserByEmail } from "../queries/user";
+import { getUserByEmail } from "./queries/user";
 import bcrypt from 'bcryptjs';
 
 export const {
@@ -15,27 +15,7 @@ export const {
         strategy: "jwt",
     },
     providers: [
-        google({
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-
-            authorization: {
-                prompt: "consent",
-                access_type: "offline",
-                response_type: "code",
-            }
-        }),
-        github({
-            clientId: process.env.GITHUB_CLIENT_ID,
-            clientSecret: process.env.GITHUB_CLIENT_SECRET,
-
-            authorization: {
-                prompt: "consent",
-                access_type: "offline",
-                response_type: "code",
-            }
-        }),
-        credentials({
+            credentials({
             async authorize(credentials) {
                 if(credentials === null) return null;
                 try {

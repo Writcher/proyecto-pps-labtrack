@@ -1,14 +1,14 @@
 import { ABMcreate, ABMdelete, ABMedit, Grade, NewGrade, NewProjecttype, NewScolarchiptype, NewSupplystatus, NewSupplytype, Projectstatus, Projecttype, Scolarshiptype, Supplystatus, Supplytype } from '../lib/definitions';
-import { createGrade, dropGrade, getGradeByName, getGrades, updateGrade } from './grade';
-import { createProjectStatus, dropProjectStatus, getProjectStatusByName, getProjectStatuses, updateProjectStatus } from './projectstatus';
-import { createProjectType, dropProjectType, getProjectTypeByName, getProjectTypes, updateProjectType } from './projecttype';
-import { createScolarshipType, dropScolarshipType, getScolarshipTypeByName, getScolarshipTypes, updateScolarshipType } from './scolarshiptype';
-import { createSupplyStatus, dropSupplyStatus, getSupplyStatusByName, getSupplyStatuses, updateSupplyStatus } from './supplystatus';
-import { createSupplyType, dropSupplyType, getSupplyTypeByName, getSupplyTypes, updateSupplyType } from './supplytype';
+import { createGrade, dropGrade, getGradeByName, getGrades, updateGrade} from './queries/grade';
+import { createProjectStatus, dropProjectStatus, getProjectStatusByName, getProjectStatuses, updateProjectStatus } from './queries/projectstatus';
+import { createProjectType, dropProjectType, getProjectTypeByName, getProjectTypes, updateProjectType } from './queries/projecttype';
+import { createScolarshipType, dropScolarshipType, getScolarshipTypeByName, getScolarshipTypes, updateScolarshipType } from './queries/scholarshiptype';
+import { createSupplyStatus, dropSupplyStatus, getSupplyStatusByName, getSupplyStatuses, updateSupplyStatus } from './queries/supplystatus';
+import { createSupplyType, dropSupplyType, getSupplyTypeByName, getSupplyTypes, updateSupplyType } from './queries/supplytype';
 
 export async function createInstance(query: ABMcreate) {
     try {
-        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scolarshiptype", "grade"];
+        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade"];
         if (!allowedTables.includes(query.table)) {
             throw new Error(`Tabla no valida: ${query.table}`);
         }
@@ -38,7 +38,7 @@ export async function createInstance(query: ABMcreate) {
                 }
                 await createProjectStatus(newProjectStatus);
                 break;
-            case "scolarshiptype":
+            case "scholarshiptype":
                 const newScolarshipType: NewScolarchiptype = {
                     name: query.name,
                 }
@@ -64,7 +64,7 @@ export async function createInstance(query: ABMcreate) {
 
 export async function deleteInstance(query: ABMdelete) {
     try {
-        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scolarshiptype", "grade"];
+        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade"];
         if (!allowedTables.includes(query.table)) {
             throw new Error(`Tabla no valida: ${query.table}`);
         }
@@ -82,7 +82,7 @@ export async function deleteInstance(query: ABMdelete) {
             case "projectstatus":
                 await dropProjectStatus(query.id);
                 break;
-            case "scolarshiptype":
+            case "scholarshiptype":
                 await dropScolarshipType(query.id);
                 break;
             case "grade":
@@ -102,7 +102,7 @@ export async function deleteInstance(query: ABMdelete) {
 
 export async function editInstance(query: ABMedit) {
     try {
-        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scolarshiptype", "grade"];
+        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade"];
         if (!allowedTables.includes(query.table)) {
             throw new Error(`Tabla no valida: ${query.table}`);
         }
@@ -136,7 +136,7 @@ export async function editInstance(query: ABMedit) {
                 }
                 await updateProjectStatus(editProjectStatus);
                 break;
-            case "scolarshiptype":
+            case "scholarshiptype":
                 const editScolarshipType: Scolarshiptype = {
                     name: query.name,
                     id: query.id
@@ -165,7 +165,7 @@ export async function editInstance(query: ABMedit) {
 export async function getAllInstances(table: string) {
     let data;
     try {
-        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scolarshiptype", "grade"];
+        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade"];
         if (!allowedTables.includes(table)) {
             throw new Error(`Tabla no valida: ${table}`);
         }
@@ -183,7 +183,7 @@ export async function getAllInstances(table: string) {
             case "projectstatus":
                 data = await getProjectStatuses();
                 break;
-            case "scolarshiptype":
+            case "scholarshiptype":
                 data = await getScolarshipTypes();
                 break;
             case "grade":
@@ -205,7 +205,7 @@ export async function searchInstance(query: ABMcreate) {
     let data;
     let name;
     try {
-        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scolarshiptype", "grade"];
+        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade"];
         if (!allowedTables.includes(query.table)) {
             throw new Error(`Tabla no valida: ${query.table}`);
         }
@@ -227,7 +227,7 @@ export async function searchInstance(query: ABMcreate) {
                 name = query.name as string;
                 data = await getProjectStatusByName(name);
                 break;
-            case "scolarshiptype":
+            case "scholarshiptype":
                 name = query.name as string;
                 data = await getScolarshipTypeByName(name);
                 break;

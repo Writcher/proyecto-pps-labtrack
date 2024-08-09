@@ -1,11 +1,12 @@
 import { db } from '@vercel/postgres';
-import { Supplystatus, NewSupplystatus } from '../lib/definitions';
+import { Supplystatus, NewSupplystatus } from '../definitions';
+
+const client = db;
 
 export async function getSupplyStatuses() {
-    const client = await db.connect();
     try {
         const result = await client.sql`
-        SELECT * FROM "supplystatuses"
+        SELECT * FROM "supplystatus"
         `;
         return result.rows as Supplystatus[];
     } catch (error) {
@@ -14,8 +15,7 @@ export async function getSupplyStatuses() {
     }
 }
 
-export async function getSupplyStatusByName(name: string){
-    const client = await db.connect();
+export async function getSupplyStatusByName(name: string) {
     try {
         const result = await client.sql`
         SELECT * FROM "supplystatus"
@@ -28,8 +28,7 @@ export async function getSupplyStatusByName(name: string){
     }
 }
 
-export async function getSupplyStatusById(id: number){
-    const client = await db.connect();
+export async function getSupplyStatusById(id: number) {
     try {
         const result = await client.sql`
         SELECT * FROM "supplystatus"
@@ -42,8 +41,7 @@ export async function getSupplyStatusById(id: number){
     }
 }
 
-export async function createSupplyStatus(supplystatus: NewSupplystatus){
-    const client = await db.connect();
+export async function createSupplyStatus(supplystatus: NewSupplystatus) {
     try {
         return client.sql`
         INSERT INTO "supplystatus" (name)
@@ -55,8 +53,7 @@ export async function createSupplyStatus(supplystatus: NewSupplystatus){
     }
 }
 
-export async function dropSupplyStatus(id: number){
-    const client = await db.connect();
+export async function dropSupplyStatus(id: number) {
     try {
         return client.sql`
         DELETE FROM "supplystatus"
@@ -68,8 +65,7 @@ export async function dropSupplyStatus(id: number){
     }
 }
 
-export async function updateSupplyStatus(supplystatus: Supplystatus){
-    const client = await db.connect();
+export async function updateSupplyStatus(supplystatus: Supplystatus) {
     try {
         return client.sql`
         UPDATE "supplystatus"

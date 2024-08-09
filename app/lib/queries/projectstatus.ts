@@ -1,8 +1,9 @@
 import { db } from '@vercel/postgres';
-import { Projectstatus, NewProjectstatus } from '../lib/definitions';
+import { Projectstatus, NewProjectstatus } from '../definitions';
+
+const client = db;
 
 export async function getProjectStatuses() {
-    const client = await db.connect();
     try {
         const result = await client.sql`
         SELECT * FROM "projectstatus"
@@ -14,8 +15,7 @@ export async function getProjectStatuses() {
     }
 }
 
-export async function getProjectStatusByName(name: string){
-    const client = await db.connect();
+export async function getProjectStatusByName(name: string) {
     try {
         const result = await client.sql`
         SELECT * FROM "projectstatus"
@@ -28,8 +28,7 @@ export async function getProjectStatusByName(name: string){
     }
 }
 
-export async function getProjectStatusById(id: number){
-    const client = await db.connect();
+export async function getProjectStatusById(id: number) {
     try {
         const result = await client.sql`
         SELECT * FROM "projectstatus"
@@ -42,8 +41,7 @@ export async function getProjectStatusById(id: number){
     }
 }
 
-export async function createProjectStatus(projectstatus: NewProjectstatus){
-    const client = await db.connect();
+export async function createProjectStatus(projectstatus: NewProjectstatus) {
     try {
         return client.sql`
         INSERT INTO "projectstatus" (name)
@@ -55,8 +53,7 @@ export async function createProjectStatus(projectstatus: NewProjectstatus){
     }
 }
 
-export async function dropProjectStatus(id: number){
-    const client = await db.connect();
+export async function dropProjectStatus(id: number) {
     try {
         return client.sql`
         DELETE FROM "projectstatus"
@@ -68,8 +65,7 @@ export async function dropProjectStatus(id: number){
     }
 }
 
-export async function updateProjectStatus(projectstatus: Projectstatus){
-    const client = await db.connect();
+export async function updateProjectStatus(projectstatus: Projectstatus) {
     try {
         return client.sql`
         UPDATE "projectstatus"

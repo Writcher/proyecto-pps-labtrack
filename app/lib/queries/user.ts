@@ -1,10 +1,9 @@
 import { db } from '@vercel/postgres';
-import {NewUser } from "../lib/definitions";
+import {NewUser } from "../definitions";
 
-
+const client = db;
 
 export async function getUserByEmail(email: string) {
-    const client = await db.connect();
     try {
         const result = await client.sql`
         SELECT * FROM "user" WHERE email = ${email} LIMIT 1
@@ -17,7 +16,6 @@ export async function getUserByEmail(email: string) {
 }
 
 export async function createUser(user: NewUser){
-    const client = await db.connect();
     try {
         return client.sql`
         INSERT INTO "user" (name, file, email, password, laboratory_id, usertype_id)

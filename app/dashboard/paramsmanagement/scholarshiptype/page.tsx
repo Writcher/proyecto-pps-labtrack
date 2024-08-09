@@ -4,7 +4,7 @@ export default function ABMtipoBeca() {
     return (
             <div className="flex flex-col w-ful items-center justify-center">
                 <ABMTable 
-                    table="scolarshiptype"   
+                    table="scholarshiptype"   
                 />
             </div>
     );
