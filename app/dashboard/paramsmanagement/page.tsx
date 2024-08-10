@@ -4,6 +4,11 @@ import { useState, useEffect } from "react";
 import { TextField, MenuItem } from "@mui/material";
 import ABMtipoInsumo from "./supplytype/page";
 import Image from "next/image";
+import ABMestadoInsumo from "./supplystatus/page";
+import ABMtipoBeca from "./scholarshiptype/page";
+import ABMtipoProyecto from "./projecttype/page";
+import ABMestadoProyecto from "./projectstatus/page";
+import ABMcalificacion from "./grade/page";
 
 export default function ABMinicio() {
     const [selectedABM, setSelectedABM] = useState<number | null>(null);
@@ -16,6 +21,16 @@ export default function ABMinicio() {
         switch (selectedABM) {
             case 1:
                 return <ABMtipoInsumo />;
+            case 2:
+                return <ABMestadoInsumo />;
+            case 3:
+                return <ABMtipoProyecto />;
+            case 4:
+                return <ABMestadoProyecto />;
+            case 5:
+                return <ABMtipoBeca />;
+            case 6:
+                return <ABMcalificacion />;
             default:
                 return (
                     <main className="flex flex-col w-grow h-3/4">
@@ -51,7 +66,12 @@ export default function ABMinicio() {
                         onChange={handleChange}
                     >
                         <MenuItem key={1} value={1}>ABM Tipo de Insumo</MenuItem>
-                        {/* Añadir otros aca */}
+                        <MenuItem key={2} value={2}>ABM Estado de Insumo</MenuItem>
+                        <MenuItem key={3} value={3}>ABM Tipo de Proyecto</MenuItem>
+                        <MenuItem key={4} value={4}>ABM Estado de Proyecto</MenuItem>
+                        <MenuItem key={5} value={5}>ABM Tipo de Beca</MenuItem>
+                        <MenuItem key={6} value={6}>ABM Calificación</MenuItem>
+
                     </TextField>
                 </div>
             </div>

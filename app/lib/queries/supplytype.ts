@@ -1,8 +1,9 @@
 import { db } from '@vercel/postgres';
-import { Supplytype, NewSupplytype } from '../lib/definitions';
+import { Supplytype, NewSupplytype } from '../definitions';
+
+const client = db;
 
 export async function getSupplyTypes() {
-    const client = await db.connect();
     try {
         const result = await client.sql`
         SELECT * FROM "supplytype"
@@ -14,8 +15,7 @@ export async function getSupplyTypes() {
     }
 }
 
-export async function getSupplyTypeByName(name: string){
-    const client = await db.connect();
+export async function getSupplyTypeByName(name: string) {
     try {
         const result = await client.sql`
         SELECT * FROM "supplytype"
@@ -28,8 +28,7 @@ export async function getSupplyTypeByName(name: string){
     }
 }
 
-export async function getSupplyTypeById(id: number){
-    const client = await db.connect();
+export async function getSupplyTypeById(id: number) {
     try {
         const result = await client.sql`
         SELECT * FROM "supplytype"
@@ -42,8 +41,7 @@ export async function getSupplyTypeById(id: number){
     }
 }
 
-export async function createSupplyType(supplytype: NewSupplytype){
-    const client = await db.connect();
+export async function createSupplyType(supplytype: NewSupplytype) {
     try {
         return client.sql`
         INSERT INTO "supplytype" (name)
@@ -55,8 +53,7 @@ export async function createSupplyType(supplytype: NewSupplytype){
     }
 }
 
-export async function dropSupplyType(id: number){
-    const client = await db.connect();
+export async function dropSupplyType(id: number) {
     try {
         return client.sql`
         DELETE FROM "supplytype"
@@ -68,8 +65,7 @@ export async function dropSupplyType(id: number){
     }
 }
 
-export async function updateSupplyType(supplytype: Supplytype){
-    const client = await db.connect();
+export async function updateSupplyType(supplytype: Supplytype) {
     try {
         return client.sql`
         UPDATE "supplytype"

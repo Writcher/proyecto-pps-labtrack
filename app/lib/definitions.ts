@@ -14,6 +14,15 @@ export type ABMedit = {
     table: string;
 }
 
+export type Supplystatus = {
+    id: number;
+    name: string;
+}
+
+export type NewSupplystatus = {
+    name: string;
+}
+
 export type Supplytype = {
     id: number;
     name: string;
@@ -23,16 +32,41 @@ export type NewSupplytype = {
     name: string;
 }
 
-export type Proyecttype = {
+export type Projectstatus = {
     id: number;
     name: string;
 }
 
+export type NewProjectstatus = {
+    name: string;
+}
 
+export type Projecttype = {
+    id: number;
+    name: string;
+}
 
+export type NewProjecttype = {
+    name: string;
+}
 
+export type Scolarshiptype = {
+    id: number;
+    name: string;
+}
 
+export type NewScolarchiptype = {
+    name: string;
+}
 
+export type Grade = {
+    id: number;
+    name: string;
+}
+
+export type NewGrade = {
+    name: string;
+}
 
 
 

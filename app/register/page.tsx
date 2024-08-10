@@ -1,5 +1,5 @@
 import RegisterForm from "../ui/register-form";
-import { getLabs } from "../queries/laboratory";
+import { getLabs } from "../lib/queries/laboratory";
 import Button from "@mui/material/Button";
 import LabTrackLogoWhite, { LabTrackLogoBlack } from "../ui/labtrack-logo";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
