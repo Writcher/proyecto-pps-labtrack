@@ -32,7 +32,7 @@ export default function RegisterForm({ laboratories }: RegisterFormProps) {
             let usertype_id: number;
 
             if (emailDomainRegexDocente.test(email)) {
-                usertype_id = 2; // ID correspondiente para docentes
+                usertype_id = 1; // ID correspondiente para docentes
             } else if (emailDomainRegexAlumno.test(email)) {
                 setError("Debes ser un docente");
                 return;
