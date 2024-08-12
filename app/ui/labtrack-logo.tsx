@@ -5,7 +5,7 @@ export default function LabTrackLogoWhite() {
         <div className="flex flex-row items-center">
             <SchoolIcon className="h-12 w-12 rotate-[15deg] text-orange-500"/>
             <div className="text-white text-3xl font-medium tracking-wider px-2">
-                LabTrack
+                LMS
             </div>
         </div>
     )
@@ -16,7 +16,7 @@ export function LabTrackLogoBlack() {
         <div className="flex flex-row items-center">
             <SchoolIcon className="h-12 w-12 rotate-[15deg] text-orange-500"/>
             <div className="text-black text-3xl font-medium tracking-wider px-2">
-                LabTrack
+                LMS
             </div>
         </div>
     )

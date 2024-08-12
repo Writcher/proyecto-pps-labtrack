@@ -18,6 +18,7 @@ export default function RegisterForm({ laboratories }: RegisterFormProps) {
     const router = useRouter();
     async function handleRegisterFormSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
+        setError("");
         try {
             const formData = new FormData(event.currentTarget);
             const name = formData.get("name");
@@ -26,20 +27,10 @@ export default function RegisterForm({ laboratories }: RegisterFormProps) {
             const email = formData.get("email") as string;
             const password = formData.get("password") as string;
             const confPassword = formData.get("confirmPassword");
-
-            const emailDomainRegexDocente = /@docentes\.frm\.utn\.edu\.ar$/;
-            const emailDomainRegexAlumno = /@alumnos\.frm\.utn\.edu\.ar$/;
+            
             let usertype_id: number;
 
-            if (emailDomainRegexDocente.test(email)) {
-                usertype_id = 2; // ID correspondiente para docentes
-            } else if (emailDomainRegexAlumno.test(email)) {
-                setError("Debes ser un docente");
-                return;
-            } else {
-                setError("Debes utilizar tu correo institucional");
-                return;
-            }
+            usertype_id = 1;
 
             const passwordValidationRegex = /^(?=.*\d).{12,}$/;
             if (!passwordValidationRegex.test(password)) {
@@ -63,11 +54,17 @@ export default function RegisterForm({ laboratories }: RegisterFormProps) {
                     email,
                     password,
                     laboratory_id,
-                    usertype_id
+                    usertype_id,
                 })
-            })
-    
-            response.status === 201 && router.push("/login")
+            });
+
+            const result = await response.json();
+
+            if (response.status === 201) {
+                router.push("/login");
+            } else {
+                setError(result.error || "Error desconocido, la cagaste");
+            }
     
         } catch (error) {
             if (error instanceof Error) {
@@ -80,12 +77,12 @@ export default function RegisterForm({ laboratories }: RegisterFormProps) {
 
     return (
         <div className="flex flex-col w-64 md:w-2/5 gap-12">
-            <form className="flex flex-col" onSubmit={handleRegisterFormSubmit}>
-                <div className="flex flex-row gap-16 justify-center">
-                    <div className="mb-4">
+            <form className="flex flex-col w-full" onSubmit={handleRegisterFormSubmit}>
+                <div className="flex gap-4 justify-center">
+                    <div className="mb-4 w-full">
                         <TextField id="name" name="name" label="Nombre y Apellido" helperText="Ingresa tu Nombre y Apellido" type="text" variant="outlined" color="warning" fullWidth required/>
                     </div>
-                    <div className="mb-4">
+                    <div className="mb-4 w-full">
                         <TextField id="file" name="file" label="Legajo" helperText="Ingresa tu Legajo" type="text" variant="outlined" color="warning" fullWidth required/>
                     </div>
                 </div>

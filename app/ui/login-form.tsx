@@ -12,23 +12,28 @@ export default function LoginForm() {
     const router = useRouter();
     
     async function handleFormSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault ();
+        event.preventDefault();
+        setError("");
         try {
             const formData = new FormData(event.currentTarget);
-            const response = await doCredentialLogin(formData);
-            if (!!response.error) {
-                setError(response.error.message);
+            const email = formData.get("email")?.toString() ?? "";
+            const password = formData.get("password")?.toString() ?? "";
+            const result = await doCredentialLogin({ email, password });
+    
+            if (result.error) {
+                setError(result.error || "Error desconocido, la cagaste");
             } else {
-                router.push("/dashboard");
+                router.push("/dashboard/home");
             }
-        } catch(error) {
+        } catch (error) {
             if (error instanceof Error) {
-                setError("Correo o contraseña equivocados");
+                setError(error.message || "Error desconocido, la cagaste");
             } else {
                 setError("Error desconocido, la cagaste");
             }
         }
     }
+    
     return (
         <div className="flex flex-col w-64 md:w-2/5 gap-12">
             <form className="flex flex-col" onSubmit={handleFormSubmit}>

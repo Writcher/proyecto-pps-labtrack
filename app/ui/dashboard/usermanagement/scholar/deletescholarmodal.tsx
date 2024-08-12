@@ -4,35 +4,33 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
-import SaveIcon from '@mui/icons-material/Save';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
-interface CreateModalProps {
+interface DeleteScholarModalProps {
     open: boolean;
     handleClose: () => void;
-    table: string;
+    id: number;
+    name: string;
 }
 
-export default function CreateModal({ open, handleClose, table }: CreateModalProps) {
+export default function DeleteScholarModal({ open, handleClose, id, name }: DeleteScholarModalProps) {
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
+        const newStatus = 4;
         try {
-            const formData = new FormData(event.currentTarget);
-            const name = formData.get("name") as string;
-
-            const response = await fetch("/api/dashboard/paramsmanagement", {
-                method: 'POST',
+            const response = await fetch(`/api/dashboard/usermanagement/scholar/status`, {
+                method: 'PUT',
                 headers: {
                     "Content-type": "application/json"
                 },
                 body: JSON.stringify({
-                    name,
-                    table
+                    id,
+                    newStatus
                 })
-            })
+            });
 
-            if (response.status === 201) {
+            if (response.status === 200) {
                 handleClose();
             }
 
@@ -67,36 +65,20 @@ export default function CreateModal({ open, handleClose, table }: CreateModalPro
                 <div className='flex flex-col m-2'>
                     <DialogTitle>
                         <div className='text-gray-700 text-center font-medium text-2xl md:text-3xl mb-2'>
-                            Crear nuevo  
-                            {(() => {
-                                switch (table) {
-                                    case "supplytype":
-                                        return " Tipo de Insumo";
-                                    case "projecttype":
-                                        return " Tipo de Proyecto";
-                                    case "supplystatus":
-                                        return " Estado de Insumo";
-                                    case "projectstatus":
-                                        return " Estado de Proyecto";
-                                    case "scholarshiptype":
-                                        return " Tipo de Beca";
-                                    case "grade":
-                                        return " Calificación";
-                                    default:
-                                        return "";
-                                }
-                            })()}
+                            ¿Desactivar la cuenta de {name}?
                         </div>
                     </DialogTitle>
                     <DialogContent>
                         <div className='flex flex-col w-full items-center justify-center pt-4 gap-4'>
-                            <TextField id="name" name="name" label="Nombre" helperText="Nombre de Nuevo Tipo" type="text" variant="outlined" color="warning" fullWidth required/>
+                            <div className='text-gray-700 font-medium text-xl mb-2'>
+                                Esto inhabilitará la cuenta del becario, ¿Esta seguro?
+                            </div>
                         </div>
                     </DialogContent>
                     <DialogActions>
                         <div className='flex gap-1 md:m-4 md:gap-4'>
                             <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
-                            <Button variant="contained" size="large" color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
+                            <Button variant="contained" size="large" color="success" disableElevation endIcon={<DeleteForeverIcon />} type="submit">DESHABILITAR</Button>
                         </div>
                     </DialogActions>
                 </div>

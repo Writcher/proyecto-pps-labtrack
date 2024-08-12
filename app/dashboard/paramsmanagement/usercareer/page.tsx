@@ -1,10 +1,10 @@
 import ABMTable from "@/app/ui/dashboard/paramsmanagement/abmtable";
 import Button from "@mui/material/Button";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import { auth } from "@/app/lib/auth";
 import { redirect } from "next/navigation";
+import { auth } from "@/app/lib/auth";
 
-export default async function ABMtipoProyecto() {
+export default async function ABMcarrera() {
     const session = await auth();
     if (!session?.user) redirect("/");
     return (
@@ -14,12 +14,12 @@ export default async function ABMtipoProyecto() {
             </div>
             <div className="flex flex-col text-xl md:text-3xl text-gray-700 text-center font-bold">
                 <p className="mt-16">
-                    ABM Tipo de Proyecto
+                    ABM Carrera
                 </p>
             </div>
             <div className="flex flex-col w-ful items-center justify-center m-6">
                 <ABMTable 
-                    table="projecttype"   
+                    table="usercareer"   
                 />
             </div>
         </main>

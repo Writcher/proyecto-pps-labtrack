@@ -87,7 +87,7 @@ export default function ABMTable({ table }: ABMTableProps) {
         const [selectedRowId, setSelectedRowId] = useState<number | null>(null);
         const [selectedRowName, setSelectedRowName] = useState<string | null>(null);       
             //delete
-    const [modalOpenDelete, setModalOpenDelete] = useState(false);
+    {/*const [modalOpenDelete, setModalOpenDelete] = useState(false);
     const handleOpenDeleteModal = (id: number, name: string) => {
         setSelectedRowId(id);
         setSelectedRowName(name);
@@ -100,7 +100,7 @@ export default function ABMTable({ table }: ABMTableProps) {
         if (!modalOpenDelete) {
             debouncedFetchData(search);
         }
-    }, [modalOpenDelete]);
+    }, [modalOpenDelete]);*/}
             //edit
     const [modalOpenEdit, setModalOpenEdit] = useState(false);
     const handleOpenEditModal = (id: number, name: string) => {
@@ -186,10 +186,10 @@ export default function ABMTable({ table }: ABMTableProps) {
                                         </div>
                                     </TableCell>
                                     <TableCell align="right">
-                                        <div className="flex flex-row justify-end gap-5 text-gray-700">
-                                            <IconButton color="error" onClick={() => handleOpenDeleteModal(row.id, row.name)}>
+                                        <div className="flex flex-row justify-end mr-10 items-center text-gray-700">
+                                            {/*<IconButton color="error" onClick={() => handleOpenDeleteModal(row.id, row.name)}>
                                                 <DeleteForeverIcon />
-                                            </IconButton>
+                                            </IconButton>*/}
                                             <IconButton color="inherit" onClick={() => handleOpenEditModal(row.id, row.name)}>
                                                 <EditIcon />
                                             </IconButton>
@@ -217,13 +217,13 @@ export default function ABMTable({ table }: ABMTableProps) {
                 id={selectedRowId!}        
                 name={selectedRowName!}        
             />
-            <DeleteModal
+            {/*<DeleteModal
                 open={modalOpenDelete}
                 handleClose={handleCloseDeleteModal}
                 table={table}
                 id={selectedRowId!}        
                 name={selectedRowName!}        
-            />
+            />*/}
             <CreateModal
                 open={modalOpenCreate}
                 handleClose={handleCloseCreateModal}

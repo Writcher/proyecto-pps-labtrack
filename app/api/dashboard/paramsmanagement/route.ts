@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createInstance, deleteInstance, editInstance, getAllInstances, searchInstance } from "@/app/lib/abm";
+import { createInstance, editInstance, getAllInstances, searchInstance } from "@/app/lib/abm";
 
 export const POST = async (request: Request) => {
     try {
@@ -96,7 +96,7 @@ export const GET = async (request: Request) => {
     }
 };
 
-export const DELETE = async (request: Request) => {
+{/*{export const DELETE = async (request: Request) => {
     try {
         const url = new URL(request.url);
         const idStr = url.searchParams.get('id');
@@ -125,4 +125,4 @@ export const DELETE = async (request: Request) => {
         console.error("Error manejando DELETE:", error);
         return new NextResponse("Error manejando DELETE", { status: 500 });
     }
-};
+};*/}

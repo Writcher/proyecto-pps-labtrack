@@ -1,9 +1,8 @@
 import NextAuth from "next-auth";
-import google from "next-auth/providers/google";
-import github from "next-auth/providers/github";
 import credentials from "next-auth/providers/credentials";
 import { getUserByEmail } from "./queries/user";
 import bcrypt from 'bcryptjs';
+import { User } from "./definitions";
 
 export const {
     handlers: { GET, POST },
@@ -15,19 +14,19 @@ export const {
         strategy: "jwt",
     },
     providers: [
-            credentials({
+        credentials({
             async authorize(credentials) {
-                if(credentials === null) return null;
+                if ( credentials === null ) return null;
                 try {
-                    const user = await getUserByEmail(credentials?.email as string);
+                    const user = await getUserByEmail(credentials?.email as string) as User;
                     if (user) {
                         const hashedPassword = user.password;
-
+        
                         const isMatch = await bcrypt.compare(
-                            credentials.password as string,
-                            hashedPassword
+                        credentials.password as string,
+                        hashedPassword
                         );
-                        if (isMatch) {
+                        if (isMatch) {            
                             return user;
                         } else {
                             throw new Error("Contraseña incorrecta");
@@ -39,10 +38,24 @@ export const {
                     if (error instanceof Error) {
                         throw new Error(error.message);
                     } else {
-                        throw new Error("Error desconocido, la cagaste");
+                        throw new Error("Error desconocido, la cagaste");                        
                     }
                 }
             }
         }),
-    ]
+    ],
+    callbacks: {
+        async jwt({ token, user }) {
+            if (user) {
+                token.user = user as unknown as User;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (token.user) {
+                session.user = token.user as User;
+            }
+            return session;
+        }
+    }
 })
