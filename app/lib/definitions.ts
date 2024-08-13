@@ -140,6 +140,18 @@ export type UserGetScholar = {
     scholarshiptype: string;
 }
 
+export type EditUserScholar = {
+    id: number;
+    name?: string;
+    file?: string;
+    dni?: string;
+    address?: string;
+    phone?: string;
+    careerlevel?: number;
+    scholarshiptype_id?: number;
+    usercareer_id?: number;
+}
+
 export type NewUser = {
     name: string;
     file?: string;

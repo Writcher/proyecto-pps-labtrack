@@ -1,5 +1,5 @@
 import { db } from '@vercel/postgres';
-import { NewUser, User, UserGetScholar, } from "../definitions";
+import { EditUserScholar, NewUser, User, UserGetScholar, } from "../definitions";
 
 const client = db;
 
@@ -54,6 +54,26 @@ export async function createScholar(user: NewUser)  {
         throw new Error("No se pudo crear el usuario");
     }
 }
+
+export async function editScholar(user: EditUserScholar) {
+    try {
+        return client.sql`
+        UPDATE "user"
+        SET name = ${user.name},
+            file = ${user.file},
+            dni = ${user.dni},
+            address = ${user.address},
+            phone = ${user.phone},
+            careerlevel = ${user.careerlevel},
+            scholarshiptype_id = ${user.scholarshiptype_id},
+            usercareer_id = ${user.usercareer_id}
+        WHERE id = ${user.id}
+        `;
+    } catch(error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo editar el user");
+    }
+}   
 
 export async function getUserByEmail(email: string) {
     try {

@@ -32,27 +32,52 @@ export default function EditScholarModal({ open, handleClose, row, usercareers, 
     }, [open]);
 
     const [userCareer, setUserCareer] = useState<number | ''>('');
-    const handleUserCareerChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setUserCareer(event.target.value as number);
-    };
-
     const [scholarship, setScholarship] = useState<number | ''>('');
-    const handleScholarshipChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setScholarship(event.target.value as number);
-    };
-
     const [careerLevel, setCareerLevel] = useState<number | ''>('');
+    const [userName, setUserName] = useState<string | ''>('');
+    const [userDni, setUserDni] = useState<string | ''>('');
+    const [userFile, setUserFile] = useState<string | ''>('');
+    const [userAddress, setUserAddress] = useState<string | ''>('');
+    const [userPhone, setUserPhone] = useState<string | ''>('');
 
     useEffect(() => {
         if (row) {
             setCareerLevel(row.careerlevel ?? '');
+            setScholarship(row.scholarshiptype_id ?? '');
+            setUserCareer(row.usercareer_id ?? '');
+            setUserName(row.name ?? '');
+            setUserDni(row.dni ?? '');
+            setUserFile(row.file ?? '');
+            setUserAddress(row.address ?? '');
+            setUserPhone(row.phone ?? '');
         }
     }, [row]);
 
     const handleCareerLevelChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setCareerLevel(event.target.value as number | '');
     };
-    
+    const handleScholarshipChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setScholarship(event.target.value as number | '');
+    };
+    const handleUserCareerChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setUserCareer(event.target.value as number | '');
+    };
+    const handleUserNameChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setUserName(event.target.value as string | '');
+    };
+    const handleUserDniChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setUserDni(event.target.value as string | '');
+    };
+    const handleUserFileChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setUserFile(event.target.value as string | '');
+    };
+    const handleUserAddressChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setUserAddress(event.target.value as string | '');
+    };
+    const handleUserPhoneChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setUserPhone(event.target.value as string | '');
+    };
+
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         try {
@@ -64,28 +89,26 @@ export default function EditScholarModal({ open, handleClose, row, usercareers, 
             const careerlevelstring = formData.get("careerlevel");
             const address = formData.get("address") as string;
             const phone = formData.get("phone") as string;
-            const email = formData.get("email") as string;
-            const password = formData.get("password") as string;
             const scholarshipstring = formData.get("scholarship"); 
 
+            const id = row.id as number;
             const scholarshiptype_id = scholarshipstring ? parseInt(scholarshipstring as string, 10) : undefined;
             const usercareer_id = careerstring ? parseInt(careerstring as string, 10) : undefined;
             const careerlevel = careerlevelstring ? parseInt(careerlevelstring as string, 10) : undefined;
 
-            const response = await fetch("/api/dashboard/paramsmanagement", {
+            const response = await fetch("/api/dashboard/usermanagement/scholar", {
                 method: 'PUT',
                 headers: {
                     "Content-type": "application/json"
                 },
                 body: JSON.stringify({
+                    id,
                     name,
                     file,
                     dni,
                     address,
                     phone,
                     careerlevel,
-                    email,
-                    password,
                     scholarshiptype_id,
                     usercareer_id,
                 })
@@ -132,14 +155,14 @@ export default function EditScholarModal({ open, handleClose, row, usercareers, 
                     <DialogContent>
                     <div className='flex flex-col w-full items-center justify-center pt-4 gap-4'>
                         <div className='flex w-full'>
-                            <TextField id="name" name="name" label="Nombre y Apellido" helperText="Ingrese Nombre y Apellido" type="text" variant="outlined" color="warning" fullWidth required/>
+                            <TextField id="name" name="name" label="Nombre y Apellido" helperText="Ingrese Nombre y Apellido" type="text" variant="outlined" color="warning" fullWidth required value={userName} onChange={handleUserNameChange}/>
                         </div>
                         <div className='md:flex md:gap-4 w-full'>
                             <div className='flex w-full mb-4 md:mb-0 md:w-4/5'>
-                                <TextField id="dni" name="dni" label="DNI" helperText="Ingrese DNI" type="text" variant="outlined" color="warning" fullWidth required/>
+                                <TextField id="dni" name="dni" label="DNI" helperText="Ingrese DNI" type="text" variant="outlined" color="warning" fullWidth required value={userDni} onChange={handleUserDniChange}/>
                             </div>                    
                             <div className='flex w-full md:w-2/6'>
-                                <TextField id="file" name="file" label="Legajo" helperText="Ingrese Legajo" type="text" variant="outlined" color="warning" fullWidth required/>
+                                <TextField id="file" name="file" label="Legajo" helperText="Ingrese Legajo" type="text" variant="outlined" color="warning" fullWidth required value={userFile} onChange={handleUserFileChange}/>
                             </div>
                         </div>
                         <div className='md:flex md:gap-4 w-full'>
@@ -169,17 +192,17 @@ export default function EditScholarModal({ open, handleClose, row, usercareers, 
                             </TextField>
                         </div>
                         <div className='flex w-full'>
-                            <TextField id="address" name="address" label="Dirección" helperText="Ingrese Dirección" type="text" variant="outlined" color="warning" fullWidth required/>
+                            <TextField id="address" name="address" label="Dirección" helperText="Ingrese Dirección" type="text" variant="outlined" color="warning" fullWidth required value={userAddress} onChange={handleUserAddressChange}/>
                         </div>
                         <div className='flex w-full'>
-                            <TextField id="phone" name="phone" label="Teléfono" helperText="Ingrese Teléfono" type="text" variant="outlined" color="warning" fullWidth required/>
+                            <TextField id="phone" name="phone" label="Teléfono" helperText="Ingrese Teléfono" type="text" variant="outlined" color="warning" fullWidth required value={userPhone} onChange={handleUserPhoneChange}/>
                         </div>
-                        <div className='flex w-full'>
+                        {/*<div className='flex w-full'>
                             <TextField id="email" name="email" label="Email" helperText="Ingrese Email" type="email" variant="outlined" color="warning" fullWidth required/>
                         </div>
                         <div className='flex w-full'>
                             <TextField id="password" name="password" label="Contraseña" helperText="Ingrese Contraseña" type="password" variant="outlined" color="warning" fullWidth required/>
-                        </div>
+                        </div>*/}
                         <div className='text-center text-xl font-medium text-red-700'>{error}</div>
                     </div>
                     </DialogContent>

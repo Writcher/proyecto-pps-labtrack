@@ -15,10 +15,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import TablePagination from '@mui/material/TablePagination';
 import debounce from "lodash.debounce";
-import CreateScholarModal from "./createscholarmodal";
 import { Scolarshiptype, Usercareer, UserGetScholar } from "@/app/lib/definitions";
-import DeleteScholarModal from "./deletescholarmodal";
-import EditScholarModal from "./editscholarmodal";
+
 
 interface AMBScholarTableProps {
     usercareers: Usercareer[];
@@ -37,7 +35,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
     const [data, setData] = useState<UserGetScholar[]>([]);
     async function fetchData(searchTerm: string) {
         try {
-            const response = await fetch(`/api/dashboard/usermanagement/scholar?name=${encodeURIComponent(searchTerm)}&labid=${encodeURIComponent(laboratory_id)}`, {
+            const response = await fetch(`/api/dashboard/usermanagement/guest?name=${encodeURIComponent(searchTerm)}&labid=${encodeURIComponent(laboratory_id)}`, {
                 method: 'GET',
             });
             const fetchedData = await response.json();
@@ -269,38 +267,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                                         <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-200">
                                             <TableCell colSpan={4}>
                                                 <div className="flex flex-col m-4">
-                                                    <div className="flex flex-col md:flex-row gap-8">
-                                                        <div className="text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>DNI: </strong>{row.dni}
-                                                        </div>
-                                                        <div className="text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Legajo: </strong>{row.file}
-                                                        </div>
-                                                        <div className="text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Beca: </strong>{row.scholarshiptype}
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex flex-col md:flex-row gap-8 mt-8">
-                                                        <div className="text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Carrera: </strong>{row.usercareer}
-                                                        </div>
-                                                        <div className="text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Año de Cursado: </strong>{row.careerlevel}
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex flex-col md:flex-row gap-8 mt-8">
-                                                        <div className="text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Email: </strong>{row.email}
-                                                        </div>
-                                                        <div className="text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Telefono: </strong>{row.phone}
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex flex-col md:flex-row gap-8 mt-8">
-                                                        <div className="text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Dirección: </strong>{row.address}
-                                                        </div>
-                                                    </div>
+                                                    aca datos de invitado, que se yo fecha de creacion y fecha de expiracion.
                                                 </div>
                                             </TableCell>
                                         </TableRow>
@@ -320,26 +287,26 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </div>
-            <CreateScholarModal
+            {/*<CreateGuestModal
                 open={modalOpenCreate}
                 handleClose={handleCloseCreateModal}
                 usercareers={usercareers}
                 scholarships={scholarships}
                 laboratory_id={laboratory_id}
             />
-            <EditScholarModal
+            <EditGuestModal
                 open={modalOpenEdit}
                 handleClose={handleCloseEditModal}
                 usercareers={usercareers}
                 scholarships={scholarships}
                 row={selectedRow!}
             />
-            <DeleteScholarModal
+            <DeleteGuestModal
                 open={modalOpenDelete}
                 handleClose={handleCloseDeleteModal}
                 id={selectedRowId!}
                 name={selectedRowName!}
-            />
+            />*/}
         </main>
-    );
+    )
 }

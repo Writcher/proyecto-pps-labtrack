@@ -1,4 +1,4 @@
-import { getScholars, getScholarByName, createScholar } from "@/app/lib/queries/user";
+import { getScholars, getScholarByName, createScholar, editScholar } from "@/app/lib/queries/user";
 import { NextResponse } from "next/server";
 import bcrypt from 'bcryptjs';
 import { db } from "@vercel/postgres";
@@ -119,5 +119,27 @@ export const POST = async (request: Request) => {
 }
 
 export const PUT = async (request: Request) => {
+    try {
+        const { id, name, file, dni, address, phone, careerlevel, scholarshiptype_id, usercareer_id } = await request.json();
 
+        if (typeof id !== 'number' || typeof name !== 'string' || typeof file !== 'string' || typeof dni !== 'string' || typeof address !== 'string' || typeof phone !== 'string' || typeof careerlevel !== 'number' || typeof scholarshiptype_id !== 'number' || typeof usercareer_id !== 'number') {
+            return new NextResponse("Parametros no validos", {status: 400});
+        }
+
+        const query = {
+            id, name, file, dni, address, phone, careerlevel, scholarshiptype_id, usercareer_id
+        }
+
+        try {
+            await editScholar(query);
+        } catch(error) {
+            console.error("Error manejando PUT:", error);
+            return new NextResponse("Error al editar usuario", { status: 500 });
+        } 
+
+        return new NextResponse("Instancia editada", { status: 200 });
+    } catch(error) {
+        console.error("Error manejando PUT:", error);
+        return new NextResponse("Error al editar usuario", { status: 500 });
+    }
 }

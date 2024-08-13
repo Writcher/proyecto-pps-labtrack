@@ -20,7 +20,7 @@ export default async function ABMusuarios() {
                 <div className="flex flex-col m-6 md:m-12"/>
                 <div className="flex flex-col gap-5 md:w-2/6">
                     <Button variant="outlined" href="/dashboard/usermanagement/scholar" size="large" color="warning" disableElevation fullWidth>Gestionar Becarios</Button>
-                
+                    <Button variant="outlined" href="/dashboard/usermanagement/guest" size="large" color="warning" disableElevation fullWidth>Gestionar Invitados</Button>
                 </div>
             </div>
         </main>
