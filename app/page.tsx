@@ -17,7 +17,7 @@ export default function Principal() {
         <div className="flex-col w-8/10 md:w-2/5 p-16">
           <p className="text-xl md:text-3xl text-gray-700 font-medium">
             <strong className="text-orange-500">
-              Bienbenido a LMS.
+              Bienvenido a LMS.
             </strong>
             Click a continuación para iniciar sesión o registrarse si es un docente.
           </p>

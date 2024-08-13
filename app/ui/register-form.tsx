@@ -59,12 +59,12 @@ export default function RegisterForm({ laboratories }: RegisterFormProps) {
             });
 
             const result = await response.json();
-
-            if (response.status === 201) {
-                router.push("/login");
-            } else {
+            
+            if (response.status !== 201) {
                 setError(result.error || "Error desconocido, la cagaste");
             }
+            
+            router.push("/login");
     
         } catch (error) {
             if (error instanceof Error) {

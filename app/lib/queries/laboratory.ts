@@ -14,7 +14,7 @@ export async function getLabs() {
     }
 }
 
-export async function getLabById(id: number | undefined) {
+export async function getLabById(id: number) {
     try {
         const result = await client.sql`
         SELECT * FROM "laboratory"
@@ -25,4 +25,4 @@ export async function getLabById(id: number | undefined) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el laboratory");
     }
-} 
+}

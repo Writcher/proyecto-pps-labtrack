@@ -43,6 +43,7 @@ export async function doCredentialLogin({ email, password }: { email: string; pa
                     password,
                     redirect: false
                 });
+                console.log("auth",response)
                 return response;
             } else {
                 return { error: "Contraseña incorrecta." };

@@ -116,7 +116,7 @@ export async function getGuestsByName(name: string, labid: number) {
 export async function getUserByEmail(email: string) {
     try {
         const result = await client.sql`
-        SELECT id, password, email, userstatus_id, validitytime_id, emailVerified FROM "user" WHERE email = ${email} LIMIT 1
+        SELECT * FROM "user" WHERE email = ${email} LIMIT 1
         `;
         const user = result.rows[0];
         if (user) {

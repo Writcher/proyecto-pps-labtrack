@@ -62,7 +62,7 @@ export default function CreateModal({ open, handleClose, table }: CreateModalPro
                     component: 'form',
                     onSubmit: handleSubmit,
                     onClick: handleDialogClick //que no lo cieren clicks adentro del modal
-                }} 
+                }}
             >
                 <div className='flex flex-col m-2'>
                     <DialogTitle>
