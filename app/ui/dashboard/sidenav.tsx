@@ -33,8 +33,10 @@ export default async function SideNav() {
   }
   
   const laboratory_id = session?.user?.laboratory_id;
-  const laboratory = await getLabById(laboratory_id);
+  const laboratory = await getLabById(laboratory_id); 
 
+  
+  
   const lab = laboratory.name;
 
   return (
