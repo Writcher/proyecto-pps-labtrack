@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import bcrypt from 'bcryptjs';
 import { db } from "@vercel/postgres";
 import { UserGetScholar } from "@/app/lib/definitions";
+import { getStatusPending } from "@/app/lib/queries/userstatus";
+import { getTypeScholar } from "@/app/lib/queries/usertype";
 
 export const GET = async (request: Request) => {
     try {
@@ -60,8 +62,8 @@ export const POST = async (request: Request) => {
                 usercareer_id } = await request.json();
                 
         const hashedPassword = await bcrypt.hash(password, 5);
-        const userstatus = 2;
-        const usertype = 2;
+        const userstatus = await getStatusPending();
+        const usertype = await getTypeScholar();
 
         const user = {
                 name,

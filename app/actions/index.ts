@@ -1,13 +1,12 @@
 "use server"
 
 import { signIn, signOut } from "../lib/auth";
-import { User } from "../lib/definitions";
 import { getUserByEmail } from "../lib/queries/user";
 import bcrypt from 'bcryptjs';
 import { createVerificationToken, deleteVerificationToken, getVerificationTokenByEmail } from "../lib/queries/validationtoken";
 import { nanoid } from "nanoid";
 import sendVerificationEmail from "../lib/verificationemail";
-import { NextResponse } from "next/server";
+import { getStatusDeactivated, getStatusExpired, getStatusPending } from "../lib/queries/userstatus";
 
 export async function doLogout() {
     await signOut({ redirectTo: "/" });
@@ -20,12 +19,15 @@ export async function doCredentialLogin({ email, password }: { email: string; pa
             const hashedPassword = user.password;
             const isMatch = await bcrypt.compare(password as string, hashedPassword);
             if (isMatch) {
+                const statusExpired = await getStatusExpired();
+                const statusDeactivated = await getStatusDeactivated();
                 // Verificación de estado de usuario
-                if (user.userstatus_id === 3 || user.userstatus_id === 4) {
+                if (user.userstatus_id === statusDeactivated || user.userstatus_id === statusExpired) {
                     return { error: "La cuenta ha expirado o ha sido deshabiltada." };
                 }
                 // Verificación de email
-                if (user.userstatus_id === 2) {
+                const statusPending = await getStatusPending();
+                if (user.userstatus_id === statusPending) {
                     const verificationTokenExists = await getVerificationTokenByEmail(user.email);
                     if (verificationTokenExists?.email) {
                         await deleteVerificationToken(user.email);

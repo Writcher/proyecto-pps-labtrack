@@ -15,16 +15,16 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import TablePagination from '@mui/material/TablePagination';
 import debounce from "lodash.debounce";
-import { Scolarshiptype, Usercareer, UserGetScholar } from "@/app/lib/definitions";
+import { Scolarshiptype, Usercareer, UserGetGuest } from "@/app/lib/definitions";
 
 
-interface AMBScholarTableProps {
+interface AMBGuestTableProps {
     usercareers: Usercareer[];
     scholarships: Scolarshiptype[];
     laboratory_id: number;
 }
 
-export default function ABMScholarTable({ usercareers, scholarships, laboratory_id }: AMBScholarTableProps ) {
+export default function ABMGuestTable({ usercareers, scholarships, laboratory_id }: AMBGuestTableProps ) {
 
     //busqueda
     const [search, setSearch] = useState("");
@@ -32,7 +32,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
         event.preventDefault();
     };
 
-    const [data, setData] = useState<UserGetScholar[]>([]);
+    const [data, setData] = useState<UserGetGuest[]>([]);
     async function fetchData(searchTerm: string) {
         try {
             const response = await fetch(`/api/dashboard/usermanagement/guest?name=${encodeURIComponent(searchTerm)}&labid=${encodeURIComponent(laboratory_id)}`, {
@@ -88,7 +88,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
     }, [modalOpenCreate]);
 
     //fila seleccionada
-    const [selectedRow, setSelectedRow] = useState<UserGetScholar | null>(null);
+    const [selectedRow, setSelectedRow] = useState<UserGetGuest | null>(null);
     const [selectedRowId, setSelectedRowId] = useState<number | null>(null);
     const [selectedRowName, setSelectedRowName] = useState<string | null>(null);       
 
@@ -110,7 +110,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
 
     //edit
     const [modalOpenEdit, setModalOpenEdit] = useState(false);
-    const handleOpenEditModal = (row: UserGetScholar) => {
+    const handleOpenEditModal = (row: UserGetGuest) => {
         setSelectedRow(row);
         setModalOpenEdit(true);
     }
@@ -133,10 +133,10 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
     const [sortColumn, setSortColumn] = useState<string>('id');
 
-    const sortData = (data: UserGetScholar[]) => {
+    const sortData = (data: UserGetGuest[]) => {
         return data.slice().sort((a, b) => {
-            const aValue = a[sortColumn as keyof UserGetScholar] ?? '';
-            const bValue = b[sortColumn as keyof UserGetScholar] ?? '';
+            const aValue = a[sortColumn as keyof UserGetGuest] ?? '';
+            const bValue = b[sortColumn as keyof UserGetGuest] ?? '';
     
             if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
             if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
@@ -156,7 +156,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
     };
 
     return (
-        <main className="flex flex-col gap-6 mt-12 w-full md:w-3/5">
+        <main className="flex flex-col gap-6 mt-12 w-full md:w-5/6">
             <div className="flex flex-row w-full">
                 <form className="flew items-center justify-start w-2/5" onSubmit={handleSubmit}>
                     <TextField 
@@ -246,7 +246,6 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                                                 text-white font-medium text-[15px] md:text-lg py-2 px-2 rounded-lg md:rounded-3xl
                                                 ${row.userstatus === 'Activo' ? 'bg-green-600' : ''}
                                                 ${row.userstatus === 'Expirado' ? 'bg-red-500' : ''}
-                                                ${row.userstatus === 'Inactivo' ? 'bg-red-500' : ''}
                                                 ${row.userstatus === 'Pendiente' ? 'bg-yellow-500' : ''}
                                             `}>
                                                 {row.userstatus}
@@ -267,7 +266,25 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                                         <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-200">
                                             <TableCell colSpan={4}>
                                                 <div className="flex flex-col m-4">
-                                                    aca datos de invitado, que se yo fecha de creacion y fecha de expiracion.
+                                                    <div className="flex flex-col md:flex-row gap-8 mt-8">
+                                                        <div className="text-gray-700 font-medium md:text-[17px]">
+                                                            <strong>Email: </strong>{row.email}
+                                                        </div>
+                                                        <div className="text-gray-700 font-medium md:text-[17px]">
+                                                            <strong>Fecha de Creación: </strong>{new Date(row.created_at).toLocaleDateString()}
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex flex-col md:flex-row gap-8 mt-8">
+                                                        <div className="text-gray-700 font-medium md:text-[17px]">
+                                                            <strong>Valido Desde: </strong>
+                                                            {new Date(row.created_at).toLocaleDateString('es-ES', {
+                                                                year: 'numeric',
+                                                                month: 'long',
+                                                                day: 'numeric'
+                                                            })}
+                                                        </div>
+                                                        
+                                                    </div>
                                                 </div>
                                             </TableCell>
                                         </TableRow>

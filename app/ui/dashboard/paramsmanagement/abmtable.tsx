@@ -118,7 +118,7 @@ export default function ABMTable({ table }: ABMTableProps) {
     },[modalOpenEdit]);
 
     return (
-        <main className="flex flex-col gap-6 mt-12 w-full md:w-3/5">
+        <main className="flex flex-col gap-6 mt-12 w-full md:w-5/6">
             <div className="flex flex-row w-full">
                 <form className="flew items-center justify-start w-2/5" onSubmit={handleSubmit}>
                     <TextField 

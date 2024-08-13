@@ -17,7 +17,6 @@ interface DeleteScholarModalProps {
 export default function DeleteScholarModal({ open, handleClose, id, name }: DeleteScholarModalProps) {
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        const newStatus = 4;
         try {
             const response = await fetch(`/api/dashboard/usermanagement/scholar/status`, {
                 method: 'PUT',
@@ -25,8 +24,7 @@ export default function DeleteScholarModal({ open, handleClose, id, name }: Dele
                     "Content-type": "application/json"
                 },
                 body: JSON.stringify({
-                    id,
-                    newStatus
+                    id
                 })
             });
 

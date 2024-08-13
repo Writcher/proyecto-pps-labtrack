@@ -2,13 +2,14 @@ import { NextResponse } from "next/server";
 import { createUser } from "@/app/lib/queries/user";
 import bcrypt from 'bcryptjs';
 import { db } from "@vercel/postgres";
+import { getStatusPending } from "@/app/lib/queries/userstatus";
 
 export const POST = async (request: Request) => {
     try {
         const { name, file, email, password, laboratory_id, usertype_id } = await request.json();
 
         const hashedPassword = await bcrypt.hash(password, 5);
-        const userstatus = 2;
+        const userstatus = await getStatusPending();
 
         const user = {
             name,

@@ -1,17 +1,20 @@
 import { db } from '@vercel/postgres';
-import { EditUserScholar, NewUser, User, UserGetScholar, } from "../definitions";
+import { EditUserScholar, NewUser, User, UserGetGuest, UserGetScholar, } from "../definitions";
+import { getTypeGuest, getTypeScholar } from './usertype';
+import { getStatusActive } from './userstatus';
 
 const client = db;
 
-export async function getScholars(labid: number){
+export async function getScholars(labid: number) {
     try {
+        const type = await getTypeScholar();
         const result = await client.sql`
-        SELECT u.*, uc.name AS usercareer, us.name AS userstatus, st.name AS scholarshiptype
+        SELECT u.id, u.scholarshiptype_id, u.usercareer_id, u.name, u.file, u.dni, u.address, u.phone, u.careerlevel, u.created_at, u.deactivated_at, u.email, uc.name AS usercareer, us.name AS userstatus, st.name AS scholarshiptype
         FROM "user" u
         JOIN "usercareer" uc ON u.usercareer_id = uc.id
         JOIN "userstatus" us ON u.userstatus_id = us.id
         JOIN "scholarshiptype" st ON u.scholarshiptype_id = st.id
-        WHERE u.usertype_id = 2
+        WHERE u.usertype_id = ${type}
         AND u.laboratory_id = ${labid}
         `;
         return result.rows as UserGetScholar[];
@@ -21,19 +24,17 @@ export async function getScholars(labid: number){
     }
 }
 
-export async function getScholarByName(name: string, labid: number){
+export async function getScholarByName(name: string, labid: number) {
     try {
+        const type = await getTypeScholar();
         const result = await client.sql`
-            SELECT u.*, 
-                uc.name AS usercareer, 
-                us.name AS userstatus, 
-                st.name AS scholarshiptype
+            SELECT u.id, u.scholarshiptype_id, u.usercareer_id, u.name, u.file, u.dni, u.address, u.phone, u.careerlevel, u.created_at, u.deactivated_at, u.email, uc.name AS usercareer, us.name AS userstatus, st.name AS scholarshiptype
             FROM "user" u
             JOIN "usercareer" uc ON u.usercareer_id = uc.id
             JOIN "userstatus" us ON u.userstatus_id = us.id
             JOIN "scholarshiptype" st ON u.scholarshiptype_id = st.id
             WHERE u.name ILIKE ${`%${name}%`}
-                AND u.usertype_id = 2
+                AND u.usertype_id = ${type}
                 AND u.laboratory_id = ${labid}
         `;
         return result.rows as UserGetScholar[];
@@ -75,10 +76,47 @@ export async function editScholar(user: EditUserScholar) {
     }
 }   
 
+export async function getGuests(labid: number) {
+    try {
+        const type = await getTypeGuest();
+        const result = await client.sql`
+        SELECT u.id, u.name, u.created_at, u.deactivated_at, u.email, vt.date_from AS date_from, vt.date_until AS date_until, us.name AS userstatus,
+        FROM "user" u
+        JOIN "userstatus" us ON u.userstatus_id = us.id
+        JOIN "validitytime" vt ON u.validitytime_id = vt.id
+        WHERE u.usertype_id = ${type}
+        AND u.laboratory_id = ${labid}
+        `;
+        return result.rows as UserGetGuest[];
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el becario");
+    }
+}
+
+export async function getGuestsByName(name: string, labid: number) {
+    try {
+        const type = await getTypeGuest();
+        const result = await client.sql`
+        SELECT u.id, u.name, u.created_at, u.deactivated_at, u.email, vt.date_from AS date_from, vt.date_until AS date_until, us.name AS userstatus,
+        FROM "user" u
+        JOIN "userstatus" us ON u.userstatus_id = us.id
+        JOIN "validitytime" vt ON u.validitytime_id = vt.id
+        WHERE u.name ILIKE ${`%${name}%`}
+        AND    u.usertype_id = ${type}
+        AND u.laboratory_id = ${labid}
+        `;
+        return result.rows as UserGetGuest[];
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el becario");
+    }
+}
+
 export async function getUserByEmail(email: string) {
     try {
         const result = await client.sql`
-        SELECT * FROM "user" WHERE email = ${email} LIMIT 1
+        SELECT id, password, email, userstatus_id, validitytime_id, emailVerified FROM "user" WHERE email = ${email} LIMIT 1
         `;
         const user = result.rows[0];
         if (user) {
@@ -107,14 +145,14 @@ export async function createUser(user: NewUser) {
     }
 }
 
-export async function verifyUserEmail(email: string) {
+export async function verifyUserEmail(email: string, status: number) {
     try {
         const date = new Date;
         const dateVerified = date.toISOString().split('T')[0];
         return client.sql`
             UPDATE "user"
             SET emailVerified = ${dateVerified},
-                userstatus_id = 1
+                userstatus_id = ${status}
             WHERE email = ${email}
         `;
     } catch(error) {
@@ -123,11 +161,13 @@ export async function verifyUserEmail(email: string) {
     }
 }
 
-export async function userChangeStatus(id: number, newStatus: number) {
+export async function userChangeStatus(id: number, newStatus: number, ) {
     try {
+        const date = new Date;
+        const dateDeactivated = date.toISOString().split('T')[0];
         return client.sql`
         UPDATE "user"
-        SET userstatus_id = ${newStatus}
+        SET deactivated_at = ${dateDeactivated}, userstatus_id = ${newStatus}
         WHERE id = ${id}
         `;
     } catch(error) {

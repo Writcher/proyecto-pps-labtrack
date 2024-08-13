@@ -1,4 +1,5 @@
 import { getUserByEmail, verifyUserEmail } from "@/app/lib/queries/user";
+import { getStatusActive } from "@/app/lib/queries/userstatus";
 import { deleteVerificationToken, getVerificationTokenByToken } from "@/app/lib/queries/validationtoken";
 import { NextResponse } from "next/server";
 
@@ -25,7 +26,8 @@ export async function GET(request: Request) {
         if (user?.emailVerified) {
             return new Response("Email ya verificado")
         } else {
-            await verifyUserEmail(databaseToken.email);
+            const status = await getStatusActive();
+            await verifyUserEmail(databaseToken.email, status);
         }
 
         await deleteVerificationToken(databaseToken.email);
