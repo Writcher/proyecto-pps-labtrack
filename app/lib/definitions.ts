@@ -1,3 +1,5 @@
+import { DateMarker } from "@fullcalendar/core/internal";
+
 export type ABMcreate = {
     name: string;
     table: string;
@@ -165,6 +167,14 @@ export type EditScholar = {
     careerlevel: number;
     scholarshiptype_id: number;
     usercareer_id: number;
+}
+
+export type Guest = UserSchema & {
+    expires_at: Date;
+}
+
+export type NewGuest = NewUser & {
+    expires_at: Date;
 }
 
 export type GetGuest = {

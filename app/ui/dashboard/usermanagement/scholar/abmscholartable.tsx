@@ -247,7 +247,6 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                                             <div className={`
                                                 text-white font-medium text-[15px] md:text-lg py-2 px-2 rounded-lg md:rounded-3xl
                                                 ${row.userstatus === 'Activo' ? 'bg-green-600' : ''}
-                                                ${row.userstatus === 'Expirado' ? 'bg-red-500' : ''}
                                                 ${row.userstatus === 'Inactivo' ? 'bg-red-500' : ''}
                                                 ${row.userstatus === 'Pendiente' ? 'bg-yellow-500' : ''}
                                             `}>
@@ -269,30 +268,30 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                                         <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-200">
                                             <TableCell colSpan={4}>
                                                 <div className="flex flex-col m-4 w-full">
-                                                    <div className="flex flex-col md:flex-row gap-8">
-                                                        <div className="flex gap-1 md:w-2/6 text-gray-700 font-medium md:text-[17px]">
+                                                    <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">
+                                                            <strong>Beca: </strong>{row.scholarshiptype}
+                                                    </div>
+                                                    <div className="flex flex-col md:flex-row gap-8 mt-8">
+                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
                                                             <strong>DNI: </strong>{row.dni}
                                                         </div>
-                                                        <div className="flex gap-1 md:w-2/6 text-gray-700 font-medium md:text-[17px]">
+                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
                                                             <strong>Legajo: </strong>{row.file}
-                                                        </div>
-                                                        <div className="flex gap-1 md:w-2/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Beca: </strong>{row.scholarshiptype}
                                                         </div>
                                                     </div>
                                                     <div className="flex flex-col md:flex-row gap-8 mt-8">
-                                                        <div className="flex gap-1 md:w-4/6 text-gray-700 font-medium md:text-[17px]">
+                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
                                                             <strong>Carrera: </strong>{row.usercareer}
                                                         </div>
-                                                        <div className="flex gap-1 md:w-2/6 text-gray-700 font-medium md:text-[17px]">
+                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
                                                             <strong>Año de Cursado: </strong>{row.careerlevel}
                                                         </div>
                                                     </div>
                                                     <div className="flex flex-col md:flex-row gap-8 mt-8">
-                                                        <div className="flex gap-1 md:w-4/6 text-gray-700 font-medium md:text-[17px]">
+                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
                                                             <strong>Email: </strong>{row.email}
                                                         </div>
-                                                        <div className="flex gap-1 md:w-2/6 text-gray-700 font-medium md:text-[17px]">
+                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
                                                             <strong>Telefono: </strong>{row.phone}
                                                         </div>
                                                     </div>

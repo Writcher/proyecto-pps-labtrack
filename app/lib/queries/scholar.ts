@@ -67,7 +67,7 @@ export async function createScholar(user: NewScholar)  {
         `;
     } catch(error) {
         console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo crear el usuario");
+        throw new Error("No se pudo crear el becario");
     }
 }
 
@@ -92,6 +92,6 @@ export async function editScholar(user: EditScholar) {
         return { success: true, message: "Instancia editada correctamente" };
     } catch(error) {
         console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo editar el user");
+        throw new Error("No se pudo editar el becario");
     }
 }   

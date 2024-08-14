@@ -1,6 +1,10 @@
 import { GetGuest } from "@/app/lib/definitions";
-import { getGuests, getGuestsByName } from "@/app/lib/queries/guest";
+import { createGuest, getGuests, getGuestsByName } from "@/app/lib/queries/guest";
+import { getStatusActive, getStatusPending } from "@/app/lib/queries/userstatus";
+import { getTypeGuest } from "@/app/lib/queries/usertype";
+import { db } from "@vercel/postgres";
 import { NextResponse } from "next/server";
+import bcrypt from 'bcryptjs';
 
 export const GET = async (request: Request) => {
     try {
@@ -40,5 +44,55 @@ export const GET = async (request: Request) => {
     } catch (error) {
         console.error("Error manejando GET:", error);
         return new NextResponse("Error manejando GET", { status: 500 });
+    }
+}
+
+export const POST = async (request: Request) => {
+    try {
+        const { name,
+                email,
+                expires_at,
+                password,
+                laboratory_id } = await request.json();
+
+        if (!name || !email || !expires_at || !password || !laboratory_id) {
+            return NextResponse.json({ error: 'Faltan datos requeridos.' }, { status: 400 });
+        }
+                
+        const hashedPassword = await bcrypt.hash(password, 5);
+
+        const userstatus = await getStatusPending() as number;  //cambiar aca si quiero que el estado inicial sea pendiente
+        const usertype = await getTypeGuest() as number;
+
+        const client = db;
+        const existingUserEmail = await client.sql`
+        SELECT * FROM "user" WHERE email = ${email} LIMIT 1
+        `;  
+
+        if (existingUserEmail.rows.length > 0) {
+            return NextResponse.json({ error: 'El correo electrónico ya está en uso.' }, { status: 400 });
+        }
+
+        const user = {
+                name,
+                email,
+                expires_at,
+                password: hashedPassword,
+                laboratory_id,
+                usertype_id: usertype,
+                userstatus_id: userstatus,
+        }
+
+        try {
+            await createGuest(user);
+        } catch(error) {
+            console.error("Error manejando POST:", error);
+            return new NextResponse("Error al crear usuario", { status: 500 });
+        }
+    
+        return NextResponse.json({ status: 201 });
+    } catch (error) {
+        console.error("Error manejando POST:", error);
+        return new NextResponse("Error al crear becario", { status: 500 });
     }
 }

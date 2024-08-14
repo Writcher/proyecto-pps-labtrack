@@ -1,9 +1,8 @@
 import Button from "@mui/material/Button";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import { getUserCareers } from "@/app/lib/queries/usercareer";
-import { getScolarshipTypes } from "@/app/lib/queries/scholarshiptype";
 import { auth } from "@/app/lib/auth";
 import { redirect } from "next/navigation";
+import ABMGuestTable from "@/app/ui/dashboard/usermanagement/guest/abmguesttable";
 
 export default async function Invitados() {
     const session = await auth();
@@ -11,8 +10,6 @@ export default async function Invitados() {
     
     const laboratory_id = session?.user?.laboratory_id as number;
     
-    const usercareers = await getUserCareers(); 
-    const scholarships = await getScolarshipTypes();   
     return (
         <main className="flex flex-col w-full">
             <div className="flex flex-row h-16 pl-2 md:h-20 bg-gradient-to-r md:bg-gradient-to-l md:from-gray-800 md:to-gray-700 from-gray-800 to-gray-700 border-b-4 border-orange-500 md:border-transparent md:hover:bg-gradient-to-r md:hover:from-orange-500 md:hover:to-gray-800 text-white items-center">
@@ -24,7 +21,7 @@ export default async function Invitados() {
                 </p>
             </div>
             <div className="flex flex-col w-ful items-center justify-center m-4">
-                la tabla va aca
+                <ABMGuestTable laboratory_id={laboratory_id}/>
             </div>
         </main>
     );
