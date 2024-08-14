@@ -18,7 +18,7 @@ export async function GET(request: Request) {
             return new Response("No se encontro el Token", { status: 400 });
         }
 
-        if (databaseToken.expirationdate < new Date()){
+        if (databaseToken.expires_at < new Date()){
             return new Response("Token expirado", { status: 400 });
         }
 

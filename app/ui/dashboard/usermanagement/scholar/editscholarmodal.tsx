@@ -9,7 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
-import { Scolarshiptype, Usercareer, UserGetScholar } from '@/app/lib/definitions';
+import { Scolarshiptype, Usercareer, GetScholar } from '@/app/lib/definitions';
 import { MenuItem } from '@mui/material';
 
 interface EditModalProps {
@@ -17,7 +17,7 @@ interface EditModalProps {
     handleClose: () => void;
     usercareers: Usercareer[];
     scholarships: Scolarshiptype[];
-    row: UserGetScholar;
+    row: GetScholar;
 }
 
 export default function EditScholarModal({ open, handleClose, row, usercareers, scholarships }: EditModalProps) {

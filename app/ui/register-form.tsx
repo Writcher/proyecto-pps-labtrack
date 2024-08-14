@@ -22,15 +22,10 @@ export default function RegisterForm({ laboratories }: RegisterFormProps) {
         try {
             const formData = new FormData(event.currentTarget);
             const name = formData.get("name");
-            const file = formData.get("file") as string;
             const laboratory_id = formData.get("lab");
             const email = formData.get("email") as string;
             const password = formData.get("password") as string;
             const confPassword = formData.get("confirmPassword");
-            
-            let usertype_id: number;
-
-            usertype_id = 1;
 
             const passwordValidationRegex = /^(?=.*\d).{12,}$/;
             if (!passwordValidationRegex.test(password)) {
@@ -50,11 +45,9 @@ export default function RegisterForm({ laboratories }: RegisterFormProps) {
                 },
                 body: JSON.stringify({
                     name,
-                    file,
                     email,
                     password,
-                    laboratory_id,
-                    usertype_id,
+                    laboratory_id
                 })
             });
 
@@ -78,15 +71,10 @@ export default function RegisterForm({ laboratories }: RegisterFormProps) {
     return (
         <div className="flex flex-col w-64 md:w-2/5 gap-12">
             <form className="flex flex-col w-full" onSubmit={handleRegisterFormSubmit}>
-                <div className="flex gap-4 justify-center">
-                    <div className="mb-4 w-full">
+                <div className="flex flex-col">
+                    <div className="mb-4 ">
                         <TextField id="name" name="name" label="Nombre y Apellido" helperText="Ingresa tu Nombre y Apellido" type="text" variant="outlined" color="warning" fullWidth required/>
                     </div>
-                    <div className="mb-4 w-full">
-                        <TextField id="file" name="file" label="Legajo" helperText="Ingresa tu Legajo" type="text" variant="outlined" color="warning" fullWidth required/>
-                    </div>
-                </div>
-                <div className="flex flex-col">
                     <div className="mb-4">
                         <TextField id="lab" name="lab" label="Laboratorio" helperText="Selecciona tu Laboratorio" type="text" variant="outlined" color="warning" select fullWidth required>
                             {laboratories.map(Laboratory => (

@@ -6,7 +6,7 @@ export async function createVerificationToken(token: string, email: string, expi
     try {
         const expirationDateOnly = expirationdate.toISOString().split('T')[0];
         const result = await client.sql `
-        INSERT INTO "verificationtoken" (email, token, expirationdate)
+        INSERT INTO "verificationtoken" (email, token, expires_at)
         VALUES (${email}, ${token}, ${expirationDateOnly})
         `;
         return {success: true}

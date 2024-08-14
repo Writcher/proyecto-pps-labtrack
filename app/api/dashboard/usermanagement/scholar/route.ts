@@ -1,10 +1,10 @@
-import { getScholars, getScholarByName, createScholar, editScholar } from "@/app/lib/queries/user";
 import { NextResponse } from "next/server";
 import bcrypt from 'bcryptjs';
 import { db } from "@vercel/postgres";
-import { UserGetScholar } from "@/app/lib/definitions";
 import { getStatusPending } from "@/app/lib/queries/userstatus";
 import { getTypeScholar } from "@/app/lib/queries/usertype";
+import { GetScholar } from "@/app/lib/definitions";
+import { createScholar, editScholar, getScholarByName, getScholars } from "@/app/lib/queries/scholar";
 
 export const GET = async (request: Request) => {
     try {
@@ -22,7 +22,7 @@ export const GET = async (request: Request) => {
             return new NextResponse("labid is required", { status: 400 });
         }
 
-        let data: UserGetScholar[];
+        let data: GetScholar[];
 
         if (name.trim() === "") {
             try {
@@ -90,19 +90,19 @@ export const POST = async (request: Request) => {
             return NextResponse.json({ error: 'El correo electrónico ya está en uso.' }, { status: 400 });
         }
 
-        const existingUserFile = await client.sql`
-        SELECT * FROM "user" WHERE file = ${file} LIMIT 1
+        const existingScholarFile = await client.sql`
+        SELECT * FROM "scholar" WHERE file = ${file} LIMIT 1
         `;    
 
-        if (existingUserFile.rows.length > 0) {
+        if (existingScholarFile.rows.length > 0) {
             return NextResponse.json({ error: 'Ya existe una cuenta con este legajo.' }, { status: 400 });
         }
 
-        const existingUserDNI = await client.sql`
-        SELECT * FROM "user" WHERE dni = ${dni} LIMIT 1
+        const existingScholarDNI = await client.sql`
+        SELECT * FROM "scholar" WHERE dni = ${dni} LIMIT 1
         `;    
 
-        if (existingUserDNI.rows.length > 0) {
+        if (existingScholarDNI.rows.length > 0) {
             return NextResponse.json({ error: 'Ya existe una cuenta con este DNI.' }, { status: 400 });
         }
 

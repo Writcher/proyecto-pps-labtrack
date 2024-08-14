@@ -1,5 +1,5 @@
-import { UserGetGuest } from "@/app/lib/definitions";
-import { getGuests, getGuestsByName } from "@/app/lib/queries/user";
+import { GetGuest } from "@/app/lib/definitions";
+import { getGuests, getGuestsByName } from "@/app/lib/queries/guest";
 import { NextResponse } from "next/server";
 
 export const GET = async (request: Request) => {
@@ -18,7 +18,7 @@ export const GET = async (request: Request) => {
             return new NextResponse("labid is required", { status: 400 });
         }
 
-        let data: UserGetGuest[];
+        let data: GetGuest[];
 
         if (name.trim() === "") {
             try {

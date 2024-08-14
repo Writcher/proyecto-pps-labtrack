@@ -16,7 +16,7 @@ import AddIcon from '@mui/icons-material/Add';
 import TablePagination from '@mui/material/TablePagination';
 import debounce from "lodash.debounce";
 import CreateScholarModal from "./createscholarmodal";
-import { Scolarshiptype, Usercareer, UserGetScholar } from "@/app/lib/definitions";
+import { Scolarshiptype, Usercareer, GetScholar } from "@/app/lib/definitions";
 import DeleteScholarModal from "./deletescholarmodal";
 import EditScholarModal from "./editscholarmodal";
 
@@ -34,7 +34,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
         event.preventDefault();
     };
 
-    const [data, setData] = useState<UserGetScholar[]>([]);
+    const [data, setData] = useState<GetScholar[]>([]);
     async function fetchData(searchTerm: string) {
         try {
             const response = await fetch(`/api/dashboard/usermanagement/scholar?name=${encodeURIComponent(searchTerm)}&labid=${encodeURIComponent(laboratory_id)}`, {
@@ -90,7 +90,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
     }, [modalOpenCreate]);
 
     //fila seleccionada
-    const [selectedRow, setSelectedRow] = useState<UserGetScholar | null>(null);
+    const [selectedRow, setSelectedRow] = useState<GetScholar | null>(null);
     const [selectedRowId, setSelectedRowId] = useState<number | null>(null);
     const [selectedRowName, setSelectedRowName] = useState<string | null>(null);       
 
@@ -112,7 +112,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
 
     //edit
     const [modalOpenEdit, setModalOpenEdit] = useState(false);
-    const handleOpenEditModal = (row: UserGetScholar) => {
+    const handleOpenEditModal = (row: GetScholar) => {
         setSelectedRow(row);
         setModalOpenEdit(true);
     }
@@ -135,10 +135,10 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
     const [sortColumn, setSortColumn] = useState<string>('id');
 
-    const sortData = (data: UserGetScholar[]) => {
+    const sortData = (data: GetScholar[]) => {
         return data.slice().sort((a, b) => {
-            const aValue = a[sortColumn as keyof UserGetScholar] ?? '';
-            const bValue = b[sortColumn as keyof UserGetScholar] ?? '';
+            const aValue = a[sortColumn as keyof GetScholar] ?? '';
+            const bValue = b[sortColumn as keyof GetScholar] ?? '';
     
             if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
             if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
@@ -312,8 +312,8 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                                                         </div>
                                                         <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
                                                             <strong>Fecha de Inhabilitación: </strong>
-                                                            {row.deactivated_at ? 
-                                                                new Date(row.deactivated_at).toLocaleDateString('es-ES', {
+                                                            {row.dropped_at ? 
+                                                                new Date(row.dropped_at).toLocaleDateString('es-ES', {
                                                                     year: 'numeric',
                                                                     month: 'long',
                                                                     day: 'numeric'

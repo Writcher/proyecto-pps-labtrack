@@ -77,109 +77,104 @@ export type NewUsercareer = {
     name: string;
 }
 
+export type Usertype = {
+    id: number;
+    name: string;
+}
+
 export type User = {
     id: string;
     name: string;
-    file?: string;
-    dni?: string;
-    address?: string;
-    phone?: string;
-    careerlevel?: number;
-    created_at: Date;
-    deactivated_at?: Date;
     email: string;
     password: string;
-    laboratory_id?: number;
+    created_at: Date;
+    dropped_at?: Date;
+    laboratory_id: number;
     usertype_id: number;
     userstatus_id: number;
-    validitytime_id?: number;
-    scholarshiptype_id?: number;
-    usercareer_id?: number;
     emailVerified: Date | null;
 }
 
 export type UserSchema = {
     id: number;
     name: string;
-    file?: string;
-    dni?: string;
-    address?: string;
-    phone?: string;
-    careerlevel?: number;
-    created_at: Date;
-    deactivated_at?: Date;
     email: string;
     password: string;
-    laboratory_id?: number;
-    usertype_id: number;
-    userstatus_id: number;
-    validitytime_id?: number;
-    scholarshiptype_id?: number;
-    usercareer_id?: number;
-    emailVerified: Date | null;
-}
-
-export type UserGetScholar = {
-    id: number;
-    name: string;
-    file: string;
-    dni: string;
-    address: string;
-    phone: string;
-    careerlevel: number;
     created_at: Date;
     deactivated_at?: Date;
-    email: string;
-    usercareer: string;
-    userstatus: string;
-    scholarshiptype: string;
-    usercareer_id: number;
-    scholarshiptype_id: number;
-}
-
-export type EditUserScholar = {
-    id: number;
-    name: string;
-    file: string;
-    dni: string;
-    address: string;
-    phone: string;
-    careerlevel: number;
-    scholarshiptype_id: number;
-    usercareer_id: number;
-}
-
-export type UserGetGuest = {
-    id: number;
-    name: string;
-    created_at: Date;
-    deactivated_at: Date;
-    email: string;
-    userstatus: string;
-    date_from: Date;
-    date_until: Date;
+    laboratory_id: number;
+    usertype_id: number;
+    userstatus_id: number;
+    emailVerified: Date | null;
 }
 
 export type NewUser = {
     name: string;
-    file?: string;
-    dni?: string;
-    address?: string;
-    phone?: string;
-    careerlevel?: string;
     email: string;
     password: string;
-    laboratory_id?: number;
+    laboratory_id: number;
     usertype_id: number;
     userstatus_id: number;
-    validitytime_id?: number;
-    scholarshiptype_id?: number;
-    usercareer_id?: number;
 }
 
-export type Usertype = {
+export type Scholar = UserSchema & {
+    dni: string;
+    file: string;
+    phone?: string;
+    address?: string;
+    careerlevel: number;
+    usercareer_id: number;
+    scholarshiptype_id: number;
+}
+
+export type NewScholar = NewUser & {
+    dni: string;
+    file: string;
+    phone?: string;
+    address?: string;
+    careerlevel: number;
+    usercareer_id: number;
+    scholarshiptype_id: number;
+}
+
+export type GetScholar = {
     id: number;
     name: string;
+    email: string;
+    created_at: Date;
+    dropped_at?: Date;
+    userstatus: string;
+    file: string;
+    dni: string;
+    address?: string;
+    phone?: string;
+    careerlevel: number;
+    usercareer_id: number;
+    usercareer: string;
+    scholarshiptype_id: number;
+    scholarshiptype: string;
+}
+
+export type EditScholar = {
+    id: number;
+    name: string;
+    file: string;
+    dni: string;
+    address?: string;
+    phone?: string;
+    careerlevel: number;
+    scholarshiptype_id: number;
+    usercareer_id: number;
+}
+
+export type GetGuest = {
+    id: number;
+    name: string;
+    created_at: Date;
+    dropped_at: Date | null;
+    expires_at: Date;
+    email: string;
+    userstatus: string;
 }
 
 export type Laboratory = {
