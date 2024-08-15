@@ -6,12 +6,13 @@ import Link from 'next/link';
 import GroupIcon from '@mui/icons-material/Group';
 import BuildIcon from '@mui/icons-material/Build';
 import HomeIcon from '@mui/icons-material/Home';
+import WorkIcon from '@mui/icons-material/Work';
 
 const linksadmin = [
     { name: 'Inicio', href: '/dashboard/home', icon: HomeIcon },
-    { name: 'Proyectos', href: '/dashboard/projects', icon: HomeIcon },
-    { name: 'Gestión de Usuarios', href: '/dashboard/usermanagement', icon: GroupIcon },
-    { name: 'Gestion de Parametros', href: '/dashboard/paramsmanagement', icon: BuildIcon },
+    { name: 'Proyectos', href: '/dashboard/projects', icon: WorkIcon },
+    { name: 'Usuarios', href: '/dashboard/usermanagement', icon: GroupIcon },
+    { name: 'Gestión de Parametros', href: '/dashboard/paramsmanagement', icon: BuildIcon },
     
     //Añadir links segun necesario aca.
 ];

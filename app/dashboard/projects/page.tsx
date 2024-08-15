@@ -5,7 +5,9 @@ import ABMProjectTable from "@/app/ui/dashboard/projects/abmprojecttable";
 export default async function Invitados() {
     const session = await auth();
     if (!session?.user) redirect("/");
-    
+    if (session?.user.usertype_id != 1) {
+        return <div> No sos profesor vos loco, raja de aca</div>
+    }
     const laboratory_id = session?.user?.laboratory_id as number;
     
     return (
