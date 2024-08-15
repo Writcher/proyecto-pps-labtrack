@@ -17,6 +17,7 @@ import TablePagination from '@mui/material/TablePagination';
 import debounce from "lodash.debounce";
 import { GetGuest } from "@/app/lib/definitions";
 import CreateGuestModal from "./createguestmodal";
+import DeleteGuestModal from "./deleteguestmodal";
 
 interface AMBGuestTableProps {
     laboratory_id: number;
@@ -318,13 +319,13 @@ export default function ABMGuestTable({ laboratory_id }: AMBGuestTableProps ) {
                 usercareers={usercareers}
                 scholarships={scholarships}
                 row={selectedRow!}
-            />
+            />*/}
             <DeleteGuestModal
                 open={modalOpenDelete}
                 handleClose={handleCloseDeleteModal}
                 id={selectedRowId!}
                 name={selectedRowName!}
-            />*/}
+            />
         </main>
     )
 }

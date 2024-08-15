@@ -55,24 +55,29 @@ export async function getScholarByName(name: string, labid: number) {
 
 export async function createScholar(user: NewScholar)  {
     try {
+        await client.sql`BEGIN`;
         const response = await client.sql`
         INSERT INTO "user" (name, email, password, laboratory_id, usertype_id, userstatus_id)
         VALUES (${user.name}, ${user.email}, ${user.password}, ${user.laboratory_id}, ${user.usertype_id}, ${user.userstatus_id})
         RETURNING id
         ;`;
         const id = response.rows[0].id;
-        return client.sql`
+        await client.sql`
         INSERT INTO "scholar" (id, dni, file, phone, address, careerlevel, usercareer_id, scholarshiptype_id)
         VALUES (${id}, ${user.dni}, ${user.file}, ${user.phone}, ${user.address}, ${user.careerlevel}, ${user.usercareer_id}, ${user.scholarshiptype_id})
         `;
+        await client.sql`COMMIT`;
+        return { success: true, message: "Instancia creada correctamente" };
     } catch(error) {
         console.error("Error de Base de Datos:", error);
+        await client.sql`ROLLBACK`;
         throw new Error("No se pudo crear el becario");
     }
 }
 
 export async function editScholar(user: EditScholar) {
     try {
+        await client.sql`BEGIN`;
         await client.sql`
             UPDATE "user"
             SET name = ${user.name}
@@ -89,9 +94,11 @@ export async function editScholar(user: EditScholar) {
                 usercareer_id = ${user.usercareer_id}
             WHERE id = ${user.id}
         `;
+        await client.sql`COMMIT`;
         return { success: true, message: "Instancia editada correctamente" };
     } catch(error) {
         console.error("Error de Base de Datos:", error);
+        await client.sql`ROLLBACK`;
         throw new Error("No se pudo editar el becario");
     }
 }   

@@ -1,6 +1,6 @@
 import { GetGuest } from "@/app/lib/definitions";
-import { createGuest, getGuests, getGuestsByName } from "@/app/lib/queries/guest";
-import { getStatusActive, getStatusPending } from "@/app/lib/queries/userstatus";
+import { createGuest, dropGuest, getGuests, getGuestsByName, getGuestStatus } from "@/app/lib/queries/guest";
+import { getStatusExpired, getStatusPending } from "@/app/lib/queries/userstatus";
 import { getTypeGuest } from "@/app/lib/queries/usertype";
 import { db } from "@vercel/postgres";
 import { NextResponse } from "next/server";
@@ -94,5 +94,35 @@ export const POST = async (request: Request) => {
     } catch (error) {
         console.error("Error manejando POST:", error);
         return new NextResponse("Error al crear becario", { status: 500 });
+    }
+}
+
+export const DELETE = async (request: Request) => {
+    try {
+        const url = new URL(request.url);
+        const idStr = url.searchParams.get('id');
+
+        const id = idStr ? parseInt(idStr, 10) : null;
+
+        if (typeof id !== 'number') {
+            return NextResponse.json({ error: "Mandaste cualquier parametro loco"}, { status: 400 });
+        }
+
+        const isExpired = await getStatusExpired();
+        const guestStatus = await getGuestStatus(id);
+
+        if (isExpired === guestStatus) {
+            try {
+                await dropGuest(id);
+                return NextResponse.json({ status: 200 });
+            } catch(error) {
+                console.error("Error manejando DELETE:", error);
+                return NextResponse.json({ error: "Error al eliminar instancia"}, { status: 500 });
+            } 
+        }
+        return NextResponse.json({ error: 'La cuenta no ha expirado.' }, { status: 400 });
+    } catch (error) {
+        console.error("Error manejando DELETE:", error);
+        return NextResponse.json({ error: "Error manejando DELETE." }, { status: 500 });
     }
 }
