@@ -1,12 +1,14 @@
 "use server"
 
 import { signIn, signOut } from "../lib/auth";
-import { getUserByEmail } from "../lib/queries/user";
+import { getUserByEmail, userChangeStatus } from "../lib/queries/user";
 import bcrypt from 'bcryptjs';
 import { createVerificationToken, deleteVerificationToken, getVerificationTokenByEmail } from "../lib/queries/validationtoken";
 import { nanoid } from "nanoid";
 import sendVerificationEmail from "../lib/verificationemail";
 import { getStatusDeactivated, getStatusExpired, getStatusPending } from "../lib/queries/userstatus";
+import { getTypeGuest } from "../lib/queries/usertype";
+import { getGuestExpirationDate } from "../lib/queries/guest";
 
 export async function doLogout() {
     await signOut({ redirectTo: "/" });
@@ -37,6 +39,16 @@ export async function doCredentialLogin({ email, password }: { email: string; pa
                     await createVerificationToken(token, user.email, expirationdate);
                     await sendVerificationEmail(user.email, token);
                     return { error: "Se envió un email de verificación, por favor, revisa tu bandeja de entrada." };
+                }
+                //Verifico si la cuenta es de invitado si ha expirado
+                const userTypeGuest = await getTypeGuest();
+                if (user.usertype_id === userTypeGuest) {
+                    const idnumber = Number(user.id);
+                    const expirationdate = await getGuestExpirationDate(idnumber);
+                    if (expirationdate < new Date()) {
+                        await userChangeStatus(idnumber, statusExpired);
+                        return { error: "Usuario expirado, contacte a un administrador." };
+                    }
                 }
                 const response = await signIn("credentials", {
                     email,
