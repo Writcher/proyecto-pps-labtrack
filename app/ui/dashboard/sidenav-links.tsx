@@ -9,6 +9,7 @@ import HomeIcon from '@mui/icons-material/Home';
 
 const linksadmin = [
     { name: 'Inicio', href: '/dashboard/home', icon: HomeIcon },
+    { name: 'Proyectos', href: '/dashboard/projects', icon: HomeIcon },
     { name: 'Gestión de Usuarios', href: '/dashboard/usermanagement', icon: GroupIcon },
     { name: 'Gestion de Parametros', href: '/dashboard/paramsmanagement', icon: BuildIcon },
     

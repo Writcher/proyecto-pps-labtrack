@@ -191,3 +191,8 @@ export type Laboratory = {
     id: number;
     name: string;
 }
+
+export type GetProject = {
+    id: number;
+    name: string;
+}

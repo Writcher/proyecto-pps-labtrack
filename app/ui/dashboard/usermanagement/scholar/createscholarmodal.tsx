@@ -88,7 +88,7 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
                 handleClose();
             } else {
                 const result = await response.json();
-                setError(result.message || "Error desconocido");
+                setError(result.error || "Error desconocido");
             }
         } catch (error) {
             if (error instanceof Error) {

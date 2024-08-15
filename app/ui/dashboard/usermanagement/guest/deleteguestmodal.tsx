@@ -37,7 +37,7 @@ export default function DeleteGuestModal({ open, handleClose, id, name }: Delete
                 handleClose();
             } else {
                 const result = await response.json();
-                setError(result.message || "Error desconocido");
+                setError(result.error || "Error desconocido");
             }
 
         } catch (error) {

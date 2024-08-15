@@ -9,24 +9,28 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import IconButton from "@mui/material/IconButton";
 import { getLabById } from "@/app/lib/queries/laboratory";
 import { doLogout } from "@/app/actions";
+import { getTypeAdmin, getTypeScholar } from "@/app/lib/queries/usertype";
 
 export default async function SideNav() {
   const session = await auth();
   if (!session?.user) redirect("/");
 
+  const adminType = await getTypeAdmin();
+  const scholarType = await getTypeScholar();
+
   let sideNavLinks;
-  if (session?.user?.usertype_id === 1) {
+  if (session?.user?.usertype_id === adminType) {
     sideNavLinks = <SideNavLinksAdmin />;
-  } else if (session?.user?.usertype_id === 2) {
+  } else if (session?.user?.usertype_id === scholarType) {
     sideNavLinks = <SideNavLinksScholar />;
   } else {
     sideNavLinks = <SideNavLinksGuest />;
   }
 
   let role;
-  if (session?.user?.usertype_id === 1) {
+  if (session?.user?.usertype_id === adminType) {
     role = "Admin";
-  } else if (session?.user?.usertype_id === 2) {
+  } else if (session?.user?.usertype_id === scholarType) {
     role = "Becario";
   } else {
     role = "Invitado";
@@ -35,8 +39,6 @@ export default async function SideNav() {
   const laboratory_id = session?.user?.laboratory_id;
   const laboratory = await getLabById(laboratory_id); 
 
-  
-  
   const lab = laboratory.name;
 
   return (

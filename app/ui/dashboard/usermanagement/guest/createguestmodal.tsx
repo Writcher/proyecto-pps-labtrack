@@ -69,7 +69,7 @@ export default function CreateGuestModal({ open, handleClose, laboratory_id }: C
                 handleClose();
             } else {
                 const result = await response.json();
-                setError(result.message || "Error desconocido");
+                setError(result.error || "Error desconocido");
             }
         } catch (error) {
             if (error instanceof Error) {

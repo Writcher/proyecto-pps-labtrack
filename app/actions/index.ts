@@ -21,11 +21,21 @@ export async function doCredentialLogin({ email, password }: { email: string; pa
             const hashedPassword = user.password;
             const isMatch = await bcrypt.compare(password as string, hashedPassword);
             if (isMatch) {
+                // Verifico si la cuenta de invitado se ha pasado de su fecha de vencimiento.
+                const userTypeGuest = await getTypeGuest();
                 const statusExpired = await getStatusExpired();
+                if (user.usertype_id === userTypeGuest) {
+                    const idnumber = Number(user.id);
+                    const expirationdate = await getGuestExpirationDate(idnumber);
+                    if (expirationdate < new Date()) {
+                        await userChangeStatus(idnumber, statusExpired);
+                        return { error: "Usuario expirado, contacte a un administrador." };
+                    }
+                }
                 const statusDeactivated = await getStatusDeactivated();
                 // Verificación de estado de usuario
                 if (user.userstatus_id === statusDeactivated || user.userstatus_id === statusExpired) {
-                    return { error: "La cuenta ha expirado o ha sido deshabiltada." };
+                    return { error: "La cuenta ha expirado o ha sido deshabiltada, contacte a un administrador." };
                 }
                 // Verificación de email
                 const statusPending = await getStatusPending();
@@ -39,16 +49,6 @@ export async function doCredentialLogin({ email, password }: { email: string; pa
                     await createVerificationToken(token, user.email, expirationdate);
                     await sendVerificationEmail(user.email, token);
                     return { error: "Se envió un email de verificación, por favor, revisa tu bandeja de entrada." };
-                }
-                //Verifico si la cuenta es de invitado si ha expirado
-                const userTypeGuest = await getTypeGuest();
-                if (user.usertype_id === userTypeGuest) {
-                    const idnumber = Number(user.id);
-                    const expirationdate = await getGuestExpirationDate(idnumber);
-                    if (expirationdate < new Date()) {
-                        await userChangeStatus(idnumber, statusExpired);
-                        return { error: "Usuario expirado, contacte a un administrador." };
-                    }
                 }
                 const response = await signIn("credentials", {
                     email,

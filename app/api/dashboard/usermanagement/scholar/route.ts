@@ -128,6 +128,24 @@ export const PUT = async (request: Request) => {
             return new NextResponse("Parametros no validos", {status: 400});
         }
 
+        const client = db;
+
+        const existingScholarFile = await client.sql`
+        SELECT * FROM "scholar" WHERE file = ${file} LIMIT 1
+        `;    
+
+        if (existingScholarFile.rows.length > 0) {
+            return NextResponse.json({ error: 'Ya existe una cuenta con este legajo.' }, { status: 400 });
+        }
+
+        const existingScholarDNI = await client.sql`
+        SELECT * FROM "scholar" WHERE dni = ${dni} LIMIT 1
+        `;    
+
+        if (existingScholarDNI.rows.length > 0) {
+            return NextResponse.json({ error: 'Ya existe una cuenta con este DNI.' }, { status: 400 });
+        }
+
         const query = {
             id, name, file, dni, address, phone, careerlevel, scholarshiptype_id, usercareer_id
         }
@@ -139,7 +157,7 @@ export const PUT = async (request: Request) => {
             return new NextResponse("Error al editar usuario", { status: 500 });
         } 
 
-        return new NextResponse("Instancia editada", { status: 200 });
+        return NextResponse.json({ status: 200 });
     } catch(error) {
         console.error("Error manejando PUT:", error);
         return new NextResponse("Error al editar usuario", { status: 500 });

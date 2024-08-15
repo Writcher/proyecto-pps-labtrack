@@ -116,6 +116,9 @@ export default function EditScholarModal({ open, handleClose, row, usercareers, 
 
             if (response.status === 200) {
                 handleClose();
+            } else {
+                const result = await response.json();
+                setError(result.error || "Error desconocido");
             }
 
         } catch (error) {

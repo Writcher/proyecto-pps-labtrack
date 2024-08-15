@@ -67,21 +67,23 @@ export default function CreateModal({ open, handleClose, table }: CreateModalPro
                 <div className='flex flex-col m-2'>
                     <DialogTitle>
                         <div className='text-gray-700 text-center font-medium text-2xl md:text-3xl mb-2'>
-                            Crear nuevo  
+                            Crear nuev  
                             {(() => {
                                 switch (table) {
                                     case "supplytype":
-                                        return " Tipo de Insumo";
+                                        return "o Tipo de Insumo";
                                     case "projecttype":
-                                        return " Tipo de Proyecto";
+                                        return "o Tipo de Proyecto";
                                     case "supplystatus":
-                                        return " Estado de Insumo";
+                                        return "o Estado de Insumo";
                                     case "projectstatus":
-                                        return " Estado de Proyecto";
+                                        return "o Estado de Proyecto";
                                     case "scholarshiptype":
-                                        return " Tipo de Beca";
+                                        return "o Tipo de Beca";
                                     case "grade":
-                                        return " Calificación";
+                                        return "a Calificación";
+                                    case "usercareer":
+                                        return "a Carrera";
                                     default:
                                         return "";
                                 }

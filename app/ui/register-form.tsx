@@ -56,9 +56,10 @@ export default function RegisterForm({ laboratories }: RegisterFormProps) {
             if (response.status !== 201) {
                 setError(result.error || "Error desconocido, la cagaste");
             }
+            if (response.status === 201) {
+                router.push("/login");
+            }
             
-            router.push("/login");
-    
         } catch (error) {
             if (error instanceof Error) {
                 throw new Error(error.message);
