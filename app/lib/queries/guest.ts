@@ -41,6 +41,21 @@ export async function getGuestsByName(name: string, labid: number) {
     }
 }
 
+export async function getGuestExpirationDate(id: number) {
+    try {
+        const response = await client.sql`
+        SELECT expires_at
+        FROM "guest"
+        WHERE id = ${id}
+        `;
+        const { expires_at } = response.rows[0];
+        return new Date(expires_at);
+    } catch(error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo encontrar el invitado");
+    }
+}
+
 export async function createGuest(user: NewGuest)  {
     try {
         const date = new Date(user.expires_at);
