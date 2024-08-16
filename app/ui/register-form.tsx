@@ -27,7 +27,7 @@ export default function RegisterForm({ laboratories }: RegisterFormProps) {
             const email = formData.get("email") as string;
             const password = formData.get("password") as string;
             const confPassword = formData.get("confirmPassword");
-
+          
             const passwordValidationRegex = /^(?=.*\d).{12,}$/;
             if (!passwordValidationRegex.test(password)) {
                 setError("La contraseña debe tener al menos 12 caracteres y contener al menos un número");
