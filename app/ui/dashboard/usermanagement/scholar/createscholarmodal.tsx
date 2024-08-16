@@ -9,7 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
-import { MenuItem } from '@mui/material';
+import { Alert, MenuItem } from '@mui/material';
 import { Scolarshiptype, Usercareer } from '@/app/lib/definitions';
 
 interface CreateModalProps {
@@ -175,7 +175,7 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
                         <div className='flex w-full'>
                             <TextField id="password" name="password" label="Contraseña" helperText="Ingrese Contraseña" type="password" variant="outlined" color="warning" fullWidth required/>
                         </div>
-                        <div className='text-center text-xl font-medium text-red-700'>{error}</div>
+                        {error && <Alert severity="error">{error}</Alert>}
                     </div>
                 </DialogContent>
                 <DialogActions>

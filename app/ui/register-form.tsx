@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import React from 'react';
+import Alert from '@mui/material/Alert';
 
 interface RegisterFormProps {
     laboratories: Laboratory[];
@@ -97,7 +98,7 @@ export default function RegisterForm({ laboratories }: RegisterFormProps) {
                     </Button>
                 </div>
             </form>
-            <div className='text-center tex-xl font-medium text-red-700'>{error}</div>
+            {error && <Alert severity="error">{error}</Alert>}
         </div>
     )
 }

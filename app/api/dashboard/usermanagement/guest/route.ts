@@ -19,7 +19,7 @@ export const GET = async (request: Request) => {
         }
 
         if (labid === undefined) {
-            return new NextResponse("labid is required", { status: 400 });
+            return new NextResponse("labid es necesario.", { status: 400 });
         }
 
         let data: GetGuest[];
@@ -33,7 +33,7 @@ export const GET = async (request: Request) => {
             }
         } else {
             try {
-                data = await  getGuestsByName(name, labid)
+                data = await  getGuestsByName(name, labid);
             } catch (error) {
                 console.error("Error buscando datos:", error);
                 return new NextResponse("Error buscando datos", { status: 500 });
@@ -117,7 +117,7 @@ export const DELETE = async (request: Request) => {
                 return NextResponse.json({ status: 200 });
             } catch(error) {
                 console.error("Error manejando DELETE:", error);
-                return NextResponse.json({ error: "Error al eliminar instancia"}, { status: 500 });
+                return NextResponse.json({ error: "La cuenta no ha expirado."}, { status: 500 });
             } 
         }
         return NextResponse.json({ error: 'La cuenta no ha expirado.' }, { status: 400 });

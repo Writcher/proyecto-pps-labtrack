@@ -61,7 +61,7 @@ export async function dropProjectType(id: number) {
         `;
     } catch(error) {
         console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo crear el projecttype");
+        throw new Error("No se pudo eliminar el projecttype");
     }
 }
 

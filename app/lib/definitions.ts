@@ -1,5 +1,3 @@
-import { DateMarker } from "@fullcalendar/core/internal";
-
 export type ABMcreate = {
     name: string;
     table: string;
@@ -195,4 +193,33 @@ export type Laboratory = {
 export type GetProject = {
     id: number;
     name: string;
+}
+
+export type GetSupply = {
+    id: number;
+    name: string;
+    description: string;
+    year: number;
+    supplystatus_id: number;
+    supplytype_id: number;
+    supplystatus: string;
+    supplytype: string;
+}
+
+export type NewSupply = {
+    name: string;
+    description: string;
+    year: number;
+    supplystatus_id: number;
+    supplytype_id: number;
+    laboratory_id: number;
+}
+
+export type EditSupply = {
+    id: number;
+    name: string;
+    description: string;
+    year: number;
+    supplystatus_id: number;
+    supplytype_id: number;
 }

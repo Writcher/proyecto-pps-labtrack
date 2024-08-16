@@ -11,7 +11,7 @@ export default async function ABMusuarios() {
     }
     return (
         <main className="flex flex-col w-full">
-            <div className="flex flex-col items-center justify-center mt-12 mb-4 md:gap-12">
+            <div className="flex flex-col items-center justify-center mb-4 md:gap-12">
                 <div className="flex flex-col text-xl md:text-3xl text-gray-700 text-center font-bold">
                     <p className="mt-16">
                         Usuarios

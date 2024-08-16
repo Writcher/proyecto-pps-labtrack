@@ -9,7 +9,7 @@ export default async function Home() {
 
     return (
         <div>
-            {laboratory_id}
+            proximamente loco
         </div>
     )
 }

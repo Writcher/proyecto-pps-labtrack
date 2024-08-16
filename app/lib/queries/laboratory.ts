@@ -2,6 +2,7 @@ import { db } from '@vercel/postgres';
 import { Laboratory } from '../definitions';
 
 const client = db;
+
 export async function getLabs() {
     try {
         const result = await client.sql`

@@ -96,7 +96,7 @@ export const GET = async (request: Request) => {
     }
 };
 
-{/*{export const DELETE = async (request: Request) => {
+{/*export const DELETE = async (request: Request) => {
     try {
         const url = new URL(request.url);
         const idStr = url.searchParams.get('id');

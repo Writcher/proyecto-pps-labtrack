@@ -2,6 +2,7 @@ import Button from "@mui/material/Button";
 import LabTrackLogoWhite, { LabTrackLogoBlack } from "../ui/labtrack-logo";
 import LoginForm from "../ui/login-form";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import Alert from "@mui/material/Alert";
 
 export default function Login({searchParams}: {searchParams: {verified: string}}) {
     
@@ -22,7 +23,7 @@ export default function Login({searchParams}: {searchParams: {verified: string}}
                 <div className="relative flex flex-col items-end p-16">
                     <LabTrackLogoWhite />
                     <p className="text-xl md:text-3xl text-white font-medium">
-                        Sistema de gestion de laboratorios
+                        Sistema de Gestion de Laboratorios
                     </p>
                 </div>
             </div>
@@ -32,7 +33,7 @@ export default function Login({searchParams}: {searchParams: {verified: string}}
                 <div className="flex block md:hidden">
                     <LabTrackLogoBlack />
                 </div>
-                <div className='flex justify-center items-center text-center tex-xl font-medium text-green-700 mb-6'>{verifiedaccount}</div>
+                {verifiedaccount && <Alert severity="success">{verifiedaccount}</Alert>}
                 <div className="flex flex-col mb-8">
                     <p className="text-xl md:text-3xl text-gray-700 font-medium">
                         <strong className="text-gray-700">

@@ -6,6 +6,7 @@ import { doCredentialLogin } from "../actions";
 import { useRouter } from "next/navigation"; 
 import { FormEvent, useState } from "react";
 import TextField from "@mui/material/TextField";
+import Alert from "@mui/material/Alert";
 
 export default function LoginForm() {
     const [error, setError] = useState("");
@@ -47,7 +48,7 @@ export default function LoginForm() {
                     INICIAR SESIÓN
                 </Button>
             </form>
-            <div className='text-center tex-xl font-medium text-red-700'>{error}</div>
+            {error && <Alert severity="error">{error}</Alert>}
         </div>
     )
 }

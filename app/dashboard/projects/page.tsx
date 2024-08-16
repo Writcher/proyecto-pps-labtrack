@@ -18,7 +18,8 @@ export default async function Invitados() {
                 </p>
             </div>
             <div className="flex flex-col w-ful items-center justify-center m-4">
-                <ABMProjectTable laboratory_id={laboratory_id}/>
+                Todavia no hago esta tabla
+                {/*<ABMProjectTable laboratory_id={laboratory_id}/>*/}
             </div>
         </main>
     );

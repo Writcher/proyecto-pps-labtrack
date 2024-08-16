@@ -14,7 +14,7 @@ export default async function Register() {
                 <div className="relative flex flex-col items-end p-16">
                     <LabTrackLogoWhite />
                     <p className="text-xl md:text-3xl text-white font-medium">
-                        Sistema de gestion de laboratorios
+                        Sistema de Gestion de Laboratorios
                     </p>
                 </div>
             </div>

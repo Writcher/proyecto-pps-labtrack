@@ -61,7 +61,7 @@ export async function dropSupplyStatus(id: number) {
         `;
     } catch(error) {
         console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo crear el supplystatus");
+        throw new Error("No se pudo eliminar el supplystatus");
     }
 }
 
