@@ -7,10 +7,12 @@ import GroupIcon from '@mui/icons-material/Group';
 import BuildIcon from '@mui/icons-material/Build';
 import HomeIcon from '@mui/icons-material/Home';
 import WorkIcon from '@mui/icons-material/Work';
+import InventoryIcon from '@mui/icons-material/Inventory';
 
 const linksadmin = [
     { name: 'Inicio', href: '/dashboard/home', icon: HomeIcon },
     { name: 'Proyectos', href: '/dashboard/projects', icon: WorkIcon },
+    { name: 'Inventario', href: '/dashboard/inventory', icon: InventoryIcon },
     { name: 'Usuarios', href: '/dashboard/usermanagement', icon: GroupIcon },
     { name: 'Gestión de Parametros', href: '/dashboard/paramsmanagement', icon: BuildIcon },
     
