@@ -1,14 +1,15 @@
-import { ABMcreate, ABMdelete, ABMedit, Grade, NewGrade, NewProjecttype, NewScolarchiptype, NewSupplystatus, NewSupplytype, Projectstatus, Projecttype, Scolarshiptype, Supplystatus, Supplytype } from '../lib/definitions';
+import { ABMcreate, ABMdelete, ABMedit, Grade, NewGrade, NewProjecttype, NewScolarchiptype, NewSupplystatus, NewSupplytype, NewUsercareer, Projectstatus, Projecttype, Scolarshiptype, Supplystatus, Supplytype, Usercareer } from '../lib/definitions';
 import { createGrade, dropGrade, getGradeByName, getGrades, updateGrade} from './queries/grade';
 import { createProjectStatus, dropProjectStatus, getProjectStatusByName, getProjectStatuses, updateProjectStatus } from './queries/projectstatus';
 import { createProjectType, dropProjectType, getProjectTypeByName, getProjectTypes, updateProjectType } from './queries/projecttype';
 import { createScolarshipType, dropScolarshipType, getScolarshipTypeByName, getScolarshipTypes, updateScolarshipType } from './queries/scholarshiptype';
 import { createSupplyStatus, dropSupplyStatus, getSupplyStatusByName, getSupplyStatuses, updateSupplyStatus } from './queries/supplystatus';
 import { createSupplyType, dropSupplyType, getSupplyTypeByName, getSupplyTypes, updateSupplyType } from './queries/supplytype';
+import { createUserCareer, dropUserCareer, getUserCareerByName, getUserCareers, updateUserCareer } from './queries/usercareer';
 
 export async function createInstance(query: ABMcreate) {
     try {
-        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade"];
+        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade", "usercareer"];
         if (!allowedTables.includes(query.table)) {
             throw new Error(`Tabla no valida: ${query.table}`);
         }
@@ -49,6 +50,11 @@ export async function createInstance(query: ABMcreate) {
                     name: query.name,
                 }
                 await createGrade(newGrade);
+            case "usercareer":
+                const newUsercareer: NewUsercareer = {
+                    name: query.name,
+                }
+                await createUserCareer(newUsercareer);
                 break;
             default:
                 throw new Error(`No se puede manejar la tabla: ${query.table}`);
@@ -62,9 +68,9 @@ export async function createInstance(query: ABMcreate) {
     }
 }
 
-export async function deleteInstance(query: ABMdelete) {
+{/*export async function deleteInstance(query: ABMdelete) {
     try {
-        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade"];
+        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade", "usercareer"];
         if (!allowedTables.includes(query.table)) {
             throw new Error(`Tabla no valida: ${query.table}`);
         }
@@ -88,6 +94,9 @@ export async function deleteInstance(query: ABMdelete) {
             case "grade":
                 await dropGrade(query.id);
                 break;
+            case "usercareer":
+                await dropUserCareer(query.id);
+                break;
             default:
                 throw new Error(`No se puede manejar la tabla: ${query.table}`);
         }
@@ -98,11 +107,11 @@ export async function deleteInstance(query: ABMdelete) {
         console.error("Error de Base de Datos:", error);
         throw new Error("Error al eliminar la tabla (profundo)");
     }
-}
+}*/}
 
 export async function editInstance(query: ABMedit) {
     try {
-        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade"];
+        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade", "usercareer"];
         if (!allowedTables.includes(query.table)) {
             throw new Error(`Tabla no valida: ${query.table}`);
         }
@@ -150,6 +159,13 @@ export async function editInstance(query: ABMedit) {
                 }
                 await updateGrade(editGrade);
                 break;
+            case "usercareer":
+                const editUsercareer: Usercareer = {
+                    name: query.name,
+                    id: query.id    
+                }
+                await updateUserCareer(editUsercareer);
+                break;
             default:
                 throw new Error(`No se puede manejar la tabla: ${query.table}`);
         }
@@ -165,7 +181,7 @@ export async function editInstance(query: ABMedit) {
 export async function getAllInstances(table: string) {
     let data;
     try {
-        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade"];
+        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade", "usercareer"];
         if (!allowedTables.includes(table)) {
             throw new Error(`Tabla no valida: ${table}`);
         }
@@ -189,6 +205,9 @@ export async function getAllInstances(table: string) {
             case "grade":
                 data = await getGrades();
                 break;
+            case "usercareer":
+                data = await getUserCareers();
+                break;
             default:
                 throw new Error(`No se puede manejar la tabla: ${table}`);
         }
@@ -205,7 +224,7 @@ export async function searchInstance(query: ABMcreate) {
     let data;
     let name;
     try {
-        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade"];
+        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade", "usercareer"];
         if (!allowedTables.includes(query.table)) {
             throw new Error(`Tabla no valida: ${query.table}`);
         }
@@ -234,6 +253,10 @@ export async function searchInstance(query: ABMcreate) {
             case "grade":
                 name = query.name as string;
                 data = await getGradeByName(name);
+                break;
+            case "usercareer":
+                name = query.name as string;
+                data = await getUserCareerByName(name);
                 break;
             default:
                 throw new Error(`No se puede manejar la tabla: ${query.table}`);

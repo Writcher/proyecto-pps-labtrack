@@ -61,7 +61,7 @@ export async function dropScolarshipType(id: number) {
         `;
     } catch(error) {
         console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo crear el scholarshiptype");
+        throw new Error("No se pudo eliminar el scholarshiptype");
     }
 }
 

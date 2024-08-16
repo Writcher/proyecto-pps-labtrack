@@ -5,7 +5,7 @@ import "./ui/globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "LabTrack",
+  title: "LMS",
   description: "Proyecto PPS Gimenez",
 };
 
@@ -16,7 +16,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${inter.className} antialiased`}>{children}</body>
+      <body className={`${inter.className} antialiased`}>
+        
+          {children}
+        
+      </body>
     </html>
   );
 }

@@ -61,7 +61,7 @@ export async function dropSupplyType(id: number) {
         `;
     } catch(error) {
         console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo crear el supplytype");
+        throw new Error("No se pudo eliminar el supplytype");
     }
 }
 

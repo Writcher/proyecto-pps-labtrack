@@ -1,5 +1,5 @@
 import { db } from '@vercel/postgres';
-import {NewUser } from "../definitions";
+import { NewUser, User } from "../definitions";
 
 const client = db;
 
@@ -8,21 +8,60 @@ export async function getUserByEmail(email: string) {
         const result = await client.sql`
         SELECT * FROM "user" WHERE email = ${email} LIMIT 1
         `;
-        return result.rows[0];
+        const user = result.rows[0];
+        if (user) {
+            return {
+                ...user,
+                id: user.id.toString(), // Convert ID to string
+            } as User;
+        } else {
+            return null;
+        }
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el correo");
     }
 }
 
-export async function createUser(user: NewUser){
+export async function createUser(user: NewUser) {
     try {
         return client.sql`
-        INSERT INTO "user" (name, file, email, password, laboratory_id, usertype_id)
-        VALUES (${user.name}, ${user.file}, ${user.email}, ${user.password}, ${user.laboratory_id}, ${user.usertype_id})
+        INSERT INTO "user" (name, email, password, laboratory_id, usertype_id, userstatus_id)
+        VALUES (${user.name}, ${user.email}, ${user.password}, ${user.laboratory_id}, ${user.usertype_id}, ${user.userstatus_id})
         `;
     } catch(error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo crear el usuario");
+    }
+}
+
+export async function verifyUserEmail(email: string, status: number) {
+    try {
+        const date = new Date;
+        const dateVerified = date.toISOString().split('T')[0];
+        return client.sql`
+            UPDATE "user"
+            SET emailverified = ${dateVerified},
+                userstatus_id = ${status}
+            WHERE email = ${email}
+        `;
+    } catch(error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo editar el usuario");
+    }
+}
+
+export async function userChangeStatus(id: number, newStatus: number, ) {
+    try {
+        const date = new Date;
+        const dateDeactivated = date.toISOString().split('T')[0];
+        return client.sql`
+        UPDATE "user"
+        SET dropped_at = ${dateDeactivated}, userstatus_id = ${newStatus}
+        WHERE id = ${id}
+        `;
+    } catch(error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo editar el user");
     }
 }

@@ -14,7 +14,7 @@ export default async function Register() {
                 <div className="relative flex flex-col items-end p-16">
                     <LabTrackLogoWhite />
                     <p className="text-xl md:text-3xl text-white font-medium">
-                        Sistema de gestion de laboratorios
+                        Sistema de Gestion de Laboratorios
                     </p>
                 </div>
             </div>
@@ -34,7 +34,7 @@ export default async function Register() {
                 <div className="flex w-screen md:w-full justify-center">
                     <RegisterForm  laboratories={laboratories}/>
                 </div>
-                <div className="absolute bottom-10 left-50">
+                <div className="flex">
                     <Button variant="text" href="/" size="large" color="warning" disableElevation startIcon={<KeyboardArrowLeftIcon />}> ATRAS </Button>
                 </div>
             </div>
