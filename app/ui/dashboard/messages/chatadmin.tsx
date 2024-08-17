@@ -123,14 +123,14 @@ export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: Ch
                     scrollButtons="auto"
                 >
                     {scholars.map(scholar => (
-                        <Tab label={scholar.name} value={scholar.id}></Tab>
+                        <Tab key={scholar.id} label={scholar.name} value={scholar.id}></Tab>
                     ))}
                 </Tabs>
             </div>
             <div className="flex grow h-full">
                     {scholars.map(scholarcontent => (
                         tabValue === scholarcontent.id && (
-                            <div className="flex flex-col w-full m-4 items-center justify-center">
+                            <div key={scholarcontent.id} className="flex flex-col w-full m-4 items-center justify-center">
                                 <div className="flex flex-col mb-4 text-xl md:text-3xl text-gray-700 text-center font-bold">
                                     <p>
                                         {scholarcontent.name}
