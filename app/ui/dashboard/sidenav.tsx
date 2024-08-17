@@ -9,7 +9,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import IconButton from "@mui/material/IconButton";
 import { getLabById } from "@/app/lib/queries/laboratory";
 import { doLogout } from "@/app/actions";
-import { getTypeAdmin, getTypeScholar } from "@/app/lib/queries/usertype";
+import { getTypeAdmin, getTypeGuest, getTypeScholar } from "@/app/lib/queries/usertype";
 
 export default async function SideNav() {
   const session = await auth();
@@ -17,13 +17,14 @@ export default async function SideNav() {
 
   const adminType = await getTypeAdmin();
   const scholarType = await getTypeScholar();
+  const guestType = await getTypeGuest();
 
   let sideNavLinks;
   if (session?.user?.usertype_id === adminType) {
     sideNavLinks = <SideNavLinksAdmin />;
   } else if (session?.user?.usertype_id === scholarType) {
     sideNavLinks = <SideNavLinksScholar />;
-  } else {
+  } else if (session?.user?.usertype_id === guestType) {
     sideNavLinks = <SideNavLinksGuest />;
   }
 
@@ -42,7 +43,7 @@ export default async function SideNav() {
   const lab = laboratory.name;
 
   return (
-    <div className="flex flex-col h-full bg-gradient-to-r from-gray-800 to-gray-700 border-b-4 md:border-r-4 md:border-b-0 border-orange-500">
+    <div className="flex flex-col h-full bg-gradient-to-b md:bg-gradient-to-r from-gray-800 to-gray-700 border-b-4 md:border-r-4 md:border-b-0 border-orange-500">
       <Link className="flex mb-6 mt-6 md:mt-0 h-10 md:h-20 justify-center items-center" href="/">
         <div>
           <LabTrackLogoWhite/>

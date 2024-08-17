@@ -223,3 +223,29 @@ export type EditSupply = {
     supplystatus_id: number;
     supplytype_id: number;
 }
+
+export type Message = {
+    id: number;
+    content: string;
+    sender_id: number;
+    receiver_id: number;
+    timestamp: Date;
+}
+
+export type GetMessages = {
+    content: string;
+    sender_id: number;
+    receiver_id: number;
+    timestamp: Date;
+}
+
+export type NewMessage = {
+    content: string;
+    sender_id: number;
+    receiver_id: number;
+}
+
+export type GetAdmin = {
+    id: number;
+    name: string;
+}

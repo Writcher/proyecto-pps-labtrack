@@ -1,5 +1,6 @@
 import { db } from '@vercel/postgres';
-import { NewUser, User } from "../definitions";
+import { GetAdmin, NewUser, User } from "../definitions";
+import { getTypeAdmin } from './usertype';
 
 const client = db;
 
@@ -63,5 +64,21 @@ export async function userChangeStatus(id: number, newStatus: number, ) {
     } catch(error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo editar el user");
+    }
+}
+
+export async function getAdmins(labid: number) {
+    try {
+        const type = await getTypeAdmin();
+        const result = await client.sql`
+        SELECT id, name 
+        FROM "user"
+        WHERE usertype_id = ${type}
+        AND laboratory_id = ${labid}
+        `;
+        return result.rows as GetAdmin[];
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el becario");
     }
 }

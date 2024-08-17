@@ -41,7 +41,6 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                 method: 'GET',
             });
             const fetchedData = await response.json();
-            console.log(fetchedData.userstatus);
             setData(fetchedData);
         } catch (error) {
             if (error instanceof Error) {
