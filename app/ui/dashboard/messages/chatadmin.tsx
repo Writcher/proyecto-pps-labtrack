@@ -1,6 +1,6 @@
 "use client"
 
-import { GetMessages, GetScholar } from "@/app/lib/definitions";
+import { GetMessages, GetScholarMessages } from "@/app/lib/definitions";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import TextField from "@mui/material/TextField";
@@ -10,6 +10,8 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import dayjs from 'dayjs';
+import Badge from "@mui/material/Badge";
+
 
 interface ChatMenuProps {
     laboratory_id: number;
@@ -18,17 +20,15 @@ interface ChatMenuProps {
 }
 
 export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: ChatMenuProps) {
-
     const current_id_number = Number(current_id);
-
-    const [scholars, setScholars] = useState<GetScholar[]>([]);
+    const [scholars, setScholars] = useState<GetScholarMessages[]>([]);
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await fetch(`/api/dashboard/messages?labid=${encodeURIComponent(laboratory_id)}&typeid=${encodeURIComponent(usertype_id)}`, {
+                const response = await fetch(`/api/dashboard/messages?labid=${encodeURIComponent(laboratory_id)}&typeid=${encodeURIComponent(usertype_id)}&currentid=${encodeURIComponent(current_id_number)}`, {
                     method: 'GET',
                 });
-                const fetchedData = await response.json();
+                const fetchedData: GetScholarMessages[] = await response.json();
                 setScholars(fetchedData);
             } catch (error) {
                 if (error instanceof Error) {
@@ -39,11 +39,31 @@ export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: Ch
             } 
         }
         fetchData();
-    }, [laboratory_id, usertype_id]);
+    }, [laboratory_id, usertype_id, current_id_number]);
 
     const [tabValue, setTabValue] = React.useState(0);
-    const handleTabChange = (event: React.SyntheticEvent, newTabValue: number) => {
+    const handleTabChange = async (event: React.SyntheticEvent, newTabValue: number) => {
         setTabValue(newTabValue);
+        //nuevo
+        try {
+            const response = await fetch(`/api/dashboard/messages/read`, {
+                method: 'PUT',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    sender_id: newTabValue,    // El id del remitente es el id de la pestaña seleccionada
+                    receiver_id: current_id_number  // El id del receptor es el id del usuario actual
+                })
+            });
+    
+            if (!response.ok) {
+                throw new Error("Error al actualizar los mensajes como leídos");
+            }
+        } catch (error) {
+            console.error(error instanceof Error ? error.message : "Error desconocido");
+        }
+        //
     };
 
     const [message, setMessage] = useState<string | ''>('');
@@ -124,7 +144,7 @@ export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: Ch
                     scrollButtons="auto"
                 >
                     {scholars.map(scholar => (
-                        <Tab key={scholar.id} label={scholar.name} value={scholar.id}></Tab>
+                        <Tab key={scholar.id} label={<Badge badgeContent={scholar.unreadCount} color="warning">{scholar.name}</Badge>} value={scholar.id}></Tab>
                     ))}
                 </Tabs>
             </div>
@@ -137,18 +157,18 @@ export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: Ch
                                         {scholarcontent.name}
                                     </p>
                                 </div>
-                                <div className="flex h-4/6 w-full bg-gray-100 pb-4 justify-center overflow-y-auto">
-                                    <div className="flex flex-col w-full h-full md:w-3/6 rounded border border-gray-400 justify-end">
-                                    {messages.map((msg, index) => (
-                                        <div key={index} className={`flex w-full ${msg.sender_id === current_id_number ? 'pr-4 justify-end' : 'pl-4 justify-start'} mb-4`}>
-                                            <div className={`flex-col p-2 rounded-lg max-w-[50%] ${msg.sender_id === current_id_number ? 'bg-gray-300 text-gray-800' : 'bg-orange-500 text-white'}`}>
-                                                <p>{msg.content}</p>
-                                                <span className="text-xs text-gray-600">
-                                                    {dayjs(msg.timestamp).format('DD/MM/YYYY HH:mm')}
-                                                </span>
+                                <div className="flex h-4/6 w-full bg-gray-100 pb-4 justify-center overflow-hidden">
+                                    <div className="flex flex-col w-full h-full md:w-3/6 rounded border border-gray-400 justify-end overflow-y-scroll">
+                                        {messages.map((msg, index) => (
+                                            <div key={index} className={`flex w-full ${msg.sender_id === current_id_number ? 'pr-4 justify-end' : 'pl-4 justify-start'} mb-4`}>
+                                                <div className={`flex-col p-2 rounded-lg max-w-[50%] ${msg.sender_id === current_id_number ? 'bg-gray-300 text-gray-800' : 'bg-orange-500 text-white'}`}>
+                                                    <p>{msg.content}</p>
+                                                    <span className="text-xs text-gray-600">
+                                                        {dayjs(msg.timestamp).format('DD/MM/YYYY HH:mm')}
+                                                    </span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        ))}
                                     </div>
                                 </div>
                                 <div className="flex flex-col w-full bg-gray-100 items-center">  

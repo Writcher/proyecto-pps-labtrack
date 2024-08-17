@@ -1,6 +1,6 @@
 "use client"
 
-import { GetMessages, GetAdmin } from "@/app/lib/definitions";
+import { GetMessages, GetAdminMessages } from "@/app/lib/definitions";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import TextField from "@mui/material/TextField";
@@ -10,6 +10,7 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import dayjs from 'dayjs';
+import Badge from "@mui/material/Badge";
 
 interface ChatMenuProps {
     laboratory_id: number;
@@ -20,15 +21,14 @@ interface ChatMenuProps {
 export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: ChatMenuProps) {
 
     const current_id_number = Number(current_id);
-
-    const [admins, setAdmins] = useState<GetAdmin[]>([]);
+    const [admins, setAdmins] = useState<GetAdminMessages[]>([]);
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await fetch(`/api/dashboard/messages?labid=${encodeURIComponent(laboratory_id)}&typeid=${encodeURIComponent(usertype_id)}`, {
+                const response = await fetch(`/api/dashboard/messages?labid=${encodeURIComponent(laboratory_id)}&typeid=${encodeURIComponent(usertype_id)}&currentid=${encodeURIComponent(current_id_number)}`, {
                     method: 'GET',
                 });
-                const fetchedData = await response.json();
+                const fetchedData: GetAdminMessages[] = await response.json();
                 setAdmins(fetchedData);
             } catch (error) {
                 if (error instanceof Error) {
@@ -39,11 +39,31 @@ export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: Ch
             } 
         }
         fetchData();
-    }, [laboratory_id, usertype_id]);
+    }, [laboratory_id, usertype_id, current_id_number]);
 
     const [tabValue, setTabValue] = React.useState(0);
-    const handleTabChange = (event: React.SyntheticEvent, newTabValue: number) => {
+    const handleTabChange = async (event: React.SyntheticEvent, newTabValue: number) => {
         setTabValue(newTabValue);
+        //nuevo
+        try {
+            const response = await fetch(`/api/dashboard/messages/read`, {
+                method: 'PUT',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    sender_id: newTabValue,    // El id del remitente es el id de la pestaña seleccionada
+                    receiver_id: current_id_number  // El id del receptor es el id del usuario actual
+                })
+            });
+    
+            if (!response.ok) {
+                throw new Error("Error al actualizar los mensajes como leídos");
+            }
+        } catch (error) {
+            console.error(error instanceof Error ? error.message : "Error desconocido");
+        }
+        //
     };
 
     const [message, setMessage] = useState<string | ''>('');
@@ -124,7 +144,7 @@ export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: Ch
                     scrollButtons="auto"
                 >
                     {admins.map(admin => (
-                        <Tab key={admin.id} label={admin.name} value={admin.id}></Tab>
+                        <Tab key={admin.id} label={<Badge badgeContent={admin.unreadCount} color="warning">{admin.name}</Badge>} value={admin.id}></Tab>
                     ))}
                 </Tabs>
             </div>

@@ -18,12 +18,14 @@ export default async function SideNav() {
   const adminType = await getTypeAdmin();
   const scholarType = await getTypeScholar();
   const guestType = await getTypeGuest();
+  const current_id_string = session?.user?.id; 
+  const current_id_number = Number(current_id_string);
 
   let sideNavLinks;
   if (session?.user?.usertype_id === adminType) {
-    sideNavLinks = <SideNavLinksAdmin />;
+    sideNavLinks = <SideNavLinksAdmin current_id_number={current_id_number}/>;
   } else if (session?.user?.usertype_id === scholarType) {
-    sideNavLinks = <SideNavLinksScholar />;
+    sideNavLinks = <SideNavLinksScholar current_id_number={current_id_number}/>;
   } else if (session?.user?.usertype_id === guestType) {
     sideNavLinks = <SideNavLinksGuest />;
   }

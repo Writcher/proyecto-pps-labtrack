@@ -237,6 +237,7 @@ export type GetMessages = {
     sender_id: number;
     receiver_id: number;
     timestamp: Date;
+    is_read: boolean
 }
 
 export type NewMessage = {
@@ -248,4 +249,29 @@ export type NewMessage = {
 export type GetAdmin = {
     id: number;
     name: string;
+}
+
+export type GetScholarMessages = {
+    id: number;
+    name: string;
+    email: string;
+    created_at: Date;
+    dropped_at?: Date;
+    userstatus: string;
+    file: string;
+    dni: string;
+    address?: string;
+    phone?: string;
+    careerlevel: number;
+    usercareer_id: number;
+    usercareer: string;
+    scholarshiptype_id: number;
+    scholarshiptype: string;
+    unreadCount: any;
+}
+
+export type GetAdminMessages = {
+    id: number;
+    name: string;
+    unreadCount: any;
 }
