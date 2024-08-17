@@ -64,6 +64,8 @@ export function SideNavLinksAdmin({ current_id_number }: LinkProps) {
 
       fetchUnreadCount();
       setFetchData(false);
+      const intervalId = setInterval(fetchUnreadCount, 5000);
+      return () => clearInterval(intervalId);
   }, [fetchData]);
 
   const handleLinkClick = () => {
@@ -130,6 +132,8 @@ export function SideNavLinksScholar({ current_id_number }: LinkProps) {
 
     fetchUnreadCount();
     setFetchData(false);
+    const intervalId = setInterval(fetchUnreadCount, 5000);
+    return () => clearInterval(intervalId);
   }, [fetchData]);
 
   const handleLinkClick = () => {
