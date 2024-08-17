@@ -299,7 +299,7 @@ export default function ABMProjectTable({ laboratory_id }: AMBProjectTableProps 
                                                     <div className="flex flex-col md:flex-row gap-8 mt-8">
                                                         <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
                                                             <strong>Fecha de Creación: </strong>
-                                                            {new Date(row.created_at).toLocaleDateString('es-ES', {
+                                                            {new Date(row.created_at).toLocaleDateString('es-AR', {
                                                                 year: 'numeric',
                                                                 month: 'long',
                                                                 day: 'numeric'
@@ -308,7 +308,7 @@ export default function ABMProjectTable({ laboratory_id }: AMBProjectTableProps 
                                                         <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
                                                             <strong>Fecha de Inhabilitación: </strong>
                                                             {row.dropped_at ? 
-                                                                new Date(row.dropped_at).toLocaleDateString('es-ES', {
+                                                                new Date(row.dropped_at).toLocaleDateString('es-AR', {
                                                                     year: 'numeric',
                                                                     month: 'long',
                                                                     day: 'numeric'

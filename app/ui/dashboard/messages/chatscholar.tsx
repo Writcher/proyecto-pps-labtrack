@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
+import dayjs from 'dayjs';
 
 interface ChatMenuProps {
     laboratory_id: number;
@@ -143,7 +144,7 @@ export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: Ch
                                             <div className={`flex-col p-2 rounded-lg max-w-[50%] ${msg.sender_id === current_id_number ? 'bg-gray-300 text-gray-800' : 'bg-orange-500 text-white'}`}>
                                                 <p>{msg.content}</p>
                                                 <span className="text-xs text-gray-600">
-                                                    {new Date(msg.timestamp).toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })} {new Date(msg.timestamp).toLocaleTimeString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', hour: '2-digit', minute: '2-digit' })}
+                                                    {dayjs(msg.timestamp).format('DD/MM/YYYY HH:mm')}
                                                 </span>
                                             </div>
                                         </div>

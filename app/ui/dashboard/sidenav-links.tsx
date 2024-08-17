@@ -14,8 +14,8 @@ const linksadmin = [
     { name: 'Inicio', href: '/dashboard/home', icon: HomeIcon },
     { name: 'Proyectos', href: '/dashboard/projects', icon: WorkIcon },
     { name: 'Inventario', href: '/dashboard/inventory', icon: InventoryIcon },
-    { name: 'Usuarios', href: '/dashboard/usermanagement', icon: GroupIcon },
     { name: 'Mensajes', href: '/dashboard/messages', icon: ChatIcon },
+    { name: 'Usuarios', href: '/dashboard/usermanagement', icon: GroupIcon },
     { name: 'Gestión de Parametros', href: '/dashboard/paramsmanagement', icon: BuildIcon },
     
     //Añadir links segun necesario aca.

@@ -272,7 +272,7 @@ export default function ABMGuestTable({ laboratory_id }: AMBGuestTableProps ) {
                                                     <div className="flex flex-col md:flex-row gap-8 mt-8">
                                                         <div className="text-gray-700 font-medium md:text-[17px]">
                                                             <strong>Valido Desde: </strong>
-                                                            {new Date(row.created_at).toLocaleDateString('es-ES', {
+                                                            {new Date(row.created_at).toLocaleDateString('es-AR', {
                                                                 year: 'numeric',
                                                                 month: 'long',
                                                                 day: 'numeric'
@@ -280,7 +280,7 @@ export default function ABMGuestTable({ laboratory_id }: AMBGuestTableProps ) {
                                                         </div>
                                                         <div className="text-gray-700 font-medium md:text-[17px]">
                                                             <strong>Valido Hasta: </strong>
-                                                            {new Date(row.expires_at).toLocaleDateString('es-ES', {
+                                                            {new Date(row.expires_at).toLocaleDateString('es-AR', {
                                                                 year: 'numeric',
                                                                 month: 'long',
                                                                 day: 'numeric'
