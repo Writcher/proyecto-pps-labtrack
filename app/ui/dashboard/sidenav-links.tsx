@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import { usePathname } from 'next/navigation';//Para ressaltar el link activo.
 import clsx from 'clsx';//Para aplicar estilos condicionalmente. Los dos se usan para resaltar el link activo
@@ -8,12 +8,14 @@ import BuildIcon from '@mui/icons-material/Build';
 import HomeIcon from '@mui/icons-material/Home';
 import WorkIcon from '@mui/icons-material/Work';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import ChatIcon from '@mui/icons-material/Chat';
 
 const linksadmin = [
     { name: 'Inicio', href: '/dashboard/home', icon: HomeIcon },
     { name: 'Proyectos', href: '/dashboard/projects', icon: WorkIcon },
     { name: 'Inventario', href: '/dashboard/inventory', icon: InventoryIcon },
     { name: 'Usuarios', href: '/dashboard/usermanagement', icon: GroupIcon },
+    { name: 'Mensajes', href: '/dashboard/messages', icon: ChatIcon },
     { name: 'Gestión de Parametros', href: '/dashboard/paramsmanagement', icon: BuildIcon },
     
     //Añadir links segun necesario aca.
@@ -21,12 +23,13 @@ const linksadmin = [
 
 const linksscholar = [
   { name: 'Inicio', href: '/dashboard/home', icon: HomeIcon },
+  { name: 'Mensajes', href: '/dashboard/messages', icon: ChatIcon },
   
   //Añadir links segun necesario aca.
 ];
 
 const linksguest = [
-  { name: 'Inicio', href: '/dashboard/home', icon: HomeIcon },
+  { name: 'Inventario', href: '/dashboard/inventory', icon: InventoryIcon },
   
   //Añadir links segun necesario aca.
 ];

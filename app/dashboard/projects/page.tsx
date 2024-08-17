@@ -1,13 +1,22 @@
 import { auth } from "@/app/lib/auth";
 import { redirect } from "next/navigation";
 import ABMProjectTable from "@/app/ui/dashboard/projects/abmprojecttable";
+import { getTypeAdmin } from "@/app/lib/queries/usertype";
 
 export default async function Invitados() {
+    const adminType = await getTypeAdmin();
     const session = await auth();
     if (!session?.user) redirect("/");
-    if (session?.user.usertype_id != 1) {
-        return <div> No sos profesor vos loco, raja de aca</div>
+    if (session?.user.usertype_id != adminType) {
+        return (
+            <div className="flex flex-col text-xl md:text-3xl text-gray-700 text-center font-bold">
+                <p className="mt-16">
+                    Becarios no pueden acceder a esta página.
+                </p>
+            </div>
+        )
     }
+
     const laboratory_id = session?.user?.laboratory_id as number;
     
     return (
