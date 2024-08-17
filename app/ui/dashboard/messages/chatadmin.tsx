@@ -38,7 +38,7 @@ export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: Ch
             } 
         }
         fetchData();
-    }, [laboratory_id]);
+    }, [laboratory_id, usertype_id]);
 
     const [tabValue, setTabValue] = React.useState(0);
     const handleTabChange = (event: React.SyntheticEvent, newTabValue: number) => {
