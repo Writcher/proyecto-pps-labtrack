@@ -18,7 +18,7 @@ export default function DeleteScholarModal({ open, handleClose, id, name }: Dele
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         try {
-            const response = await fetch(`/api/dashboard/usermanagement/scholar/status`, {
+            const response = await fetch(`/api/admin/usermanagement/scholar/status`, {
                 method: 'PUT',
                 headers: {
                     "Content-type": "application/json"

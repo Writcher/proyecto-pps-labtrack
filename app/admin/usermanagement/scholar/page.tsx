@@ -1,6 +1,6 @@
 import Button from "@mui/material/Button";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import ABMScholarTable from "@/app/components/admin/usermanagement/scholar/abmscholartable";
+import ABMScholarTable from "@/app/components/admin/usermanagement/scholar/table";
 import { getUserCareers } from "@/app/lib/queries/usercareer";
 import { getScolarshipTypes } from "@/app/lib/queries/scholarshiptype";
 import { auth } from "@/app/lib/auth";

@@ -10,17 +10,17 @@ import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
 import { MenuItem } from '@mui/material';
-import { GetSupply, Supplystatus, Supplytype } from '@/app/lib/definitions';
+import { Supplystatus, Supplytype } from '@/app/lib/definitions';
 
 interface CreateModalProps {
     open: boolean;
     handleClose: () => void;
     supplytypes: Supplytype[];
     supplystatuses: Supplystatus[];
-    row: GetSupply;
+    laboratory_id: number;
 }
 
-export default function EditSupplyModal({ open, handleClose, supplytypes, supplystatuses, row }: CreateModalProps) {
+export default function CreateSupplyModal({ open, handleClose, supplytypes, supplystatuses, laboratory_id }: CreateModalProps) {
     const [error, setError] = useState("");
 
     // Resetea el error cuando el modal se cierra
@@ -30,40 +30,22 @@ export default function EditSupplyModal({ open, handleClose, supplytypes, supply
         }
     }, [open]);
 
+    const [supplyStatus, setSupplyStatus] = useState<number | ''>('');
+    const handleSupplyStatusChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setSupplyStatus(event.target.value as number);
+    };
+
+    const [supplyType, setSupplyType] = useState<number | ''>('');
+    const handleSupplyTypeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setSupplyType(event.target.value as number);
+    };
+
     const añoInicio = 2008;
     const añoFinal = 2034;
-    const años = Array.from({ length: añoFinal - añoInicio + 1 }, (_, index) => añoInicio + index);
-
-    const [supplyStatus, setSupplyStatus] = useState<number | ''>('');
-    const [supplyType, setSupplyType] = useState<number | ''>('');
+    const años = Array.from({ length: añoFinal - añoInicio + 1 }, (_, index) => añoInicio + index)
     const [year, setYear] = useState<number | ''>('');
-    const [name, setName] = useState<string | ''>('');
-    const [description, setDescription] = useState<string | ''>('');
-    
-    useEffect(() => {
-        if (row) {
-            setSupplyStatus(row.supplystatus_id ?? '');
-            setSupplyType(row.supplytype_id ?? '');
-            setYear(row.year ?? '');
-            setName(row.name ?? '');
-            setDescription(row.description ?? '');
-        }
-    }, [row])
-    
-    const handleSupplyStatusChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setSupplyStatus(event.target.value as number |'');
-    };    
-    const handleSupplyTypeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setSupplyType(event.target.value as number | '');
-    };
     const handleYearChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setYear(event.target.value as number | '');
-    };
-    const handleNameChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setName(event.target.value as string | '');
-    };
-    const handleDescriptionChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setDescription(event.target.value as string | '');
+        setYear(event.target.value as number);
     };
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -80,20 +62,18 @@ export default function EditSupplyModal({ open, handleClose, supplytypes, supply
             const supplystatus_id = supplystatusstring ? parseInt(supplystatusstring as string, 10) : undefined;
             const year = yearstring ? parseInt(yearstring as string, 10) : undefined;
 
-            const id = row.id as number;
-
-            const response = await fetch("/api/dashboard/inventory", {
-                method: 'PUT',
+            const response = await fetch("/api/inventory", {
+                method: 'POST',
                 headers: {
                     "content-type": "application/json"
                 },
                 body: JSON.stringify({
-                    id,
                     name,
                     description,
                     year,
                     supplystatus_id,
                     supplytype_id,
+                    laboratory_id
                 })
             });
 
@@ -134,14 +114,14 @@ export default function EditSupplyModal({ open, handleClose, supplytypes, supply
             <div className='flex flex-col m-2'>
                 <DialogTitle>
                     <div className='text-gray-700 text-center font-medium text-2xl md:text-3xl mb-2'>
-                        Editar Insumo con ID {row?.id}: {row?.name}
+                        Crear nuevo Insumo
                     </div>
                 </DialogTitle>
                 <DialogContent>
                     <div className='flex flex-col w-full items-center justify-center pt-4 gap-4'>
                         <div className='md:flex md:gap-4 w-full'>                    
                             <div className='flex w-full mb-4 md:mb-0 md:w-4/6'>
-                                <TextField id="name" name="name" label="Nombre" helperText="Ingrese Nombre" type="text" variant="outlined" color="warning" fullWidth required value={name} onChange={handleNameChange}/>
+                                <TextField id="name" name="name" label="Nombre" helperText="Ingrese Nombre" type="text" variant="outlined" color="warning" fullWidth required/>
                             </div>                    
                             <div className='flex w-full md:w-2/6'>
                                 <TextField id="year" name="year" label="Año" helperText="Seleccione el Año" type="text" variant="outlined" color="warning" select fullWidth required value={year} onChange={handleYearChange}>
@@ -154,7 +134,7 @@ export default function EditSupplyModal({ open, handleClose, supplytypes, supply
                             </div>
                         </div>
                         <div className='flex w-full'>
-                            <TextField id="description" name="description" label="Descripción" helperText="Ingrese Descripción" type="text" variant="outlined" color="warning" multiline rows={6} inputProps={{ maxLength: 255 }} fullWidth required value={description} onChange={handleDescriptionChange}/>
+                            <TextField id="description" name="description" label="Descripción" helperText="Ingrese Descripción" type="text" variant="outlined" color="warning" multiline rows={6} inputProps={{ maxLength: 255 }} fullWidth required/>
                         </div>
                         <div className='md:flex md:gap-4 w-full'>
                             <div className='flex w-full mb-4 md:mb-0 md:w-3/6'>

@@ -21,7 +21,7 @@ export default function CreateModal({ open, handleClose, table }: CreateModalPro
             const formData = new FormData(event.currentTarget);
             const name = formData.get("name") as string;
 
-            const response = await fetch("/api/dashboard/paramsmanagement", {
+            const response = await fetch("/api/admin/paramsmanagement", {
                 method: 'POST',
                 headers: {
                     "Content-type": "application/json"

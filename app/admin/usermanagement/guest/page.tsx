@@ -2,7 +2,7 @@ import Button from "@mui/material/Button";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { auth } from "@/app/lib/auth";
 import { redirect } from "next/navigation";
-import ABMGuestTable from "@/app/components/admin/usermanagement/guest/abmguesttable";
+import ABMGuestTable from "@/app/components/admin/usermanagement/guest/table";
 
 export default async function Invitados() {
     const session = await auth();

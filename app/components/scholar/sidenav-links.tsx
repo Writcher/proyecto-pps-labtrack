@@ -3,56 +3,48 @@
 import { usePathname } from 'next/navigation';//Para ressaltar el link activo.
 import clsx from 'clsx';//Para aplicar estilos condicionalmente. Los dos se usan para resaltar el link activo
 import Link from 'next/link';
-import GroupIcon from '@mui/icons-material/Group';
-import BuildIcon from '@mui/icons-material/Build';
 import HomeIcon from '@mui/icons-material/Home';
-import WorkIcon from '@mui/icons-material/Work';
-import InventoryIcon from '@mui/icons-material/Inventory';
 import ChatIcon from '@mui/icons-material/Chat';
 import Badge from '@mui/material/Badge';
 import { useEffect, useState } from 'react';
 
-const linksadmin = [
-    { name: 'Inicio', href: '/admin/home', icon: HomeIcon },
-    { name: 'Proyectos', href: '/admin/projects', icon: WorkIcon },
-    { name: 'Mensajes', href: '/admin/messages', icon: ChatIcon },
-    { name: 'Inventario', href: '/admin/inventory', icon: InventoryIcon },
-    { name: 'Usuarios', href: '/admin/usermanagement', icon: GroupIcon },
-    { name: 'Gestión de Parametros', href: '/admin/paramsmanagement', icon: BuildIcon },
-    
-    //Añadir links segun necesario aca.
+const linksscholar = [
+  { name: 'Inicio', href: '/scholar/dashboard', icon: HomeIcon },
+  { name: 'Mensajes', href: '/scholar/messages', icon: ChatIcon },
+  
+  //Añadir links segun necesario aca.
 ];
 
 interface LinkProps {
   current_id_number: number;
 }
 
-export function SideNavLinksAdmin({ current_id_number }: LinkProps) {
+export function SideNavLinksScholar({ current_id_number }: LinkProps) {
   const [unreadCount, setUnreadCount] = useState(0); // Estado local para el conteo de mensajes no leídos
   const pathname = usePathname();
   const [fetchData, setFetchData] = useState(false);
 
   useEffect(() => {
-      async function fetchUnreadCount() {
-          try {
-            const response = await fetch(`/api/admin/messages/unreadcount?currentid=${encodeURIComponent(current_id_number)}`, {
-              method: 'GET',
-            });
-            const data = await response.json();
-            setUnreadCount(data.unreadCount); // Actualizar el estado local
-          } catch (error) {
-            if (error instanceof Error) {
-              console.error(error.message);
-            } else {
-              console.error("Error desconocido, la cagaste");
-            }
-        } 
-      }
+    async function fetchUnreadCount() {
+        try {
+          const response = await fetch(`/api/scholar/messages/unreadcount?currentid=${encodeURIComponent(current_id_number)}`, {
+            method: 'GET',
+          });
+          const data = await response.json();
+          setUnreadCount(data.unreadCount); // Actualizar el estado local
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(error.message);
+          } else {
+            console.error("Error desconocido, la cagaste");
+          }
+      } 
+    }
 
-      fetchUnreadCount();
-      setFetchData(false);
-      const intervalId = setInterval(fetchUnreadCount, 5000);
-      return () => clearInterval(intervalId);
+    fetchUnreadCount();
+    setFetchData(false);
+    const intervalId = setInterval(fetchUnreadCount, 5000);
+    return () => clearInterval(intervalId);
   }, [fetchData, current_id_number]);
 
   const handleLinkClick = () => {
@@ -61,7 +53,7 @@ export function SideNavLinksAdmin({ current_id_number }: LinkProps) {
 
   return (
     <>
-      {linksadmin.map((link) => {
+      {linksscholar.map((link) => {
         const LinkIcon = link.icon;
         const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`); // Verifica si el pathname es igual o comienza con el href seguido de una barra
 

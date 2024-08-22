@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Alert from "@mui/material/Alert";
+import { getTypeAdmin, getTypeGuest, getTypeScholar } from "@/app/lib/queries/usertype";
 
 export default function LoginForm() {
     const [error, setError] = useState("");
@@ -24,7 +25,16 @@ export default function LoginForm() {
             if (result.error) {
                 setError(result.error || "Error desconocido, la cagaste");
             } else {
-                router.push("/admin/dashboard");
+                switch (result.usertype_id) {
+                    case await getTypeScholar():
+                        router.push("/scholar/dashboard");
+                        break;
+                    case await getTypeAdmin():
+                        router.push("/admin/dashboard");
+                        break;
+                    case await getTypeGuest():
+                        router.push("/guest/dashboard");
+                }
             }
         } catch (error) {
             if (error instanceof Error) {

@@ -15,32 +15,28 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import TablePagination from '@mui/material/TablePagination';
 import debounce from "lodash.debounce";
-import CreateScholarModal from "./createscholarmodal";
-import { Scolarshiptype, Usercareer, GetScholar } from "@/app/lib/definitions";
-import DeleteScholarModal from "./deletescholarmodal";
-import EditScholarModal from "./editscholarmodal";
+import { GetProject } from "@/app/lib/definitions";
 
-interface AMBScholarTableProps {
-    usercareers: Usercareer[];
-    scholarships: Scolarshiptype[];
+
+interface AMBProjectTableProps {
     laboratory_id: number;
 }
 
-export default function ABMScholarTable({ usercareers, scholarships, laboratory_id }: AMBScholarTableProps ) {
+export default function ABMProjectTable({ laboratory_id }: AMBProjectTableProps ) {
 
     //busqueda
     const [search, setSearch] = useState("");
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
     };
-
-    const [data, setData] = useState<GetScholar[]>([]);
+    const [data, setData] = useState<GetProject[]>([]);
     async function fetchData(searchTerm: string) {
         try {
-            const response = await fetch(`/api/dashboard/usermanagement/scholar?name=${encodeURIComponent(searchTerm)}&labid=${encodeURIComponent(laboratory_id)}`, {
+            const response = await fetch(`/api/admin/projects?name=${encodeURIComponent(searchTerm)}&labid=${encodeURIComponent(laboratory_id)}`, {
                 method: 'GET',
             });
             const fetchedData = await response.json();
+            console.log(fetchedData.userstatus);
             setData(fetchedData);
         } catch (error) {
             if (error instanceof Error) {
@@ -50,7 +46,6 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
             }
         }
     }
-
     const debouncedFetchData = useCallback(
         debounce((searchTerm: string) => fetchData(searchTerm), 300),
         []
@@ -62,7 +57,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
     };
-
+    
     //paginacion
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -89,7 +84,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
     }, [modalOpenCreate]);
 
     //fila seleccionada
-    const [selectedRow, setSelectedRow] = useState<GetScholar | null>(null);
+    const [selectedRow, setSelectedRow] = useState<GetProject | null>(null);
     const [selectedRowId, setSelectedRowId] = useState<number | null>(null);
     const [selectedRowName, setSelectedRowName] = useState<string | null>(null);       
 
@@ -111,7 +106,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
 
     //edit
     const [modalOpenEdit, setModalOpenEdit] = useState(false);
-    const handleOpenEditModal = (row: GetScholar) => {
+    const handleOpenEditModal = (row: GetProject) => {
         setSelectedRow(row);
         setModalOpenEdit(true);
     }
@@ -134,10 +129,10 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
     const [sortColumn, setSortColumn] = useState<string>('id');
 
-    const sortData = (data: GetScholar[]) => {
+    const sortData = (data: GetProject[]) => {
         return data.slice().sort((a, b) => {
-            const aValue = a[sortColumn as keyof GetScholar] ?? '';
-            const bValue = b[sortColumn as keyof GetScholar] ?? '';
+            const aValue = a[sortColumn as keyof GetProject] ?? '';
+            const bValue = b[sortColumn as keyof GetProject] ?? '';
     
             if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
             if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
@@ -243,14 +238,14 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                                             </div>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <div className={`
+                                            {/*<div className={`
                                                 text-white font-medium text-[15px] md:text-lg py-2 px-2 rounded-lg md:rounded-3xl
-                                                ${row.userstatus === 'Activo' ? 'bg-green-600' : ''}
-                                                ${row.userstatus === 'Inactivo' ? 'bg-red-500' : ''}
-                                                ${row.userstatus === 'Pendiente' ? 'bg-yellow-500' : ''}
+                                                ${row.projectstatus === 'Activo' ? 'bg-green-600' : ''}
+                                                ${row.projectstatus === 'Inactivo' ? 'bg-red-500' : ''}
+                                                ${row.projectstatus === 'Pendiente' ? 'bg-yellow-500' : ''}
                                             `}>
-                                                {row.userstatus}
-                                            </div>
+                                                {row.projectstatus}
+                                            </div>*/}
                                         </TableCell>
                                         <TableCell align="right">
                                             <div className="flex flex-row justify-end gap-5 text-gray-700">
@@ -266,37 +261,37 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                                     {expandedRowId === row.id && (
                                         <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-200">
                                             <TableCell colSpan={4}>
-                                                <div className="flex flex-col m-4 w-full">
+                                                {/*<div className="flex flex-col m-4 w-full">
                                                     <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Beca: </strong>{row.scholarshiptype}
+                                                            <strong>Beca: </strong>
                                                     </div>
                                                     <div className="flex flex-col md:flex-row gap-8 mt-8">
                                                         <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>DNI: </strong>{row.dni}
+                                                            <strong>DNI: </strong>
                                                         </div>
                                                         <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Legajo: </strong>{row.file}
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex flex-col md:flex-row gap-8 mt-8">
-                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Carrera: </strong>{row.usercareer}
-                                                        </div>
-                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Año de Cursado: </strong>{row.careerlevel}
+                                                            <strong>Legajo: </strong>
                                                         </div>
                                                     </div>
                                                     <div className="flex flex-col md:flex-row gap-8 mt-8">
                                                         <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Email: </strong>{row.email}
+                                                            <strong>Carrera: </strong>
                                                         </div>
                                                         <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Telefono: </strong>{row.phone}
+                                                            <strong>Año de Cursado: </strong>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex flex-col md:flex-row gap-8 mt-8">
+                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                            <strong>Email: </strong>
+                                                        </div>
+                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                            <strong>Telefono: </strong>
                                                         </div>
                                                     </div>
                                                     <div className="flex flex-col md:flex-row gap-8 mt-8">
                                                         <div className="text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Dirección: </strong>{row.address}
+                                                            <strong>Dirección: </strong>
                                                         </div>
                                                     </div>
                                                     <div className="flex flex-col md:flex-row gap-8 mt-8">
@@ -319,7 +314,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                                                                 : ''}
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div>*/}
                                             </TableCell>
                                         </TableRow>
                                     )}
@@ -338,7 +333,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </div>
-            <CreateScholarModal
+            {/*<CreateScholarModal
                 open={modalOpenCreate}
                 handleClose={handleCloseCreateModal}
                 usercareers={usercareers}
@@ -357,7 +352,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                 handleClose={handleCloseDeleteModal}
                 id={selectedRowId!}
                 name={selectedRowName!}
-            />
+            />*/}
         </main>
     );
 }

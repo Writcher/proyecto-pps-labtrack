@@ -9,18 +9,19 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
+import { Scolarshiptype, Usercareer, GetScholar } from '@/app/lib/definitions';
 import { Alert, MenuItem } from '@mui/material';
-import { Scolarshiptype, Usercareer } from '@/app/lib/definitions';
 
-interface CreateModalProps {
+interface EditModalProps {
     open: boolean;
     handleClose: () => void;
     usercareers: Usercareer[];
     scholarships: Scolarshiptype[];
-    laboratory_id: number;
+    row: GetScholar;
 }
 
-export default function CreateScholarModal({ open, handleClose, usercareers, scholarships, laboratory_id }: CreateModalProps) {
+export default function EditScholarModal({ open, handleClose, row, usercareers, scholarships }: EditModalProps) {
+    
     const [error, setError] = useState("");
 
     // Resetea el error cuando el modal se cierra
@@ -31,18 +32,50 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
     }, [open]);
 
     const [userCareer, setUserCareer] = useState<number | ''>('');
-    const handleUserCareerChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setUserCareer(event.target.value as number);
-    };
-
     const [scholarship, setScholarship] = useState<number | ''>('');
-    const handleScholarshipChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setScholarship(event.target.value as number);
-    };
-
     const [careerLevel, setCareerLevel] = useState<number | ''>('');
+    const [userName, setUserName] = useState<string | ''>('');
+    const [userDni, setUserDni] = useState<string | ''>('');
+    const [userFile, setUserFile] = useState<string | ''>('');
+    const [userAddress, setUserAddress] = useState<string | ''>('');
+    const [userPhone, setUserPhone] = useState<string | ''>('');
+
+    useEffect(() => {
+        if (row) {
+            setCareerLevel(row.careerlevel ?? '');
+            setScholarship(row.scholarshiptype_id ?? '');
+            setUserCareer(row.usercareer_id ?? '');
+            setUserName(row.name ?? '');
+            setUserDni(row.dni ?? '');
+            setUserFile(row.file ?? '');
+            setUserAddress(row.address ?? '');
+            setUserPhone(row.phone ?? '');
+        }
+    }, [row]);
+
     const handleCareerLevelChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setCareerLevel(event.target.value as number);
+        setCareerLevel(event.target.value as number | '');
+    };
+    const handleScholarshipChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setScholarship(event.target.value as number | '');
+    };
+    const handleUserCareerChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setUserCareer(event.target.value as number | '');
+    };
+    const handleUserNameChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setUserName(event.target.value as string | '');
+    };
+    const handleUserDniChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setUserDni(event.target.value as string | '');
+    };
+    const handleUserFileChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setUserFile(event.target.value as string | '');
+    };
+    const handleUserAddressChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setUserAddress(event.target.value as string | '');
+    };
+    const handleUserPhoneChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+        setUserPhone(event.target.value as string | '');
     };
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -56,85 +89,83 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
             const careerlevelstring = formData.get("careerlevel");
             const address = formData.get("address") as string;
             const phone = formData.get("phone") as string;
-            const email = formData.get("email") as string;
-            const password = formData.get("password") as string;
             const scholarshipstring = formData.get("scholarship"); 
 
+            const id = row.id as number;
             const scholarshiptype_id = scholarshipstring ? parseInt(scholarshipstring as string, 10) : undefined;
             const usercareer_id = careerstring ? parseInt(careerstring as string, 10) : undefined;
             const careerlevel = careerlevelstring ? parseInt(careerlevelstring as string, 10) : undefined;
 
-            const response = await fetch("/api/dashboard/usermanagement/scholar", {
-                method: 'POST',
+            const response = await fetch("/api/admin/usermanagement/scholar", {
+                method: 'PUT',
                 headers: {
-                    "content-type": "application/json"
+                    "Content-type": "application/json"
                 },
                 body: JSON.stringify({
+                    id,
                     name,
                     file,
                     dni,
                     address,
                     phone,
                     careerlevel,
-                    email,
-                    password,
-                    laboratory_id,
                     scholarshiptype_id,
                     usercareer_id,
                 })
-            });
+            })
 
-            if (response.ok) {
+            if (response.status === 200) {
                 handleClose();
             } else {
                 const result = await response.json();
                 setError(result.error || "Error desconocido");
             }
+
         } catch (error) {
             if (error instanceof Error) {
-                setError(error.message);
+                throw new Error(error.message);
             } else {
-                setError("Error desconocido");
+                throw new Error("Error desconocido, la cagaste");
             }
         }
     };
 
-    // Evita que se cierre si se clickea el background
+    //evita que se cierre si sse clickea el background
     const handleDialogClick = (event: React.MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
     };
 
     return (
-        <Dialog 
-            open={open} 
-            onClose={(event, reason) => {
-                if (reason !== 'backdropClick') {
-                    handleClose(); // Solo cierra si la razón no es un click en el fondo
-                }
-            }}
-            PaperProps={{ 
-                component: 'form',
-                onSubmit: handleSubmit,
-                onClick: handleDialogClick // Que no lo cierren clics adentro del modal
-            }} 
-        >
-            <div className='flex flex-col m-2'>
-                <DialogTitle>
-                    <div className='text-gray-700 text-center font-medium text-2xl md:text-3xl mb-2'>
-                        Crear nuevo Becario
-                    </div>
-                </DialogTitle>
-                <DialogContent>
+            <Dialog 
+                open={open} 
+                onClose={(event, reason) => {
+                    if (reason !== 'backdropClick') {
+                        handleClose(); //solo cierra si la rason no es un click en el fondo
+                    }
+                }}
+                PaperProps={{ 
+                    component: 'form',
+                    onSubmit: handleSubmit,
+                    onClick: handleDialogClick //que no lo cieren clicks adentro del modal
+                }} 
+            >
+                <div className='flex flex-col m-2'>
+                    <DialogTitle>
+                        <div className='text-gray-700 text-center font-medium text-2xl md:text-3xl mb-2'>
+                            Editar Becario con ID {row?.id}: {row?.name}
+                        </div>
+                    </DialogTitle>
+                    <DialogContent>
                     <div className='flex flex-col w-full items-center justify-center pt-4 gap-4'>
                         <div className='flex w-full'>
-                            <TextField id="name" name="name" label="Nombre y Apellido" helperText="Ingrese Nombre y Apellido" type="text" variant="outlined" color="warning" fullWidth required/>
+                            <TextField id="name" name="name" label="Nombre y Apellido" helperText="Ingrese Nombre y Apellido" type="text" variant="outlined" color="warning" fullWidth required value={userName} onChange={handleUserNameChange}/>
                         </div>
-                        <div className='md:flex md:gap-4 w-full'>                    
+                        <div className='md:flex md:gap-4 w-full'>
                             <div className='flex w-full mb-4 md:mb-0 md:w-4/5'>
-                                <TextField id="dni" name="dni" label="DNI" helperText="Ingrese DNI" type="text" variant="outlined" color="warning" fullWidth required/>
+                                <TextField id="dni" name="dni" label="DNI" helperText="Ingrese DNI" type="text" variant="outlined" color="warning" fullWidth required value={userDni} onChange={handleUserDniChange}/>
                             </div>                    
                             <div className='flex w-full md:w-2/6'>
-                                <TextField id="file" name="file" label="Legajo" helperText="Ingrese Legajo" type="text" variant="outlined" color="warning" fullWidth required/>
+                                <TextField id="file" name="file" label="Legajo" helperText="Ingrese Legajo" type="text" variant="outlined" color="warning" fullWidth required value={userFile} onChange={handleUserFileChange}/>
                             </div>
                         </div>
                         <div className='md:flex md:gap-4 w-full'>
@@ -164,27 +195,27 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
                             </TextField>
                         </div>
                         <div className='flex w-full'>
-                            <TextField id="address" name="address" label="Dirección" helperText="Ingrese Dirección" type="text" variant="outlined" color="warning" fullWidth required/>
+                            <TextField id="address" name="address" label="Dirección" helperText="Ingrese Dirección" type="text" variant="outlined" color="warning" fullWidth required value={userAddress} onChange={handleUserAddressChange}/>
                         </div>
                         <div className='flex w-full'>
-                            <TextField id="phone" name="phone" label="Teléfono" helperText="Ingrese Teléfono" type="text" variant="outlined" color="warning" fullWidth required/>
+                            <TextField id="phone" name="phone" label="Teléfono" helperText="Ingrese Teléfono" type="text" variant="outlined" color="warning" fullWidth required value={userPhone} onChange={handleUserPhoneChange}/>
                         </div>
-                        <div className='flex w-full'>
+                        {/*<div className='flex w-full'>
                             <TextField id="email" name="email" label="Email" helperText="Ingrese Email" type="email" variant="outlined" color="warning" fullWidth required/>
                         </div>
                         <div className='flex w-full'>
                             <TextField id="password" name="password" label="Contraseña" helperText="Ingrese Contraseña" type="password" variant="outlined" color="warning" fullWidth required/>
-                        </div>
+                        </div>*/}
                         {error && <Alert severity="error">{error}</Alert>}
                     </div>
-                </DialogContent>
-                <DialogActions>
-                    <div className='flex gap-1 md:m-4 md:gap-4'>
-                        <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
-                        <Button variant="contained" size="large" color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
-                    </div>
-                </DialogActions>
-            </div>
-        </Dialog>
+                    </DialogContent>
+                    <DialogActions>
+                        <div className='flex gap-1 md:m-4 md:gap-4'>
+                            <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                            <Button variant="contained" size="large" color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
+                        </div>
+                    </DialogActions>
+                </div>
+            </Dialog>
     );
 }

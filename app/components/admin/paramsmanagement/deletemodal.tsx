@@ -19,7 +19,7 @@ export default function DeleteModal({ open, handleClose, table, id, name }: Dele
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         try {
-            const response = await fetch(`/api/dashboard/paramsmanagement?id=${encodeURIComponent(id)}&table=${encodeURIComponent(table)}`, {
+            const response = await fetch(`/api/admin/paramsmanagement?id=${encodeURIComponent(id)}&table=${encodeURIComponent(table)}`, {
                 method: 'DELETE',
             });
 

@@ -2,21 +2,32 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { FormEvent } from "react";
+import DeleteIcon from '@mui/icons-material/Delete';
 import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
+import Button from '@mui/material/Button';
+import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
+import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
 import TablePagination from '@mui/material/TablePagination';
 import debounce from "lodash.debounce";
-import { GetSupply } from "@/app/lib/definitions";
+import { GetSupply, Supplystatus, Supplytype } from "@/app/lib/definitions";
+import CreateSupplyModal from "./createmodal";
+import EditSupplyModal from "./editmodal";
+import DeleteSupplyModal from "./deletemodal";
 
-interface InventoryTableProps {
+
+interface AMBInventoryTableProps {
     laboratory_id: number;
+    supplytypes: Supplytype[];
+    supplystatuses: Supplystatus[];
 }
 
-export default function InventoryTable({ laboratory_id }: InventoryTableProps ) {
+export default function ABMInventoryTable({ laboratory_id, supplystatuses, supplytypes }: AMBInventoryTableProps ) {
 
     //busqueda
     const [search, setSearch] = useState("");
@@ -27,7 +38,7 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
     const [data, setData] = useState<GetSupply[]>([]);
     async function fetchData(searchTerm: string) {
         try {
-            const response = await fetch(`/api/dashboard/inventory?name=${encodeURIComponent(searchTerm)}&labid=${encodeURIComponent(laboratory_id)}`, {
+            const response = await fetch(`/api/inventory?name=${encodeURIComponent(searchTerm)}&labid=${encodeURIComponent(laboratory_id)}`, {
                 method: 'GET',
             });
             const fetchedData = await response.json();
@@ -65,6 +76,55 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
+
+    //modales
+    //create
+    const [modalOpenCreate, setModalOpenCreate] = useState(false);
+    const handleOpenCreateModal = () => setModalOpenCreate(true);
+    const handleCloseCreateModal = () => {
+        setModalOpenCreate(false);
+    };
+    useEffect(() => {
+        if (!modalOpenCreate) {
+            debouncedFetchData(search);
+        }
+    }, [modalOpenCreate]);
+
+    //fila seleccionada
+    const [selectedRow, setSelectedRow] = useState<GetSupply | null>(null);
+    const [selectedRowId, setSelectedRowId] = useState<number | null>(null);
+    const [selectedRowName, setSelectedRowName] = useState<string | null>(null);       
+
+    //delete
+    const [modalOpenDelete, setModalOpenDelete] = useState(false);
+    const handleOpenDeleteModal = (id: number, name: string) => {
+        setSelectedRowId(id);
+        setSelectedRowName(name);
+        setModalOpenDelete(true);
+    }
+    const handleCloseDeleteModal = () => {
+        setModalOpenDelete(false);
+    };
+    useEffect(() => {
+        if (!modalOpenDelete) {
+            debouncedFetchData(search);
+        }
+    }, [modalOpenDelete]);
+
+    //edit
+    const [modalOpenEdit, setModalOpenEdit] = useState(false);
+    const handleOpenEditModal = (row: GetSupply) => {
+        setSelectedRow(row);
+        setModalOpenEdit(true);
+    }
+    const handleCloseEditModal = () => {
+        setModalOpenEdit(false);
+    }
+    useEffect(()=> {
+        if (!modalOpenEdit) {
+            debouncedFetchData(search);
+        }
+    },[modalOpenEdit]);
 
     //expandir fila
     const [expandedRowId, setExpandedRowId] = useState<number | null>(null);
@@ -117,6 +177,18 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
                 </form>
                 <div className="flex grow" />
                 <div className="flex items-center justify-end">
+                    <div className="h-16">
+                        <Button
+                            variant="contained"
+                            size="large"
+                            color="success"
+                            disableElevation
+                            startIcon={<AddIcon />}
+                            onClick={handleOpenCreateModal}
+                        >
+                            AÑADIR
+                        </Button>
+                    </div>
                 </div>
             </div>
             <div>
@@ -156,12 +228,17 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
                                         Año
                                     </div>
                                 </TableCell>
-                                <TableCell align="right"
+                                <TableCell align="center"
                                     onClick={() => handleSort('inventorystatus')}
                                     style={{ cursor: 'pointer' }}
                                 >
                                     <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'inventorystatus' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
                                         Estado
+                                    </div>
+                                </TableCell>
+                                <TableCell align="right">
+                                    <div className="mr-4 text-gray-700 font-medium md:font-bold text-[17px] md:text-lg">
+                                        Acciones
                                     </div>
                                 </TableCell>
                             </TableRow>
@@ -198,10 +275,20 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
                                                 {row.supplystatus}
                                             </div>
                                         </TableCell>
+                                        <TableCell align="right">
+                                            <div className="flex flex-row justify-end gap-5 text-gray-700">
+                                                <IconButton color="inherit" onClick={() => handleOpenEditModal(row)}>
+                                                    <EditIcon />
+                                                </IconButton>
+                                                <IconButton color="error" onClick={() => handleOpenDeleteModal(row.id, row.name)}>
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            </div>
+                                        </TableCell>
                                     </TableRow>
                                     {expandedRowId === row.id && (
                                         <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-200">
-                                            <TableCell colSpan={5}>
+                                            <TableCell colSpan={6}>
                                                 <div className="flex flex-col m-4 gap-4 w-full">
                                                     <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">
                                                             <strong>Descripción: </strong>{row.description}
@@ -225,6 +312,26 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </div>
+            <CreateSupplyModal
+                open={modalOpenCreate}
+                handleClose={handleCloseCreateModal}
+                supplystatuses={supplystatuses}
+                supplytypes={supplytypes}
+                laboratory_id={laboratory_id}
+            />
+            <EditSupplyModal
+                open={modalOpenEdit}
+                handleClose={handleCloseEditModal}
+                supplystatuses={supplystatuses}
+                supplytypes={supplytypes}
+                row={selectedRow!}
+            />
+            <DeleteSupplyModal
+                open={modalOpenDelete}
+                handleClose={handleCloseDeleteModal}
+                id={selectedRowId!}
+                name={selectedRowName!}
+            />
         </main>
     );
 }

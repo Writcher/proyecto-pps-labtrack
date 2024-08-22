@@ -25,7 +25,7 @@ export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: Ch
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await fetch(`/api/dashboard/messages?labid=${encodeURIComponent(laboratory_id)}&typeid=${encodeURIComponent(usertype_id)}&currentid=${encodeURIComponent(current_id_number)}`, {
+                const response = await fetch(`/api/messages?labid=${encodeURIComponent(laboratory_id)}&typeid=${encodeURIComponent(usertype_id)}&currentid=${encodeURIComponent(current_id_number)}`, {
                     method: 'GET',
                 });
                 const fetchedData: GetScholarMessages[] = await response.json();
@@ -46,7 +46,7 @@ export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: Ch
         setTabValue(newTabValue);
         //nuevo
         try {
-            const response = await fetch(`/api/dashboard/messages/read`, {
+            const response = await fetch(`/api/messages/read`, {
                 method: 'PUT',
                 headers: {
                     "Content-Type": "application/json",
@@ -76,7 +76,7 @@ export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: Ch
     useEffect(() => {
         const fetchMessages = async () => {
             try {
-                const response = await fetch(`/api/dashboard/messages/chat?senderid=${encodeURIComponent(current_id_number)}&receiverid=${encodeURIComponent(tabValue)}`, {
+                const response = await fetch(`/api/messages/chat?senderid=${encodeURIComponent(current_id_number)}&receiverid=${encodeURIComponent(tabValue)}`, {
                     method: 'GET',
                 });
                 const fetchedMessages = await response.json();
@@ -104,7 +104,7 @@ export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: Ch
                 return;
             }
     
-            const response = await fetch("/api/dashboard/messages/chat", {
+            const response = await fetch("/api/messages/chat", {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
@@ -122,7 +122,7 @@ export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: Ch
 
             setMessage('');
 
-            const updatedMessages = await fetch(`/api/dashboard/messages/chat?senderid=${encodeURIComponent(current_id_number)}&receiverid=${encodeURIComponent(tabValue)}`, {
+            const updatedMessages = await fetch(`/api/messages/chat?senderid=${encodeURIComponent(current_id_number)}&receiverid=${encodeURIComponent(tabValue)}`, {
                 method: 'GET',
             }).then(response => response.json());
 

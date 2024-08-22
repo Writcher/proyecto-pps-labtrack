@@ -52,7 +52,7 @@ export default function CreateGuestModal({ open, handleClose, laboratory_id }: C
                 return;
             }
 
-            const response = await fetch("/api/dashboard/usermanagement/guest", {
+            const response = await fetch("/api/admin/usermanagement/guest", {
                 method: 'POST',
                 headers: {
                     "content-type": "application/json"

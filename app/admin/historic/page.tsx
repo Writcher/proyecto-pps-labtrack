@@ -1,6 +1,5 @@
 import { auth } from "@/app/lib/auth";
 import { redirect } from "next/navigation";
-import ABMProjectTable from "@/app/components/admin/projects/table";
 import { getTypeAdmin } from "@/app/lib/queries/usertype";
 
 export default async function Invitados() {
@@ -28,7 +27,7 @@ export default async function Invitados() {
             </div>
             <div className="flex flex-col w-ful items-center justify-center m-4">
                 Todavia no hago esta tabla
-                {/*<ABMProjectTable laboratory_id={laboratory_id}/>*/}
+                {/*<ABMHistorico laboratory_id={laboratory_id}/>*/}
             </div>
         </main>
     );

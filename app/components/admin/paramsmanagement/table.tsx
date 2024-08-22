@@ -36,7 +36,7 @@ export default function ABMTable({ table }: ABMTableProps) {
 
     async function fetchData(searchTerm: string) {
         try {
-            const response = await fetch(`/api/dashboard/paramsmanagement?name=${encodeURIComponent(searchTerm)}&table=${encodeURIComponent(table)}`, {
+            const response = await fetch(`/api/admin/paramsmanagement?name=${encodeURIComponent(searchTerm)}&table=${encodeURIComponent(table)}`, {
                 method: 'GET',
             });
             const fetchedData = await response.json();

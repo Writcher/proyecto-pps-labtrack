@@ -1,7 +1,7 @@
 
 import Link from "next/link";
-import { SideNavLinksAdmin } from "./sidenav-links";
-import { auth } from "@/app/lib/auth";
+import { SideNavLinksScholar } from "./sidenav-links";
+import { auth, signOut } from "@/app/lib/auth";
 import { redirect } from "next/navigation";
 import LabTrackLogoWhite from "../labtrack-logo";
 import Button from "@mui/material/Button";
@@ -9,21 +9,21 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import IconButton from "@mui/material/IconButton";
 import { getLabById } from "@/app/lib/queries/laboratory";
 import { doLogout } from "@/app/actions";
-import { getTypeAdmin } from "@/app/lib/queries/usertype";
+import { getTypeScholar } from "@/app/lib/queries/usertype";
 
 export default async function SideNav() {
   const session = await auth();
   if (!session?.user) redirect("/");
 
-  const adminType = await getTypeAdmin();
+  const scholarType = await getTypeScholar();
   const current_id_string = session?.user?.id; 
   const current_id_number = Number(current_id_string);
 
   let role;
-  if (session?.user?.usertype_id === adminType) {
-    role = "Admin";
+  if (session?.user?.usertype_id === scholarType) {
+    role = "Becario";
   } 
-
+  
   const laboratory_id = session?.user?.laboratory_id;
   const laboratory = await getLabById(laboratory_id); 
 
@@ -37,7 +37,7 @@ export default async function SideNav() {
         </div>
       </Link>
       <div className="flex flex-row grow justify-between md:flex-col gap-2">
-        <SideNavLinksAdmin current_id_number={current_id_number}/>
+        <SideNavLinksScholar current_id_number={current_id_number}/>
         <div className="hidden h-auto w-full grow md:block"/>
         <div className="flex flex-col items-center justify-center w-full md:py-6">
           <p className="flex text-center items-center justify-center text-white font-medium md:justify-start hidden md:block">

@@ -11,23 +11,18 @@ import TableBody from "@mui/material/TableBody";
 import Button from '@mui/material/Button';
 import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
-import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import TablePagination from '@mui/material/TablePagination';
 import debounce from "lodash.debounce";
-import { GetSupply, Supplystatus, Supplytype } from "@/app/lib/definitions";
-import CreateSupplyModal from "./createsupplymodal";
-import EditSupplyModal from "./editsupplymodla";
-import DeleteSupplyModal from "./deletesupplymodal";
+import { GetGuest } from "@/app/lib/definitions";
+import CreateGuestModal from "./createmodal";
+import DeleteGuestModal from "./deletemodal";
 
-
-interface AMBInventoryTableProps {
+interface AMBGuestTableProps {
     laboratory_id: number;
-    supplytypes: Supplytype[];
-    supplystatuses: Supplystatus[];
 }
 
-export default function ABMInventoryTable({ laboratory_id, supplystatuses, supplytypes }: AMBInventoryTableProps ) {
+export default function ABMGuestTable({ laboratory_id }: AMBGuestTableProps ) {
 
     //busqueda
     const [search, setSearch] = useState("");
@@ -35,10 +30,10 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
         event.preventDefault();
     };
 
-    const [data, setData] = useState<GetSupply[]>([]);
+    const [data, setData] = useState<GetGuest[]>([]);
     async function fetchData(searchTerm: string) {
         try {
-            const response = await fetch(`/api/dashboard/inventory?name=${encodeURIComponent(searchTerm)}&labid=${encodeURIComponent(laboratory_id)}`, {
+            const response = await fetch(`/api/admin/usermanagement/guest?name=${encodeURIComponent(searchTerm)}&labid=${encodeURIComponent(laboratory_id)}`, {
                 method: 'GET',
             });
             const fetchedData = await response.json();
@@ -91,7 +86,7 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
     }, [modalOpenCreate]);
 
     //fila seleccionada
-    const [selectedRow, setSelectedRow] = useState<GetSupply | null>(null);
+    const [selectedRow, setSelectedRow] = useState<GetGuest | null>(null);
     const [selectedRowId, setSelectedRowId] = useState<number | null>(null);
     const [selectedRowName, setSelectedRowName] = useState<string | null>(null);       
 
@@ -113,7 +108,7 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
 
     //edit
     const [modalOpenEdit, setModalOpenEdit] = useState(false);
-    const handleOpenEditModal = (row: GetSupply) => {
+    const handleOpenEditModal = (row: GetGuest) => {
         setSelectedRow(row);
         setModalOpenEdit(true);
     }
@@ -136,10 +131,10 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
     const [sortColumn, setSortColumn] = useState<string>('id');
 
-    const sortData = (data: GetSupply[]) => {
+    const sortData = (data: GetGuest[]) => {
         return data.slice().sort((a, b) => {
-            const aValue = a[sortColumn as keyof GetSupply] ?? '';
-            const bValue = b[sortColumn as keyof GetSupply] ?? '';
+            const aValue = a[sortColumn as keyof GetGuest] ?? '';
+            const bValue = b[sortColumn as keyof GetGuest] ?? '';
     
             if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
             if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
@@ -213,31 +208,15 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
                                     </div>
                                 </TableCell>
                                 <TableCell align="center"
-                                    onClick={() => handleSort('inventorytype')}
+                                    onClick={() => handleSort('userstatus')}
                                     style={{ cursor: 'pointer' }}
                                 >
-                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'inventorytype' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
-                                        Tipo
-                                    </div>
-                                </TableCell>
-                                <TableCell align="center"
-                                    onClick={() => handleSort('year')}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'year' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
-                                        Año
-                                    </div>
-                                </TableCell>
-                                <TableCell align="center"
-                                    onClick={() => handleSort('inventorystatus')}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'inventorystatus' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
+                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'userstatus' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
                                         Estado
                                     </div>
                                 </TableCell>
                                 <TableCell align="right">
-                                    <div className="mr-4 text-gray-700 font-medium md:font-bold text-[17px] md:text-lg">
+                                    <div className="mr-5 text-gray-700 font-medium md:font-bold text-lg">
                                         Acciones
                                     </div>
                                 </TableCell>
@@ -261,25 +240,20 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
                                             </div>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <div className="text-gray-700 font-medium text-[15px] md:text-lg">
-                                                {row.supplytype}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            <div className="text-gray-700 font-medium text-[15px] md:text-lg">
-                                                {row.year}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            <div className="text-gray-700 font-medium text-[15px] md:text-lg">
-                                                {row.supplystatus}
+                                            <div className={`
+                                                text-white font-medium text-[15px] md:text-lg py-2 px-2 rounded-lg md:rounded-3xl
+                                                ${row.userstatus === 'Activo' ? 'bg-green-600' : ''}
+                                                ${row.userstatus === 'Expirado' ? 'bg-red-500' : ''}
+                                                ${row.userstatus === 'Pendiente' ? 'bg-yellow-500' : ''}
+                                            `}>
+                                                {row.userstatus}
                                             </div>
                                         </TableCell>
                                         <TableCell align="right">
-                                            <div className="flex flex-row justify-end gap-5 text-gray-700">
-                                                <IconButton color="inherit" onClick={() => handleOpenEditModal(row)}>
+                                            <div className="flex flex-row justify-end mr-10 items-center text-gray-700">
+                                                {/*<IconButton color="inherit" onClick={() => handleOpenEditModal(row)}>
                                                     <EditIcon />
-                                                </IconButton>
+                                                </IconButton>*/}
                                                 <IconButton color="error" onClick={() => handleOpenDeleteModal(row.id, row.name)}>
                                                     <DeleteIcon />
                                                 </IconButton>
@@ -288,10 +262,31 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
                                     </TableRow>
                                     {expandedRowId === row.id && (
                                         <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-200">
-                                            <TableCell colSpan={6}>
-                                                <div className="flex flex-col m-4 gap-4 w-full">
-                                                    <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Descripción: </strong>{row.description}
+                                            <TableCell colSpan={4}>
+                                                <div className="flex flex-col m-4">
+                                                    <div className="flex flex-col md:flex-row gap-8">
+                                                        <div className="text-gray-700 font-medium md:text-[17px]">
+                                                            <strong>Email: </strong>{row.email}
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex flex-col md:flex-row gap-8 mt-8">
+                                                        <div className="text-gray-700 font-medium md:text-[17px]">
+                                                            <strong>Valido Desde: </strong>
+                                                            {new Date(row.created_at).toLocaleDateString('es-AR', {
+                                                                year: 'numeric',
+                                                                month: 'long',
+                                                                day: 'numeric'
+                                                            })}
+                                                        </div>
+                                                        <div className="text-gray-700 font-medium md:text-[17px]">
+                                                            <strong>Valido Hasta: </strong>
+                                                            {new Date(row.expires_at).toLocaleDateString('es-AR', {
+                                                                year: 'numeric',
+                                                                month: 'long',
+                                                                day: 'numeric'
+                                                            })}
+                                                        </div>
+                                                        
                                                     </div>
                                                 </div>
                                             </TableCell>
@@ -312,26 +307,24 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </div>
-            <CreateSupplyModal
+            <CreateGuestModal
                 open={modalOpenCreate}
                 handleClose={handleCloseCreateModal}
-                supplystatuses={supplystatuses}
-                supplytypes={supplytypes}
                 laboratory_id={laboratory_id}
             />
-            <EditSupplyModal
+            {/*<EditGuestModal
                 open={modalOpenEdit}
                 handleClose={handleCloseEditModal}
-                supplystatuses={supplystatuses}
-                supplytypes={supplytypes}
+                usercareers={usercareers}
+                scholarships={scholarships}
                 row={selectedRow!}
-            />
-            <DeleteSupplyModal
+            />*/}
+            <DeleteGuestModal
                 open={modalOpenDelete}
                 handleClose={handleCloseDeleteModal}
                 id={selectedRowId!}
                 name={selectedRowName!}
             />
         </main>
-    );
+    )
 }

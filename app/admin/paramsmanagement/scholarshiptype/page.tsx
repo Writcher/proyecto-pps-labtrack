@@ -1,4 +1,4 @@
-import ABMTable from "@/app/components/admin/paramsmanagement/abmtable";
+import ABMTable from "@/app/components/admin/paramsmanagement/table";
 import Button from "@mui/material/Button";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { redirect } from "next/navigation";

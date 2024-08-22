@@ -12,11 +12,12 @@ export default async function ABMinicio() {
         return (
             <div className="flex flex-col text-xl md:text-3xl text-gray-700 text-center font-bold">
                 <p className="mt-16">
-                    Becarios no pueden acceder a esta página.
+                    404 Página no Encontrada
                 </p>
             </div>
         )
     }
+    
     return (
         <main className="flex flex-col w-full">
             <div className="flex flex-col items-center justify-center mb-4 md:gap-12">
