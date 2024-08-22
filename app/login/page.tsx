@@ -3,9 +3,13 @@ import LabTrackLogoWhite, { LabTrackLogoBlack } from "../components/labtrack-log
 import LoginForm from "../components/login/login-form";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import Alert from "@mui/material/Alert";
+import { getTypeAdmin, getTypeGuest, getTypeScholar } from "../lib/queries/usertype";
 
-export default function Login({searchParams}: {searchParams: {verified: string}}) {
-    
+export default async function Login({searchParams}: {searchParams: {verified: string}}) {
+    const adminType = await getTypeAdmin();
+    const scholarType = await getTypeScholar();
+    const guestType = await getTypeGuest();
+
     const isVerified = searchParams.verified;
     let verifiedaccount
     if (isVerified === "true") {
@@ -42,7 +46,7 @@ export default function Login({searchParams}: {searchParams: {verified: string}}
                     </p>
                 </div>
                 <div className="flex w-screen md:w-full justify-center">
-                    <LoginForm />
+                    <LoginForm admin={adminType} guest={guestType} scholar={scholarType}/>
                 </div>
                 <div className="flex">
                     <Button variant="text" href="/" size="large" color="warning" disableElevation startIcon={<KeyboardArrowLeftIcon />}> ATRAS </Button>

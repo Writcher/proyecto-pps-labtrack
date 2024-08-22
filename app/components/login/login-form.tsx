@@ -9,7 +9,13 @@ import TextField from "@mui/material/TextField";
 import Alert from "@mui/material/Alert";
 import { getTypeAdmin, getTypeGuest, getTypeScholar } from "@/app/lib/queries/usertype";
 
-export default function LoginForm() {
+interface LoginFormProps {
+    admin: number;
+    guest: number;
+    scholar: number;
+}
+
+export default function LoginForm({ admin, guest, scholar }: LoginFormProps ) {
     const [error, setError] = useState("");
     const router = useRouter();
     
@@ -26,13 +32,13 @@ export default function LoginForm() {
                 setError(result.error || "Error desconocido, la cagaste");
             } else {
                 switch (result.usertype_id) {
-                    case await getTypeScholar():
+                    case scholar:
                         router.push("/scholar/dashboard");
                         break;
-                    case await getTypeAdmin():
+                    case admin:
                         router.push("/admin/dashboard");
                         break;
-                    case await getTypeGuest():
+                    case guest:
                         router.push("/guest/dashboard");
                 }
             }

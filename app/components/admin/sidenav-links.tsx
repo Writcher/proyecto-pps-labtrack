@@ -35,7 +35,7 @@ export function SideNavLinksAdmin({ current_id_number }: LinkProps) {
   useEffect(() => {
       async function fetchUnreadCount() {
           try {
-            const response = await fetch(`/api/admin/messages/unreadcount?currentid=${encodeURIComponent(current_id_number)}`, {
+            const response = await fetch(`/api/messages/unreadcount?currentid=${encodeURIComponent(current_id_number)}`, {
               method: 'GET',
             });
             const data = await response.json();
