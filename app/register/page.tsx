@@ -1,7 +1,7 @@
-import RegisterForm from "../ui/register-form";
+import RegisterForm from "../components/register/register-form";
 import { getLabs } from "../lib/queries/laboratory";
 import Button from "@mui/material/Button";
-import LabTrackLogoWhite, { LabTrackLogoBlack } from "../ui/labtrack-logo";
+import LabTrackLogoWhite, { LabTrackLogoBlack } from "../components/labtrack-logo";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 
 export default async function Register() {

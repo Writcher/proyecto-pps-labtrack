@@ -1,6 +1,6 @@
 import Button from "@mui/material/Button";
-import LabTrackLogoWhite, { LabTrackLogoBlack } from "../ui/labtrack-logo";
-import LoginForm from "../ui/login-form";
+import LabTrackLogoWhite, { LabTrackLogoBlack } from "../components/labtrack-logo";
+import LoginForm from "../components/login/login-form";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import Alert from "@mui/material/Alert";
 

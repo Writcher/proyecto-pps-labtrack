@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Button from '@mui/material/Button';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import LabTrackLogoWhite from "./ui/labtrack-logo";
+import LabTrackLogoWhite from "./components/labtrack-logo";
 
 export default function Principal() {
   return (
