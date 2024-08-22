@@ -9,14 +9,19 @@ export async function getTypeScholar() {
             FROM "usertype"
             WHERE name ILIKE 'Becario'
         `;
-        const response = result.rows;
+        let response = result.rows;
         if (response.length > 0) {
-            return response[0].id;;
-        } else {
-            throw new Error("No se encontró el tipo 'Becario'");
-        }
+            return response[0].id;
+        } 
+        const insertResult = await client.sql`
+            INSERT INTO "usertype" (name)
+            VALUES ('Becario')
+            RETURNING id
+        `;
+        response = insertResult.rows;
+        return response[0].id;
     } catch (error) {
-        console.error("Error al obtener el tipo 'Becario':", error);
+        console.error("Error al obtener o crear el tipo 'Becario':", error);
         throw error;
     }
 }
@@ -28,14 +33,19 @@ export async function getTypeAdmin() {
             FROM "usertype"
             WHERE name ILIKE 'Admin'
         `;
-        const response = result.rows;
+        let response = result.rows;
         if (response.length > 0) {
-            return response[0].id;;
-        } else {
-            throw new Error("No se encontró el tipo 'Admin'");
-        }
+            return response[0].id;
+        } 
+        const insertResult = await client.sql`
+            INSERT INTO "usertype" (name)
+            VALUES ('Admin')
+            RETURNING id
+        `;
+        response = insertResult.rows;
+        return response[0].id;
     } catch (error) {
-        console.error("Error al obtener el tipo 'Admin':", error);
+        console.error("Error al obtener o crear el tipo 'Admin':", error);
         throw error;
     }
 }
@@ -47,14 +57,19 @@ export async function getTypeGuest() {
             FROM "usertype"
             WHERE name ILIKE 'Invitado'
         `;
-        const response = result.rows;
+        let response = result.rows;
         if (response.length > 0) {
-            return response[0].id;;
-        } else {
-            throw new Error("No se encontró el tipo 'Invitado'");
-        }
+            return response[0].id;
+        } 
+        const insertResult = await client.sql`
+            INSERT INTO "usertype" (name)
+            VALUES ('Invitado')
+            RETURNING id
+        `;
+        response = insertResult.rows;
+        return response[0].id;
     } catch (error) {
-        console.error("Error al obtener el tipo 'Invitado':", error);
+        console.error("Error al obtener o crear el tipo 'Invitado':", error);
         throw error;
     }
 }
