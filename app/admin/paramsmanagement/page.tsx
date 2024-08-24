@@ -17,13 +17,13 @@ export default async function ABMinicio() {
                 </div>
                 <div className="flex flex-col m-6 md:m-12"/>
                 <div className="flex flex-col gap-5 md:w-2/6">
-                    <Button variant="outlined" href="/dashboard/paramsmanagement/projecttype" size="large" color="warning" disableElevation fullWidth>ABM Tipo de Proyecto</Button>
-                    <Button variant="outlined" href="/dashboard/paramsmanagement/projectstatus" size="large" color="warning" disableElevation fullWidth>ABM Estado de Proyecto</Button>
-                    <Button variant="outlined" href="/dashboard/paramsmanagement/grade" size="large" color="warning" disableElevation fullWidth>ABM Calificación</Button>
-                    <Button variant="outlined" href="/dashboard/paramsmanagement/supplytype" size="large" color="warning" disableElevation fullWidth>ABM Tipo de Insumo</Button>
-                    <Button variant="outlined" href="/dashboard/paramsmanagement/supplystatus" size="large" color="warning" disableElevation fullWidth>ABM Estado de Insumo</Button>
-                    <Button variant="outlined" href="/dashboard/paramsmanagement/scholarshiptype" size="large" color="warning" disableElevation fullWidth>ABM Tipo de Beca</Button>
-                    <Button variant="outlined" href="/dashboard/paramsmanagement/usercareer" size="large" color="warning" disableElevation fullWidth>ABM Carrera</Button>
+                    <Button variant="outlined" href="/admin/paramsmanagement/projecttype" size="large" color="warning" disableElevation fullWidth>ABM Tipo de Proyecto</Button>
+                    <Button variant="outlined" href="/admin/paramsmanagement/projectstatus" size="large" color="warning" disableElevation fullWidth>ABM Estado de Proyecto</Button>
+                    <Button variant="outlined" href="/admin/paramsmanagement/grade" size="large" color="warning" disableElevation fullWidth>ABM Calificación</Button>
+                    <Button variant="outlined" href="/admin/paramsmanagement/supplytype" size="large" color="warning" disableElevation fullWidth>ABM Tipo de Insumo</Button>
+                    <Button variant="outlined" href="/admin/paramsmanagement/supplystatus" size="large" color="warning" disableElevation fullWidth>ABM Estado de Insumo</Button>
+                    <Button variant="outlined" href="/admin/paramsmanagement/scholarshiptype" size="large" color="warning" disableElevation fullWidth>ABM Tipo de Beca</Button>
+                    <Button variant="outlined" href="/admin/paramsmanagement/usercareer" size="large" color="warning" disableElevation fullWidth>ABM Carrera</Button>
                 </div>
             </div>
         </main>

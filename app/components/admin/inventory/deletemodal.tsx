@@ -54,9 +54,9 @@ export default function DeleteSupplyModal({ open, handleClose, id, name }: Delet
                     onClick: handleDialogClick //que no lo cieren clicks adentro del modal
                 }} 
             >
-                <div className='flex flex-col m-2'>
+                <div className='flex flex-col m-2 md:w-[500px]'>
                     <DialogTitle>
-                        <div className='text-gray-700 text-center font-medium text-2xl md:text-3xl mb-2'>
+                        <div className='text-gray-700 items-center font-medium text-2xl md:text-3xl mb-2'>
                             ¿Eliminar {name} del inventario?
                         </div>
                     </DialogTitle>
@@ -68,9 +68,17 @@ export default function DeleteSupplyModal({ open, handleClose, id, name }: Delet
                         </div>
                     </DialogContent>
                     <DialogActions>
-                        <div className='flex gap-1 md:m-4 md:gap-4'>
-                            <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
-                            <Button variant="contained" size="large" color="success" disableElevation endIcon={<DeleteForeverIcon />} type="submit">BORRAR</Button>
+                        <div className='flex flex-row m-4 hidden md:block'>
+                            <div className='flex flex-row gap-4'>
+                                <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                                <Button variant="contained" size="large" color="success" disableElevation endIcon={<DeleteForeverIcon />} type="submit">BORRAR</Button>
+                            </div>
+                        </div>
+                        <div className='flex flex-row m-3 block md:hidden'>
+                            <div className='flex flex-row justify-center gap-4'>
+                                <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                                <Button variant="contained"  color="success" disableElevation endIcon={<DeleteForeverIcon />} type="submit">BORRAR</Button>
+                            </div>
                         </div>
                     </DialogActions>
                 </div>

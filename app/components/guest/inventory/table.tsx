@@ -42,6 +42,7 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
         }
     }
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedFetchData = useCallback(
         debounce((searchTerm: string) => fetchData(searchTerm), 300),
         []
@@ -56,7 +57,7 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
 
     //paginacion
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const paginatedItems = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setPage(newPage);
@@ -90,6 +91,7 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
     useEffect(() => {
         const sortedData = sortData(data);
         setData(sortedData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sortColumn, sortDirection]);
 
     const handleSort = (column: string) => {
@@ -99,14 +101,13 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
     };
 
     return (
-        <main className="flex flex-col gap-6 mt-12 w-full md:w-5/6">
-            <div className="flex flex-row w-full">
-                <form className="flew items-center justify-start w-2/5" onSubmit={handleSubmit}>
+        <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
+            <div className="flex flex-row w-full mb-4">
+                <form className="flew items-center justify-start w-2/6" onSubmit={handleSubmit}>
                     <TextField 
                         id="search"
                         name="search"
-                        label="Buscar"
-                        helperText="Buscar por Nombre"
+                        label="Buscar por Nombre"
                         type="search"
                         variant="outlined"
                         color="warning"
@@ -119,7 +120,7 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
                 <div className="flex items-center justify-end">
                 </div>
             </div>
-            <div>
+            <div className="flex flex-col overflow-y-auto h-full">
                 <TableContainer>
                     <Table stickyHeader>
                         <TableBody>
@@ -171,38 +172,38 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
                                 <React.Fragment key={row.id}>
                                     <TableRow 
                                         onClick={() => toggleRowExpansion(row.id)}
-                                        className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-200' : ''}`}
+                                        className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-100' : ''}`}
                                     >
-                                        <TableCell align="left">
+                                        <TableCell align="left" size="small">
                                             <div className="text-gray-700 font-medium text-[15px] md:text-lg">
                                                 {row.id}
                                             </div>
                                         </TableCell>
-                                        <TableCell align="center">
+                                        <TableCell align="center" size="small">
                                             <div className="text-gray-700 font-medium text-[15px] md:text-lg">
                                                 {row.name}
                                             </div>
                                         </TableCell>
-                                        <TableCell align="center">
+                                        <TableCell align="center" size="small">
                                             <div className="text-gray-700 font-medium text-[15px] md:text-lg">
                                                 {row.supplytype}
                                             </div>
                                         </TableCell>
-                                        <TableCell align="center">
+                                        <TableCell align="center" size="small">
                                             <div className="text-gray-700 font-medium text-[15px] md:text-lg">
                                                 {row.year}
                                             </div>
                                         </TableCell>
-                                        <TableCell align="center">
+                                        <TableCell align="center" size="small">
                                             <div className="text-gray-700 font-medium text-[15px] md:text-lg">
                                                 {row.supplystatus}
                                             </div>
                                         </TableCell>
                                     </TableRow>
                                     {expandedRowId === row.id && (
-                                        <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-200">
+                                        <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-100">
                                             <TableCell colSpan={5}>
-                                                <div className="flex flex-col m-4 gap-4 w-full">
+                                                <div className="flex flex-col w-full">
                                                     <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">
                                                             <strong>Descripción: </strong>{row.description}
                                                     </div>
@@ -212,18 +213,25 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
                                     )}
                                 </React.Fragment>
                             ))}
+                            {Array.from({ length: rowsPerPage - paginatedItems.length }).map((_, index) => (
+                                <TableRow key={`empty-row-${index}`}>
+                                    <TableCell colSpan={6} />
+                                </TableRow>
+                            ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[5, 10]}
-                    component="div"
-                    count={data.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
+                <div className="flex justify-end items-end grow overflow-x-hide">
+                    <TablePagination
+                        rowsPerPageOptions={[5, 10, 15, 20]}
+                        component="div"
+                        count={data.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                </div>
             </div>
         </main>
     );

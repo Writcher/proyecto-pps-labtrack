@@ -24,3 +24,5 @@ export const PUT = async (request: Request) => {
         return new NextResponse("Error al editar usuario", { status: 500 });
     }
 };
+
+//añadir para revisar si el becario esta en algun proyecto antes de deshabilitar

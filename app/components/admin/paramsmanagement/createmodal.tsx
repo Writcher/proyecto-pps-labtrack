@@ -7,6 +7,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
+import { IconButton } from '@mui/material';
 
 interface CreateModalProps {
     open: boolean;
@@ -64,9 +65,9 @@ export default function CreateModal({ open, handleClose, table }: CreateModalPro
                     onClick: handleDialogClick //que no lo cieren clicks adentro del modal
                 }}
             >
-                <div className='flex flex-col m-2'>
+                <div className='flex flex-col m-2 md:w-[500px]'>
                     <DialogTitle>
-                        <div className='text-gray-700 text-center font-medium text-2xl md:text-3xl mb-2'>
+                        <div className='text-gray-700 items-center font-medium text-2xl md:text-3xl mb-2'>
                             Crear nuev  
                             {(() => {
                                 switch (table) {
@@ -96,9 +97,17 @@ export default function CreateModal({ open, handleClose, table }: CreateModalPro
                         </div>
                     </DialogContent>
                     <DialogActions>
-                        <div className='flex gap-1 md:m-4 md:gap-4'>
-                            <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
-                            <Button variant="contained" size="large" color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
+                        <div className='flex flex-row m-4 hidden md:block'>
+                            <div className='flex flex-row gap-4'>
+                                <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                                <Button variant="contained" size="large" color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
+                            </div>
+                        </div>
+                        <div className='flex flex-row m-3 block md:hidden'>
+                            <div className='flex flex-row justify-center gap-1'>
+                            <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                            <Button variant="contained"  color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
+                            </div>
                         </div>
                     </DialogActions>
                 </div>

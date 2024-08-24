@@ -9,14 +9,16 @@ export default async function Invitados() {
     const laboratory_id = session?.user?.laboratory_id as number;
 
     return (
-        <main className="flex flex-col w-full">
-            <div className="flex flex-col text-xl md:text-3xl text-gray-700 text-center font-bold">
-                <p className="mt-16">
+        <main className="flex flex-col w-full h-full">
+            <div className="flex flex-col mt-10 text-xl md:text-3xl text-gray-700 text-center font-bold">
+                <p className="">
                     Inventario
                 </p>
             </div>
-            <div className="flex flex-col w-ful items-center justify-center m-4">
-                <InventoryTable laboratory_id={laboratory_id}/>
+            <div className="flex flex-col min-h-[80%] max-h-[80%] mt-10 md:px-10 items-center justify-center">
+                <InventoryTable 
+                    laboratory_id={laboratory_id} 
+                />
             </div>
         </main>
     );

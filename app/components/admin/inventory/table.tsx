@@ -53,6 +53,7 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
         }
     }
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedFetchData = useCallback(
         debounce((searchTerm: string) => fetchData(searchTerm), 300),
         []
@@ -67,7 +68,7 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
 
     //paginacion
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const paginatedItems = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setPage(newPage);
@@ -88,7 +89,7 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
         if (!modalOpenCreate) {
             debouncedFetchData(search);
         }
-    }, [modalOpenCreate]);
+    }, [debouncedFetchData, modalOpenCreate, search]);
 
     //fila seleccionada
     const [selectedRow, setSelectedRow] = useState<GetSupply | null>(null);
@@ -109,7 +110,7 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
         if (!modalOpenDelete) {
             debouncedFetchData(search);
         }
-    }, [modalOpenDelete]);
+    }, [debouncedFetchData, modalOpenDelete, search]);
 
     //edit
     const [modalOpenEdit, setModalOpenEdit] = useState(false);
@@ -124,7 +125,7 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
         if (!modalOpenEdit) {
             debouncedFetchData(search);
         }
-    },[modalOpenEdit]);
+    },[debouncedFetchData, modalOpenEdit, search]);
 
     //expandir fila
     const [expandedRowId, setExpandedRowId] = useState<number | null>(null);
@@ -150,6 +151,7 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
     useEffect(() => {
         const sortedData = sortData(data);
         setData(sortedData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sortColumn, sortDirection]);
 
     const handleSort = (column: string) => {
@@ -159,14 +161,13 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
     };
 
     return (
-        <main className="flex flex-col gap-6 mt-12 w-full md:w-5/6">
-            <div className="flex flex-row w-full">
-                <form className="flew items-center justify-start w-2/5" onSubmit={handleSubmit}>
+        <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
+            <div className="flex flex-row w-full mb-4">
+                <form className="flew items-center justify-start w-2/6" onSubmit={handleSubmit}>
                     <TextField 
                         id="search"
                         name="search"
-                        label="Buscar"
-                        helperText="Buscar por Nombre"
+                        label="Buscar por Nombre"
                         type="search"
                         variant="outlined"
                         color="warning"
@@ -176,22 +177,18 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
                     />
                 </form>
                 <div className="flex grow" />
-                <div className="flex items-center justify-end">
-                    <div className="h-16">
-                        <Button
-                            variant="contained"
-                            size="large"
-                            color="success"
-                            disableElevation
-                            startIcon={<AddIcon />}
-                            onClick={handleOpenCreateModal}
-                        >
-                            AÑADIR
-                        </Button>
-                    </div>
-                </div>
+                <Button
+                    variant="contained"
+                    size="large"
+                    color="success"
+                    disableElevation
+                    startIcon={<AddIcon />}
+                    onClick={handleOpenCreateModal}
+                >
+                    AÑADIR
+                </Button>
             </div>
-            <div>
+            <div className="flex flex-col overflow-y-auto h-full">
                 <TableContainer>
                     <Table stickyHeader>
                         <TableBody>
@@ -248,34 +245,34 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
                                 <React.Fragment key={row.id}>
                                     <TableRow 
                                         onClick={() => toggleRowExpansion(row.id)}
-                                        className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-200' : ''}`}
+                                        className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-100' : ''}`}
                                     >
-                                        <TableCell align="left">
+                                        <TableCell align="left" size="small">
                                             <div className="text-gray-700 font-medium text-[15px] md:text-lg">
                                                 {row.id}
                                             </div>
                                         </TableCell>
-                                        <TableCell align="center">
+                                        <TableCell align="center" size="small">
                                             <div className="text-gray-700 font-medium text-[15px] md:text-lg">
                                                 {row.name}
                                             </div>
                                         </TableCell>
-                                        <TableCell align="center">
+                                        <TableCell align="center" size="small">
                                             <div className="text-gray-700 font-medium text-[15px] md:text-lg">
                                                 {row.supplytype}
                                             </div>
                                         </TableCell>
-                                        <TableCell align="center">
+                                        <TableCell align="center" size="small">
                                             <div className="text-gray-700 font-medium text-[15px] md:text-lg">
                                                 {row.year}
                                             </div>
                                         </TableCell>
-                                        <TableCell align="center">
+                                        <TableCell align="center" size="small">
                                             <div className="text-gray-700 font-medium text-[15px] md:text-lg">
                                                 {row.supplystatus}
                                             </div>
                                         </TableCell>
-                                        <TableCell align="right">
+                                        <TableCell align="right" size="small">
                                             <div className="flex flex-row justify-end gap-5 text-gray-700">
                                                 <IconButton color="inherit" onClick={() => handleOpenEditModal(row)}>
                                                     <EditIcon />
@@ -287,9 +284,9 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
                                         </TableCell>
                                     </TableRow>
                                     {expandedRowId === row.id && (
-                                        <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-200">
+                                        <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-100">
                                             <TableCell colSpan={6}>
-                                                <div className="flex flex-col m-4 gap-4 w-full">
+                                                <div className="flex flex-col w-full">
                                                     <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">
                                                             <strong>Descripción: </strong>{row.description}
                                                     </div>
@@ -298,19 +295,26 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
                                         </TableRow>
                                     )}
                                 </React.Fragment>
+                            ))}                            
+                            {Array.from({ length: rowsPerPage - paginatedItems.length }).map((_, index) => (
+                                <TableRow key={`empty-row-${index}`}>
+                                    <TableCell colSpan={6} />
+                                </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[5, 10]}
-                    component="div"
-                    count={data.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
+                <div className="flex justify-end items-end grow overflow-x-hide">
+                    <TablePagination
+                        rowsPerPageOptions={[5, 10, 15, 20]}
+                        component="div"
+                        count={data.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                </div>
             </div>
             <CreateSupplyModal
                 open={modalOpenCreate}

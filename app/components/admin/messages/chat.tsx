@@ -150,41 +150,47 @@ export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: Ch
             </div>
             {scholars.map(scholarcontent => (
                 tabValue === scholarcontent.id && (
-                    <div key={scholarcontent.id} className="flex flex-col h-full m-6 md:m-16 gap-6 items-center overflow-y-auto">
-                        <div className="flex flex-col w-full min-h-[85%] md:w-5/6 overflow-y-auto rounded border border-gray-400 justify-end">
-                            {messages.map((msg, index) => (
-                                <div key={index} className={`flex w-full ${msg.sender_id === current_id_number ? 'pr-4 justify-end' : 'pl-4 justify-start'} mb-2`}>
-                                    <div className={`flex-col p-2 rounded-lg max-w-[50%] ${msg.sender_id === current_id_number ? 'bg-gray-300 text-gray-800' : 'bg-orange-500 text-white'}`}>
-                                        <p>{msg.content}</p>
-                                        <span className="text-xs text-gray-600">
-                                            {dayjs(msg.timestamp).format('DD/MM/YYYY HH:mm')}
-                                        </span>
-                                    </div>
-                                </div>
-                            ))}
+                    <>
+                        <div className="flex flex-col mt-10 text-xl md:text-3xl text-gray-700 text-center font-bold">
+                            <p className="">
+                                {scholarcontent.name}
+                            </p>
                         </div>
-                        <form className="flex w-full md:w-5/6" onSubmit={handleFormSubmit}>
-                            <TextField 
-                                label="Mensaje"
-                                id="content"
-                                name="content"
-                                type="text"
-                                variant="outlined"
-                                color="warning"
-                                multiline
-                                rows={2}
-                                inputProps={{ maxLength: 255 }}
-                                fullWidth
-                                value={message}
-                                onChange={handleMessageChange}
-                                InputProps={{
-                                    endAdornment: (
-                                        <InputAdornment position="end"><IconButton color="success" type="submit"><KeyboardArrowRightIcon /></IconButton></InputAdornment>
-                                    ),
-                                }}
-                            />
-                        </form>    
-                    </div>
+                        <div key={scholarcontent.id} className="flex flex-col h-full m-6 md:m-10 gap-6 items-center overflow-y-auto">
+                            <div className="flex flex-col w-full min-h-[85%] md:w-5/6 overflow-y-auto rounded border border-gray-400 justify-end">
+                                {messages.map((msg, index) => (
+                                    <div key={index} className={`flex w-full ${msg.sender_id === current_id_number ? 'pr-4 justify-end' : 'pl-4 justify-start'} mb-2`}>
+                                        <div className={`flex-col p-2 rounded-lg max-w-[50%] ${msg.sender_id === current_id_number ? 'bg-gray-300 text-gray-800' : 'bg-orange-500 text-white'}`}>
+                                            <p>{msg.content}</p>
+                                            <span className="text-xs text-gray-600">
+                                                {dayjs(msg.timestamp).format('DD/MM/YYYY HH:mm')}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <form className="flex w-full md:w-5/6" onSubmit={handleFormSubmit}>
+                                <TextField
+                                    label="Mensaje"
+                                    id="content"
+                                    name="content"
+                                    type="text"
+                                    variant="outlined"
+                                    color="warning"
+                                    multiline
+                                    rows={2}
+                                    inputProps={{ maxLength: 255 }}
+                                    fullWidth
+                                    value={message}
+                                    onChange={handleMessageChange}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end"><IconButton color="success" type="submit"><KeyboardArrowRightIcon /></IconButton></InputAdornment>
+                                        ),
+                                    }} />
+                            </form>
+                        </div>
+                    </>
                 )
             ))}
         </main>

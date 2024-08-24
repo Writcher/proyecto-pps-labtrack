@@ -111,9 +111,9 @@ export default function CreateSupplyModal({ open, handleClose, supplytypes, supp
                 onClick: handleDialogClick // Que no lo cierren clics adentro del modal
             }} 
         >
-            <div className='flex flex-col m-2'>
+            <div className='flex flex-col m-2 md:w-[500px]'>
                 <DialogTitle>
-                    <div className='text-gray-700 text-center font-medium text-2xl md:text-3xl mb-2'>
+                    <div className='text-gray-700 items-center font-medium text-2xl md:text-3xl mb-2'>
                         Crear nuevo Insumo
                     </div>
                 </DialogTitle>
@@ -155,9 +155,17 @@ export default function CreateSupplyModal({ open, handleClose, supplytypes, supp
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <div className='flex gap-1 md:m-4 md:gap-4'>
-                        <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
-                        <Button variant="contained" size="large" color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
+                    <div className='flex flex-row m-4 hidden md:block'>
+                        <div className='flex flex-row gap-4'>
+                            <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                            <Button variant="contained" size="large" color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
+                        </div>
+                    </div>
+                    <div className='flex flex-row m-3 block md:hidden'>
+                        <div className='flex flex-row justify-center gap-1'>
+                            <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                            <Button variant="contained"  color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
+                        </div>
                     </div>
                 </DialogActions>
             </div>

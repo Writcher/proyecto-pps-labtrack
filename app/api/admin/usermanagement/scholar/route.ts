@@ -4,15 +4,19 @@ import { db } from "@vercel/postgres";
 import { getStatusPending } from "@/app/lib/queries/userstatus";
 import { getTypeScholar } from "@/app/lib/queries/usertype";
 import { GetScholar } from "@/app/lib/definitions";
-import { createScholar, editScholar, getScholarByName, getScholars } from "@/app/lib/queries/scholar";
+import { createScholar, editScholar, getScholarByName, getScholarByNameAndScholarship, getScholarByNameAndScholarshipAndUserCareer, getScholarByNameAndUserCareer, getScholars, getScholarsByScholarship, getScholarsByScholarshipAndUserCareer, getScholarsByUserCareer } from "@/app/lib/queries/scholar";
 
 export const GET = async (request: Request) => {
     try {
         const url = new URL(request.url);
         const name = url.searchParams.get('name');
         const labidString = url.searchParams.get('labid');
+        const scholarshipString = url.searchParams.get('scholarship');
+        const userCareerString = url.searchParams.get('usercareer');
 
-        const labid = labidString ? parseInt(labidString, 10) : undefined
+        const labid = labidString ? parseInt(labidString, 10) : undefined;
+        const scholarship = scholarshipString ? parseInt(scholarshipString, 10) : undefined;
+        const userCareer = userCareerString ? parseInt(userCareerString, 10) : undefined;
 
         if (typeof name !== 'string') {
             return new NextResponse("Mandaste cualquier parametro loco", { status: 400 });
@@ -25,20 +29,26 @@ export const GET = async (request: Request) => {
         let data: GetScholar[];
 
         if (name.trim() === "") {
-            try {
+            if (scholarship !== undefined && userCareer !== undefined) {
+                data = await getScholarsByScholarshipAndUserCareer(labid, scholarship, userCareer);
+            } else if (scholarship !== undefined) {
+                data = await getScholarsByScholarship(labid, scholarship);
+            } else if (userCareer !== undefined) {
+                data = await getScholarsByUserCareer(labid, userCareer);
+            } else {
                 data = await getScholars(labid);
-            } catch (error) {
-                console.error("Error recuperando instancias:", error);
-                return new NextResponse("Error recuperando becarios", { status: 500 });
             }
         } else {
-            try {
-                data = await  getScholarByName(name, labid)
-            } catch (error) {
-                console.error("Error buscando datos:", error);
-                return new NextResponse("Error buscando datos", { status: 500 });
+            if (scholarship !== undefined && userCareer !== undefined) {
+                data = await getScholarByNameAndScholarshipAndUserCareer(name, labid, scholarship, userCareer);
+            } else if (scholarship !== undefined) {
+                data = await getScholarByNameAndScholarship(name, labid, scholarship);
+            } else if (userCareer !== undefined) {
+                data = await getScholarByNameAndUserCareer(name, labid, userCareer);
+            } else {
+                data = await getScholarByName(name, labid);
             }
-        } 
+        }
 
         return new NextResponse(JSON.stringify(data), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } catch (error) {
@@ -125,30 +135,28 @@ export const PUT = async (request: Request) => {
         const { id, name, file, dni, address, phone, careerlevel, scholarshiptype_id, usercareer_id } = await request.json();
 
         if (typeof id !== 'number' || typeof name !== 'string' || typeof file !== 'string' || typeof dni !== 'string' || typeof address !== 'string' || typeof phone !== 'string' || typeof careerlevel !== 'number' || typeof scholarshiptype_id !== 'number' || typeof usercareer_id !== 'number') {
-            return new NextResponse("Parametros no validos", {status: 400});
+            return new NextResponse("Parametros no válidos", {status: 400});
         }
 
         const client = db;
 
         const existingScholarFile = await client.sql`
-        SELECT * FROM "scholar" WHERE file = ${file} LIMIT 1
+        SELECT * FROM "scholar" WHERE file = ${file} AND id <> ${id} LIMIT 1
         `;    
-
         if (existingScholarFile.rows.length > 0) {
             return NextResponse.json({ error: 'Ya existe una cuenta con este legajo.' }, { status: 400 });
         }
 
         const existingScholarDNI = await client.sql`
-        SELECT * FROM "scholar" WHERE dni = ${dni} LIMIT 1
+        SELECT * FROM "scholar" WHERE dni = ${dni} AND id <> ${id} LIMIT 1
         `;    
-
         if (existingScholarDNI.rows.length > 0) {
             return NextResponse.json({ error: 'Ya existe una cuenta con este DNI.' }, { status: 400 });
         }
 
         const query = {
             id, name, file, dni, address, phone, careerlevel, scholarshiptype_id, usercareer_id
-        }
+        };
 
         try {
             await editScholar(query);

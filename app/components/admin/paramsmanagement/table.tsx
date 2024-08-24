@@ -2,7 +2,6 @@
 
 import React, { useCallback, useEffect } from "react";
 import { FormEvent, useState } from "react";
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
 import TableRow from "@mui/material/TableRow";
@@ -16,7 +15,6 @@ import AddIcon from '@mui/icons-material/Add';
 import CreateModal from "./createmodal";
 import TablePagination from '@mui/material/TablePagination';
 import debounce from "lodash.debounce";
-import DeleteModal from "./deletemodal";
 import EditModal from "./editmodal";
 
 
@@ -50,6 +48,7 @@ export default function ABMTable({ table }: ABMTableProps) {
         }
     }
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedFetchData = useCallback(
         debounce((searchTerm: string) => fetchData(searchTerm), 300),
         [table]
@@ -62,7 +61,7 @@ export default function ABMTable({ table }: ABMTableProps) {
     };
     //paginacion
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const paginatedItems = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setPage(newPage);
@@ -82,25 +81,10 @@ export default function ABMTable({ table }: ABMTableProps) {
         if (!modalOpenCreate) {
             debouncedFetchData(search);
         }
-    }, [modalOpenCreate]);
+    }, [debouncedFetchData, modalOpenCreate, search]);
         //fila seleccionada
         const [selectedRowId, setSelectedRowId] = useState<number | null>(null);
         const [selectedRowName, setSelectedRowName] = useState<string | null>(null);       
-            //delete
-    {/*const [modalOpenDelete, setModalOpenDelete] = useState(false);
-    const handleOpenDeleteModal = (id: number, name: string) => {
-        setSelectedRowId(id);
-        setSelectedRowName(name);
-        setModalOpenDelete(true);
-    }
-    const handleCloseDeleteModal = () => {
-        setModalOpenDelete(false);
-    };
-    useEffect(() => {
-        if (!modalOpenDelete) {
-            debouncedFetchData(search);
-        }
-    }, [modalOpenDelete]);*/}
             //edit
     const [modalOpenEdit, setModalOpenEdit] = useState(false);
     const handleOpenEditModal = (id: number, name: string) => {
@@ -115,17 +99,16 @@ export default function ABMTable({ table }: ABMTableProps) {
         if (!modalOpenEdit) {
             debouncedFetchData(search);
         }
-    },[modalOpenEdit]);
+    },[debouncedFetchData, modalOpenEdit, search]);
 
     return (
-        <main className="flex flex-col gap-6 mt-12 w-full md:w-5/6">
-            <div className="flex flex-row w-full">
-                <form className="flew items-center justify-start w-2/5" onSubmit={handleSubmit}>
+        <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
+            <div className="flex flex-row w-full mb-4">
+                <form className="flew items-center justify-start w-2/6" onSubmit={handleSubmit}>
                     <TextField 
                         id="search"
                         name="search"
-                        label="Buscar"
-                        helperText="Buscar por Nombre"
+                        label="Buscar por Nombre"
                         type="search"
                         variant="outlined"
                         color="warning"
@@ -135,22 +118,18 @@ export default function ABMTable({ table }: ABMTableProps) {
                     />
                 </form>
                 <div className="flex grow" />
-                <div className="flex items-center justify-end">
-                    <div className="h-16">
-                        <Button
-                            variant="contained"
-                            size="large"
-                            color="success"
-                            disableElevation
-                            startIcon={<AddIcon />}
-                            onClick={handleOpenCreateModal}
-                        >
-                            AÑADIR
-                        </Button>
-                    </div>
-                </div>
+                <Button
+                    variant="contained"
+                    size="large"
+                    color="success"
+                    disableElevation
+                    startIcon={<AddIcon />}
+                    onClick={handleOpenCreateModal}
+                >
+                    AÑADIR
+                </Button>
             </div>
-            <div>
+            <div className="flex flex-col overflow-y-auto h-full">
                 <TableContainer>
                     <Table stickyHeader>
                         <TableBody>
@@ -175,21 +154,18 @@ export default function ABMTable({ table }: ABMTableProps) {
                         <TableBody>
                             {paginatedItems.map((row) => (
                                 <TableRow key={row.id}>
-                                    <TableCell align="left">
+                                    <TableCell align="left" size="small">
                                         <div className="text-gray-700 font-medium text-lg">
                                             {row.id}
                                         </div>
                                     </TableCell>
-                                    <TableCell align="center">
+                                    <TableCell align="center" size="small">
                                         <div className="text-gray-700 font-medium text-lg">
                                             {row.name}
                                         </div>
                                     </TableCell>
-                                    <TableCell align="right">
+                                    <TableCell align="right" size="small">
                                         <div className="flex flex-row justify-end mr-10 items-center text-gray-700">
-                                            {/*<IconButton color="error" onClick={() => handleOpenDeleteModal(row.id, row.name)}>
-                                                <DeleteForeverIcon />
-                                            </IconButton>*/}
                                             <IconButton color="inherit" onClick={() => handleOpenEditModal(row.id, row.name)}>
                                                 <EditIcon />
                                             </IconButton>
@@ -197,18 +173,25 @@ export default function ABMTable({ table }: ABMTableProps) {
                                     </TableCell>
                                 </TableRow>
                             ))}
+                            {Array.from({ length: rowsPerPage - paginatedItems.length }).map((_, index) => (
+                                <TableRow key={`empty-row-${index}`}>
+                                    <TableCell colSpan={4} />
+                                </TableRow>
+                            ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[5, 10]}
-                    component="div"
-                    count={data.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
+                <div className="flex justify-end items-end grow overflow-x-hide">
+                    <TablePagination
+                        rowsPerPageOptions={[5, 10, 15, 20]}
+                        component="div"
+                        count={data.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                </div>
             </div>
             <EditModal
                 open={modalOpenEdit}
@@ -217,13 +200,6 @@ export default function ABMTable({ table }: ABMTableProps) {
                 id={selectedRowId!}        
                 name={selectedRowName!}        
             />
-            {/*<DeleteModal
-                open={modalOpenDelete}
-                handleClose={handleCloseDeleteModal}
-                table={table}
-                id={selectedRowId!}        
-                name={selectedRowName!}        
-            />*/}
             <CreateModal
                 open={modalOpenCreate}
                 handleClose={handleCloseCreateModal}

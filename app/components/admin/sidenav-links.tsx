@@ -51,7 +51,7 @@ export function SideNavLinksAdmin({ current_id_number }: LinkProps) {
 
       fetchUnreadCount();
       setFetchData(false);
-      const intervalId = setInterval(fetchUnreadCount, 5000);
+      const intervalId = setInterval(fetchUnreadCount, 50000);
       return () => clearInterval(intervalId);
   }, [fetchData, current_id_number]);
 
