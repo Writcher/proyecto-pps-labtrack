@@ -142,6 +142,7 @@ export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: Ch
                     textColor="inherit"
                     variant="scrollable"
                     scrollButtons="auto"
+                    className="h-16 md:h-20 items-center"
                 >
                     {admins.map(admin => (
                         <Tab key={admin.id} label={<Badge badgeContent={admin.unreadCount} color="warning">{admin.name}</Badge>} value={admin.id}></Tab>

@@ -51,23 +51,26 @@ export default function DeleteScholarModal({ open, handleClose, id, name }: Dele
                 open={open} 
                 onClose={(event, reason) => {
                     if (reason !== 'backdropClick') {
-                        handleClose(); //solo cierra si la rason no es un click en el fondo
+                        handleClose();
                     }
                 }}
+                maxWidth={false}
+                fullWidth
                 PaperProps={{ 
                     component: 'form',
                     onSubmit: handleSubmit,
-                    onClick: handleDialogClick //que no lo cieren clicks adentro del modal
+                    onClick: handleDialogClick,
+                    style: { width: '600px', maxWidth: 'none' }
                 }} 
             >
-                <div className='flex flex-col m-2 md:w-[500px]'>
+                <div className='flex flex-col m-2'>
                     <DialogTitle>
                         <div className='text-gray-700 items-center font-medium text-2xl md:text-3xl mb-2'>
                             ¿Desactivar la cuenta de {name}?
                         </div>
                     </DialogTitle>
                     <DialogContent>
-                        <div className='flex flex-col w-full items-center justify-center pt-4 gap-4'>
+                        <div className='flex flex-col w-full pt-4 gap-4'>
                             <div className='text-gray-700 font-medium text-xl mb-2'>
                                 Esto inhabilitará la cuenta del becario, ¿Esta seguro?
                             </div>

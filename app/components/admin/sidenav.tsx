@@ -36,10 +36,10 @@ export default async function SideNav() {
           <LabTrackLogoWhite/>
         </div>
       </Link>
-      <div className="flex flex-row grow justify-between md:flex-col gap-2">
+      <div className="flex flex-row grow justify-between md:flex-col">
         <SideNavLinksAdmin current_id_number={current_id_number}/>
         <div className="hidden h-auto w-full grow md:block"/>
-        <div className="flex flex-col items-center justify-center w-full md:py-6">
+        <div className="flex flex-col items-center justify-center w-full md:py-6 hidden md:block">
           <p className="flex text-center items-center justify-center text-white font-medium md:justify-start hidden md:block">
             <strong>{session?.user?.name}</strong>
           </p>
@@ -55,11 +55,6 @@ export default async function SideNav() {
             <Button variant="text" size="large" color="inherit" type="submit" disableElevation endIcon={<LogoutIcon />} fullWidth>
               CERRAR SESIÓN
             </Button>
-          </div>
-          <div className="flex h-16 grow items-center justify-center gap-2 block md:hidden">
-            <IconButton color="error" type="submit">
-              <LogoutIcon/>
-            </IconButton>
           </div>
         </form>
       </div>

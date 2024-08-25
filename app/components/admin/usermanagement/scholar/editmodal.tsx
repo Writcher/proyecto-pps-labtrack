@@ -140,16 +140,19 @@ export default function EditScholarModal({ open, handleClose, row, usercareers, 
                 open={open} 
                 onClose={(event, reason) => {
                     if (reason !== 'backdropClick') {
-                        handleClose(); //solo cierra si la rason no es un click en el fondo
+                        handleClose();
                     }
                 }}
+                maxWidth={false}
+                fullWidth
                 PaperProps={{ 
                     component: 'form',
                     onSubmit: handleSubmit,
-                    onClick: handleDialogClick //que no lo cieren clicks adentro del modal
+                    onClick: handleDialogClick,
+                    style: { width: '600px', maxWidth: 'none' }
                 }} 
             >
-                <div className='flex flex-col m-2 md:w-[500px]'>
+                <div className='flex flex-col m-2'>
                     <DialogTitle>
                         <div className='text-gray-700 items-center font-medium text-2xl md:text-3xl mb-2'>
                             Editar Becario con ID {row?.id}: {row?.name}

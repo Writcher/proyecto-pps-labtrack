@@ -56,8 +56,8 @@ export default async function SideNav() {
               CERRAR SESIÓN
             </Button>
           </div>
-          <div className="flex h-16 grow items-center justify-center gap-2 block md:hidden">
-            <IconButton color="error" type="submit">
+          <div className="flex h-16 grow items-center justify-center gap-2 block md:hidden text-white">
+            <IconButton color="inherit" type="submit">
               <LogoutIcon/>
             </IconButton>
           </div>
