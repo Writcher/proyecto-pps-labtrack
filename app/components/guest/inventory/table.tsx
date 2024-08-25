@@ -125,17 +125,10 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
                     <Table stickyHeader>
                         <TableBody>
                             <TableRow>
-                                <TableCell align="left"
-                                    onClick={() => handleSort('id')}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'id' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
-                                        ID
-                                    </div>
-                                </TableCell>
-                                <TableCell align="center"
+                                <TableCell align="left" 
                                     onClick={() => handleSort('name')}
                                     style={{ cursor: 'pointer' }}
+                                    width="40%"
                                 >
                                     <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'name' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
                                         Nombre
@@ -144,6 +137,7 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
                                 <TableCell align="center"
                                     onClick={() => handleSort('inventorytype')}
                                     style={{ cursor: 'pointer' }}
+                                    width="20%"
                                 >
                                     <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'inventorytype' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
                                         Tipo
@@ -152,6 +146,7 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
                                 <TableCell align="center"
                                     onClick={() => handleSort('year')}
                                     style={{ cursor: 'pointer' }}
+                                    width="20%"
                                 >
                                     <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'year' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
                                         Año
@@ -160,6 +155,7 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
                                 <TableCell align="right"
                                     onClick={() => handleSort('inventorystatus')}
                                     style={{ cursor: 'pointer' }}
+                                    width="20%"
                                 >
                                     <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'inventorystatus' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
                                         Estado
@@ -175,11 +171,6 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
                                         className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-100' : ''}`}
                                     >
                                         <TableCell align="left" size="small">
-                                            <div className="text-gray-700 font-medium text-[15px] md:text-lg">
-                                                {row.id}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell align="center" size="small">
                                             <div className="text-gray-700 font-medium text-[15px] md:text-lg">
                                                 {row.name}
                                             </div>
@@ -202,7 +193,7 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
                                     </TableRow>
                                     {expandedRowId === row.id && (
                                         <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-100">
-                                            <TableCell colSpan={5}>
+                                            <TableCell colSpan={4}>
                                                 <div className="flex flex-col w-full">
                                                     <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">
                                                             <strong>Descripción: </strong>{row.description}
@@ -215,7 +206,7 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
                             ))}
                             {Array.from({ length: rowsPerPage - paginatedItems.length }).map((_, index) => (
                                 <TableRow key={`empty-row-${index}`}>
-                                    <TableCell colSpan={6} />
+                                    <TableCell colSpan={4} />
                                 </TableRow>
                             ))}
                         </TableBody>

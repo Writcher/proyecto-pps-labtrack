@@ -28,19 +28,6 @@ export async function getProjectStatusByName(name: string) {
     }
 }
 
-export async function getProjectStatusById(id: number) {
-    try {
-        const result = await client.sql`
-        SELECT * FROM "projectstatus"
-        WHERE id = ${id}
-        `;
-        return result.rows;
-    } catch (error) {
-        console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo obtener el projectstatus");
-    }
-}
-
 export async function createProjectStatus(projectstatus: NewProjectstatus) {
     try {
         return client.sql`

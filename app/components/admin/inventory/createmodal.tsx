@@ -41,7 +41,7 @@ export default function CreateSupplyModal({ open, handleClose, supplytypes, supp
     };
 
     const añoInicio = 2008;
-    const añoFinal = 2034;
+    const añoFinal = new Date().getFullYear();
     const años = Array.from({ length: añoFinal - añoInicio + 1 }, (_, index) => añoInicio + index)
     const [year, setYear] = useState<number | ''>('');
     const handleYearChange = (event: React.ChangeEvent<{ value: unknown }>) => {

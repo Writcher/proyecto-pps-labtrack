@@ -50,7 +50,7 @@ export type NewProjecttype = {
     name: string;
 }
 
-export type Scolarshiptype = {
+export type Scholarshiptype = {
     id: number;
     name: string;
 }
@@ -274,4 +274,30 @@ export type GetAdminMessages = {
     id: number;
     name: string;
     unreadCount: any;
+}
+
+export type GetHistoricScholar = {
+    id: number;
+    name: string;
+    email?: string;
+    dni?: string;
+    file?: string;
+    phone?: string;
+    careerlevel?: number;
+    historicusercareer_id: number;
+    historicusercareername: string;
+    historicscholarshiptype_id: number;
+    historicscholarshiptypename: string;
+}
+
+export type GetHistoricProject = {
+    id: number;
+    name: string;
+    description: string;
+    year: number;
+    historicprojecttype_id: number;
+    historicprojecttypename: string;
+    historicprojectstatus_id: number;
+    historicprojectstatusname: string;
+    historicshcolars: GetHistoricScholar[];
 }

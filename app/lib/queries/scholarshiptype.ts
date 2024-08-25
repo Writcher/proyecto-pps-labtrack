@@ -1,21 +1,21 @@
 import { db } from '@vercel/postgres';
-import { Scolarshiptype, NewScolarchiptype } from '../definitions';
+import { Scholarshiptype, NewScolarchiptype } from '../definitions';
 
 const client = db;
 
-export async function getScolarshipTypes() {
+export async function getScholarshipTypes() {
     try {
         const result = await client.sql`
         SELECT * FROM "scholarshiptype"
         `;
-        return result.rows as Scolarshiptype[];
+        return result.rows as Scholarshiptype[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el scholarshiptype");
     }
 }
 
-export async function getScolarshipTypeByName(name: string) {
+export async function getScholarshipTypeByName(name: string) {
     try {
         const result = await client.sql`
         SELECT * FROM "scholarshiptype"
@@ -28,20 +28,7 @@ export async function getScolarshipTypeByName(name: string) {
     }
 }
 
-export async function getScolarshipTypeById(id: number) {
-    try {
-        const result = await client.sql`
-        SELECT * FROM "scholarshiptype"
-        WHERE id = ${id}
-        `;
-        return result.rows;
-    } catch (error) {
-        console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo obtener el scholarshiptype");
-    }
-}
-
-export async function createScolarshipType(scholarshiptype: NewScolarchiptype) {
+export async function createScholarshipType(scholarshiptype: NewScolarchiptype) {
     try {
         return client.sql`
         INSERT INTO "scholarshiptype" (name)
@@ -53,7 +40,7 @@ export async function createScolarshipType(scholarshiptype: NewScolarchiptype) {
     }
 }
 
-export async function dropScolarshipType(id: number) {
+export async function dropScholarshipType(id: number) {
     try {
         return client.sql`
         DELETE FROM "scholarshiptype"
@@ -65,7 +52,7 @@ export async function dropScolarshipType(id: number) {
     }
 }
 
-export async function updateScolarshipType(scholarshiptype: Scolarshiptype) {
+export async function updateScholarshipType(scholarshiptype: Scholarshiptype) {
     try {
         return client.sql`
         UPDATE "scholarshiptype"

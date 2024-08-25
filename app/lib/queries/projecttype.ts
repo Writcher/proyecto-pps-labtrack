@@ -28,19 +28,6 @@ export async function getProjectTypeByName(name: string) {
     }
 }
 
-export async function getProjectTypeById(id: number) {
-    try {
-        const result = await client.sql`
-        SELECT * FROM "projecttype"
-        WHERE id = ${id}
-        `;
-        return result.rows;
-    } catch (error) {
-        console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo obtener el projecttype");
-    }
-}
-
 export async function createProjectType(projecttype: NewProjecttype) {
     try {
         return client.sql`

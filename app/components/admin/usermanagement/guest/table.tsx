@@ -172,16 +172,9 @@ export default function ABMGuestTable({ laboratory_id }: AMBGuestTableProps ) {
                         <TableBody>
                             <TableRow>
                                 <TableCell align="left"
-                                    onClick={() => handleSort('id')}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'id' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
-                                        ID
-                                    </div>
-                                </TableCell>
-                                <TableCell align="center"
                                     onClick={() => handleSort('name')}
                                     style={{ cursor: 'pointer' }}
+                                    width="40%"
                                 >
                                     <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'name' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
                                         Nombre
@@ -190,12 +183,15 @@ export default function ABMGuestTable({ laboratory_id }: AMBGuestTableProps ) {
                                 <TableCell align="center"
                                     onClick={() => handleSort('userstatus')}
                                     style={{ cursor: 'pointer' }}
+                                    width="30%"
                                 >
                                     <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'userstatus' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
                                         Estado
                                     </div>
                                 </TableCell>
-                                <TableCell align="right">
+                                <TableCell align="right"
+                                    width="30%"
+                                >
                                     <div className="mr-5 text-gray-700 font-medium md:font-bold text-lg">
                                         Acciones
                                     </div>
@@ -210,11 +206,6 @@ export default function ABMGuestTable({ laboratory_id }: AMBGuestTableProps ) {
                                         className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-100' : ''}`}
                                     >
                                         <TableCell align="left" size="small">
-                                            <div className="text-gray-700 font-medium text-[15px] md:text-lg">
-                                                {row.id}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell align="center" size="small">
                                             <div className="text-gray-700 font-medium text-[15px] md:text-lg">
                                                 {row.name}
                                             </div>
@@ -239,7 +230,7 @@ export default function ABMGuestTable({ laboratory_id }: AMBGuestTableProps ) {
                                     </TableRow>
                                     {expandedRowId === row.id && (
                                         <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-100">
-                                            <TableCell colSpan={4}>
+                                            <TableCell colSpan={3}>
                                                 <div className="flex flex-col w-full">
                                                     <div className="flex flex-col md:flex-row gap-4">
                                                         <div className="text-gray-700 font-medium md:text-[17px]">
@@ -247,7 +238,7 @@ export default function ABMGuestTable({ laboratory_id }: AMBGuestTableProps ) {
                                                         </div>
                                                     </div>
                                                     <div className="flex flex-col md:flex-row gap-4 mt-4">
-                                                        <div className="text-gray-700 font-medium md:text-[17px]">
+                                                        <div className="text-gray-700 w-3/6 font-medium md:text-[17px]">
                                                             <strong>Valido Desde: </strong>
                                                             {new Date(row.created_at).toLocaleDateString('es-AR', {
                                                                 year: 'numeric',
@@ -255,7 +246,7 @@ export default function ABMGuestTable({ laboratory_id }: AMBGuestTableProps ) {
                                                                 day: 'numeric'
                                                             })}
                                                         </div>
-                                                        <div className="text-gray-700 font-medium md:text-[17px]">
+                                                        <div className="text-gray-700 w-3/6 font-medium md:text-[17px]">
                                                             <strong>Valido Hasta: </strong>
                                                             {new Date(row.expires_at).toLocaleDateString('es-AR', {
                                                                 year: 'numeric',
@@ -273,7 +264,7 @@ export default function ABMGuestTable({ laboratory_id }: AMBGuestTableProps ) {
                             ))}
                             {Array.from({ length: rowsPerPage - paginatedItems.length }).map((_, index) => (
                                 <TableRow key={`empty-row-${index}`}>
-                                    <TableCell colSpan={4} />
+                                    <TableCell colSpan={3} />
                                 </TableRow>
                             ))}
                         </TableBody>

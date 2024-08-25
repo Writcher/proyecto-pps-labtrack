@@ -10,13 +10,13 @@ import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
 import { Alert, MenuItem } from '@mui/material';
-import { Scolarshiptype, Usercareer } from '@/app/lib/definitions';
+import { Scholarshiptype, Usercareer } from '@/app/lib/definitions';
 
 interface CreateModalProps {
     open: boolean;
     handleClose: () => void;
     usercareers: Usercareer[];
-    scholarships: Scolarshiptype[];
+    scholarships: Scholarshiptype[];
     laboratory_id: number;
 }
 

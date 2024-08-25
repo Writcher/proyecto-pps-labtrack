@@ -28,19 +28,6 @@ export async function getSupplyStatusByName(name: string) {
     }
 }
 
-export async function getSupplyStatusById(id: number) {
-    try {
-        const result = await client.sql`
-        SELECT * FROM "supplystatus"
-        WHERE id = ${id}
-        `;
-        return result.rows;
-    } catch (error) {
-        console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo obtener el supplystatus");
-    }
-}
-
 export async function createSupplyStatus(supplystatus: NewSupplystatus) {
     try {
         return client.sql`

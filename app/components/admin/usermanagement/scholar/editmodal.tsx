@@ -9,14 +9,14 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
-import { Scolarshiptype, Usercareer, GetScholar } from '@/app/lib/definitions';
+import { Scholarshiptype, Usercareer, GetScholar } from '@/app/lib/definitions';
 import { Alert, MenuItem } from '@mui/material';
 
 interface EditModalProps {
     open: boolean;
     handleClose: () => void;
     usercareers: Usercareer[];
-    scholarships: Scolarshiptype[];
+    scholarships: Scholarshiptype[];
     row: GetScholar;
 }
 

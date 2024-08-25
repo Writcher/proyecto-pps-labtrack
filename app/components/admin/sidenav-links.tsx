@@ -9,12 +9,14 @@ import HomeIcon from '@mui/icons-material/Home';
 import WorkIcon from '@mui/icons-material/Work';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import ChatIcon from '@mui/icons-material/Chat';
+import HistoryIcon from '@mui/icons-material/History';
 import Badge from '@mui/material/Badge';
 import { useEffect, useState } from 'react';
 
 const linksadmin = [
-    { name: 'Inicio', href: '/admin/home', icon: HomeIcon },
+    { name: 'Inicio', href: '/admin/dashboard', icon: HomeIcon },
     { name: 'Proyectos', href: '/admin/projects', icon: WorkIcon },
+    { name: 'Historico', href: '/admin/historic', icon: HistoryIcon },
     { name: 'Mensajes', href: '/admin/messages', icon: ChatIcon },
     { name: 'Inventario', href: '/admin/inventory', icon: InventoryIcon },
     { name: 'Usuarios', href: '/admin/usermanagement', icon: GroupIcon },

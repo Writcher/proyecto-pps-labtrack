@@ -16,7 +16,7 @@ import AddIcon from '@mui/icons-material/Add';
 import TablePagination from '@mui/material/TablePagination';
 import debounce from "lodash.debounce";
 import CreateScholarModal from "./createmodal";
-import { Scolarshiptype, Usercareer, GetScholar } from "@/app/lib/definitions";
+import { Scholarshiptype, Usercareer, GetScholar } from "@/app/lib/definitions";
 import DeleteScholarModal from "./deletemodal";
 import EditScholarModal from "./editmodal";
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
@@ -27,7 +27,7 @@ import { ButtonGroup } from "@mui/material";
 
 interface AMBScholarTableProps {
     usercareers: Usercareer[];
-    scholarships: Scolarshiptype[];
+    scholarships: Scholarshiptype[];
     laboratory_id: number;
 }
 
@@ -369,16 +369,9 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                         <TableBody>
                             <TableRow>
                                 <TableCell align="left"
-                                    onClick={() => handleSort('id')}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'id' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
-                                        ID
-                                    </div>
-                                </TableCell>
-                                <TableCell align="center"
                                     onClick={() => handleSort('name')}
                                     style={{ cursor: 'pointer' }}
+                                    width="40%"
                                 >
                                     <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'name' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
                                         Nombre
@@ -387,12 +380,15 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                                 <TableCell align="center"
                                     onClick={() => handleSort('userstatus')}
                                     style={{ cursor: 'pointer' }}
+                                    width="30%"
                                 >
                                     <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'userstatus' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
                                         Estado
                                     </div>
                                 </TableCell>
-                                <TableCell align="right">
+                                <TableCell align="right"
+                                    width="30%"
+                                >
                                     <div className="mr-4 text-gray-700 font-medium md:font-bold text-[17px] md:text-lg">
                                         Acciones
                                     </div>
@@ -407,11 +403,6 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                                         className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-100' : ''}`}
                                     >
                                         <TableCell align="left" size="small">
-                                            <div className="text-gray-700 font-medium text-[15px] md:text-lg">
-                                                {row.id}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell align="center" size="small">
                                             <div className="text-gray-700 font-medium text-[15px] md:text-lg">
                                                 {row.name}
                                             </div>
@@ -439,7 +430,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                                     </TableRow>
                                     {expandedRowId === row.id && (
                                         <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-100">
-                                            <TableCell colSpan={4}>
+                                            <TableCell colSpan={3}>
                                                 <div className="flex flex-col w-full">
                                                     <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">
                                                             <strong>Beca: </strong>{row.scholarshiptype}
@@ -501,7 +492,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                             ))}
                             {Array.from({ length: rowsPerPage - paginatedItems.length }).map((_, index) => (
                                 <TableRow key={`empty-row-${index}`}>
-                                    <TableCell colSpan={4} />
+                                    <TableCell colSpan={3} />
                                 </TableRow>
                             ))}
                         </TableBody>

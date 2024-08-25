@@ -134,17 +134,14 @@ export default function ABMTable({ table }: ABMTableProps) {
                     <Table stickyHeader>
                         <TableBody>
                             <TableRow>
-                                <TableCell align="left">
-                                    <div className="text-gray-700 font-medium md:font-bold text-lg">
-                                        ID
-                                    </div>
-                                </TableCell>
-                                <TableCell align="center">
+                                <TableCell align="center" width="40%">
                                     <div className="text-gray-700 font-medium md:font-bold text-lg">
                                         Nombre
                                     </div>
                                 </TableCell>
-                                <TableCell align="right">
+                                <TableCell align="left" width="40%">
+                                </TableCell>
+                                <TableCell align="center" width="20%">
                                     <div className="mr-5 text-gray-700 font-medium md:font-bold text-lg">
                                         Acciones
                                     </div>
@@ -154,18 +151,15 @@ export default function ABMTable({ table }: ABMTableProps) {
                         <TableBody>
                             {paginatedItems.map((row) => (
                                 <TableRow key={row.id}>
-                                    <TableCell align="left" size="small">
-                                        <div className="text-gray-700 font-medium text-lg">
-                                            {row.id}
-                                        </div>
-                                    </TableCell>
                                     <TableCell align="center" size="small">
                                         <div className="text-gray-700 font-medium text-lg">
                                             {row.name}
                                         </div>
                                     </TableCell>
-                                    <TableCell align="right" size="small">
-                                        <div className="flex flex-row justify-end mr-10 items-center text-gray-700">
+                                    <TableCell align="center" size="small">
+                                    </TableCell>
+                                    <TableCell align="center" size="small">
+                                        <div className="flex flex-row justify-center mr-5 items-center text-gray-700">
                                             <IconButton color="inherit" onClick={() => handleOpenEditModal(row.id, row.name)}>
                                                 <EditIcon />
                                             </IconButton>
@@ -175,7 +169,7 @@ export default function ABMTable({ table }: ABMTableProps) {
                             ))}
                             {Array.from({ length: rowsPerPage - paginatedItems.length }).map((_, index) => (
                                 <TableRow key={`empty-row-${index}`}>
-                                    <TableCell colSpan={4} />
+                                    <TableCell colSpan={3} />
                                 </TableRow>
                             ))}
                         </TableBody>
