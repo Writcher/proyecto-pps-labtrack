@@ -1,12 +1,12 @@
 import Image from "next/image";
 import Button from '@mui/material/Button';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import LabTrackLogoWhite from "./ui/labtrack-logo";
+import LabTrackLogoWhite from "./components/labtrack-logo";
 
 export default function Principal() {
   return (
     <main className="flex flex-col h-screen w-screen bg-gray-100">
-      <div className="absolute flex w-screen h-20 md:h-32 inset-0 bg-gradient-to-t from-black to-gray-600 opacity-80"/>
+      <div className="absolute flex w-screen h-20 md:h-32 inset-0 bg-gradient-to-t from-gray-800 to-gray-700 opacity-80"/>
       <div className="flex w-screen h-20 md:h-32" style={{ backgroundImage: "url('/research-background.png')" }}>
         <div className="relative flex items-end p-4 px-16 w-screen h-20 md:h-32">
           <LabTrackLogoWhite />
@@ -36,7 +36,7 @@ export default function Principal() {
         </div>
       </div>
       <div className="w-screen h-2 bg-gradient-to-t from-orange-500 to-orange-400"/>
-      <div className="flex items-end p-2 w-screen h-10 md:h-16 bg-gradient-to-b from-black to-gray-600 opacity-80 text-white">
+      <div className="flex items-end p-2 w-screen h-10 md:h-16 bg-gradient-to-b from-gray-800 to-gray-700 opacity-80 text-white">
         <p>Proyecto PPS - Giménez - 2024</p>
       </div>
     </main>

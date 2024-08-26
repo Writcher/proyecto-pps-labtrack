@@ -28,19 +28,6 @@ export async function getSupplyTypeByName(name: string) {
     }
 }
 
-export async function getSupplyTypeById(id: number) {
-    try {
-        const result = await client.sql`
-        SELECT * FROM "supplytype"
-        WHERE id = ${id}
-        `;
-        return result.rows;
-    } catch (error) {
-        console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo obtener el supplytype");
-    }
-}
-
 export async function createSupplyType(supplytype: NewSupplytype) {
     try {
         return client.sql`

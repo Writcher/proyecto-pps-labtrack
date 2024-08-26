@@ -9,14 +9,19 @@ export async function getStatusPending() {
             FROM "userstatus"
             WHERE name ILIKE 'Pendiente'
         `;
-        const response = result.rows;
+        let response = result.rows;
         if (response.length > 0) {
-            return response[0].id;;
-        } else {
-            throw new Error("No se encontró el estatus 'Pendiente'");
-        }
+            return response[0].id;
+        } 
+        const insertResult = await client.sql`
+            INSERT INTO "userstatus" (name)
+            VALUES ('Pendiente')
+            RETURNING id
+        `;
+        response = insertResult.rows;
+        return response[0].id;
     } catch (error) {
-        console.error("Error al obtener el estatus 'Pendiente':", error);
+        console.error("Error al obtener o crear el estado 'Pendiente':", error);
         throw error;
     }
 }
@@ -28,14 +33,19 @@ export async function getStatusActive() {
             FROM "userstatus"
             WHERE name ILIKE 'Activo'
         `;
-        const response = result.rows;
+        let response = result.rows;
         if (response.length > 0) {
-            return response[0].id;;
-        } else {
-            throw new Error("No se encontró el estatus 'Activo'");
-        }
+            return response[0].id;
+        } 
+        const insertResult = await client.sql`
+            INSERT INTO "userstatus" (name)
+            VALUES ('Activo')
+            RETURNING id
+        `;
+        response = insertResult.rows;
+        return response[0].id;
     } catch (error) {
-        console.error("Error al obtener el estatus 'Activo':", error);
+        console.error("Error al obtener o crear el estado 'Activo':", error);
         throw error;
     }
 }
@@ -47,14 +57,19 @@ export async function getStatusDeactivated(){
             FROM "userstatus"
             WHERE name ILIKE 'Inactivo'
         `;
-        const response = result.rows;
+        let response = result.rows;
         if (response.length > 0) {
-            return response[0].id;;
-        } else {
-            throw new Error("No se encontró el estatus 'Inactivo'");
-        }
+            return response[0].id;
+        } 
+        const insertResult = await client.sql`
+            INSERT INTO "userstatus" (name)
+            VALUES ('Inactivo')
+            RETURNING id
+        `;
+        response = insertResult.rows;
+        return response[0].id;
     } catch (error) {
-        console.error("Error al obtener el estatus 'Inactivo':", error);
+        console.error("Error al obtener o crear el estado 'Inactivo':", error);
         throw error;
     }
 }
@@ -66,14 +81,19 @@ export async function getStatusExpired(){
             FROM "userstatus"
             WHERE name ILIKE 'Expirado'
         `;
-        const response = result.rows;
+        let response = result.rows;
         if (response.length > 0) {
-            return response[0].id;;
-        } else {
-            throw new Error("No se encontró el estatus 'Expírado'");
-        }
+            return response[0].id;
+        } 
+        const insertResult = await client.sql`
+            INSERT INTO "userstatus" (name)
+            VALUES ('Expirado')
+            RETURNING id
+        `;
+        response = insertResult.rows;
+        return response[0].id;
     } catch (error) {
-        console.error("Error al obtener el estatus 'Expirado':", error);
+        console.error("Error al obtener o crear el estado 'Expirado':", error);
         throw error;
     }
 }

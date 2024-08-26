@@ -1,8 +1,12 @@
-import { ABMcreate, ABMdelete, ABMedit, Grade, NewGrade, NewProjecttype, NewScolarchiptype, NewSupplystatus, NewSupplytype, NewUsercareer, Projectstatus, Projecttype, Scolarshiptype, Supplystatus, Supplytype, Usercareer } from '../lib/definitions';
+import { ABMcreate, ABMdelete, ABMedit, Grade, NewGrade, NewProjecttype, NewScolarchiptype, NewSupplystatus, NewSupplytype, NewUsercareer, Projectstatus, Projecttype, Scholarshiptype, Supplystatus, Supplytype, Usercareer } from '../lib/definitions';
 import { createGrade, dropGrade, getGradeByName, getGrades, updateGrade} from './queries/grade';
+import { createHistoricProjectStatus } from './queries/historicprojectstatus';
+import { createHistoricProjectType } from './queries/historicprojecttype';
+import { createHistoricScholarshipType } from './queries/historicscholarshiptype';
+import { createHistoricUserCareer } from './queries/historicusercareer';
 import { createProjectStatus, dropProjectStatus, getProjectStatusByName, getProjectStatuses, updateProjectStatus } from './queries/projectstatus';
 import { createProjectType, dropProjectType, getProjectTypeByName, getProjectTypes, updateProjectType } from './queries/projecttype';
-import { createScolarshipType, dropScolarshipType, getScolarshipTypeByName, getScolarshipTypes, updateScolarshipType } from './queries/scholarshiptype';
+import { createScholarshipType, dropScholarshipType, getScholarshipTypeByName, getScholarshipTypes, updateScholarshipType } from './queries/scholarshiptype';
 import { createSupplyStatus, dropSupplyStatus, getSupplyStatusByName, getSupplyStatuses, updateSupplyStatus } from './queries/supplystatus';
 import { createSupplyType, dropSupplyType, getSupplyTypeByName, getSupplyTypes, updateSupplyType } from './queries/supplytype';
 import { createUserCareer, dropUserCareer, getUserCareerByName, getUserCareers, updateUserCareer } from './queries/usercareer';
@@ -32,18 +36,21 @@ export async function createInstance(query: ABMcreate) {
                     name: query.name,
                 }
                 await createProjectType(newProjectType);
+                await createHistoricProjectType(newProjectType);
                 break;
             case "projectstatus":
                 const newProjectStatus: NewSupplystatus = {
                     name: query.name,
                 }
                 await createProjectStatus(newProjectStatus);
+                await createHistoricProjectStatus(newProjectStatus);
                 break;
             case "scholarshiptype":
-                const newScolarshipType: NewScolarchiptype = {
+                const newScholarshipType: NewScolarchiptype = {
                     name: query.name,
                 }
-                await createScolarshipType(newScolarshipType);
+                await createScholarshipType(newScholarshipType);
+                await createHistoricScholarshipType(newScholarshipType);
                 break;
             case "grade":
                 const newGrade: NewGrade = {
@@ -55,6 +62,7 @@ export async function createInstance(query: ABMcreate) {
                     name: query.name,
                 }
                 await createUserCareer(newUsercareer);
+                await createHistoricUserCareer(newUsercareer);
                 break;
             default:
                 throw new Error(`No se puede manejar la tabla: ${query.table}`);
@@ -89,7 +97,7 @@ export async function createInstance(query: ABMcreate) {
                 await dropProjectStatus(query.id);
                 break;
             case "scholarshiptype":
-                await dropScolarshipType(query.id);
+                await dropScholarshipType(query.id);
                 break;
             case "grade":
                 await dropGrade(query.id);
@@ -136,6 +144,10 @@ export async function editInstance(query: ABMedit) {
                     name: query.name,
                     id: query.id
                 }
+                const newProjectType: NewProjecttype = {
+                    name: query.name,
+                }
+                await createHistoricProjectType(newProjectType);
                 await updateProjectType(editProjectType);
                 break;
             case "projectstatus":
@@ -143,14 +155,22 @@ export async function editInstance(query: ABMedit) {
                     name: query.name,
                     id: query.id
                 }
+                const newProjectStatus: NewSupplystatus = {
+                    name: query.name,
+                }
+                await createHistoricProjectStatus(newProjectStatus);
                 await updateProjectStatus(editProjectStatus);
                 break;
             case "scholarshiptype":
-                const editScolarshipType: Scolarshiptype = {
+                const editScholarshipType: Scholarshiptype = {
                     name: query.name,
                     id: query.id
                 }
-                await updateScolarshipType(editScolarshipType);
+                const newScholarshipType: NewScolarchiptype = {
+                    name: query.name,
+                }
+                await createHistoricScholarshipType(newScholarshipType);
+                await updateScholarshipType(editScholarshipType);
                 break;
             case "grade":
                 const editGrade: Grade = {
@@ -164,6 +184,10 @@ export async function editInstance(query: ABMedit) {
                     name: query.name,
                     id: query.id    
                 }
+                const newUsercareer: NewUsercareer = {
+                    name: query.name,
+                }
+                await createHistoricUserCareer(newUsercareer);
                 await updateUserCareer(editUsercareer);
                 break;
             default:
@@ -200,7 +224,7 @@ export async function getAllInstances(table: string) {
                 data = await getProjectStatuses();
                 break;
             case "scholarshiptype":
-                data = await getScolarshipTypes();
+                data = await getScholarshipTypes();
                 break;
             case "grade":
                 data = await getGrades();
@@ -248,7 +272,7 @@ export async function searchInstance(query: ABMcreate) {
                 break;
             case "scholarshiptype":
                 name = query.name as string;
-                data = await getScolarshipTypeByName(name);
+                data = await getScholarshipTypeByName(name);
                 break;
             case "grade":
                 name = query.name as string;

@@ -56,7 +56,7 @@ export async function doCredentialLogin({ email, password }: { email: string; pa
                     redirect: false
                 });
                 console.log("auth",response)
-                return response;
+                return { ...response, usertype_id: user.usertype_id };
             } else {
                 return { error: "Contraseña incorrecta." };
             }

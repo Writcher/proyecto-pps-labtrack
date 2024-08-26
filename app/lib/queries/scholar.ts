@@ -28,6 +28,82 @@ export async function getScholars(labid: number) {
     }
 }
 
+export async function getScholarsByScholarship(labid: number, scholarship: number) {
+    try {
+        const type = await getTypeScholar();
+        const result = await client.sql`
+        SELECT u.id, u.name, u.email, u.created_at, u.dropped_at, 
+            us.name AS userstatus, 
+            s.file, s.dni, s.address, s.phone, s.careerlevel, s.usercareer_id, s.scholarshiptype_id,
+            uc.name AS usercareer, 
+            st.name AS scholarshiptype
+        FROM "user" u
+        JOIN "userstatus" us ON u.userstatus_id = us.id
+        JOIN "scholar" s ON u.id = s.id
+        JOIN "usercareer" uc ON s.usercareer_id = uc.id
+        JOIN "scholarshiptype" st ON s.scholarshiptype_id = st.id
+        WHERE u.usertype_id = ${type}
+        AND u.laboratory_id = ${labid}
+        AND s.scholarshiptype_id = ${scholarship}
+        `;
+        return result.rows as GetScholar[];
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el becario");
+    }
+}
+
+export async function getScholarsByUserCareer(labid: number, userCareer: number) {
+    try {
+        const type = await getTypeScholar();
+        const result = await client.sql`
+        SELECT u.id, u.name, u.email, u.created_at, u.dropped_at, 
+            us.name AS userstatus, 
+            s.file, s.dni, s.address, s.phone, s.careerlevel, s.usercareer_id, s.scholarshiptype_id,
+            uc.name AS usercareer, 
+            st.name AS scholarshiptype
+        FROM "user" u
+        JOIN "userstatus" us ON u.userstatus_id = us.id
+        JOIN "scholar" s ON u.id = s.id
+        JOIN "usercareer" uc ON s.usercareer_id = uc.id
+        JOIN "scholarshiptype" st ON s.scholarshiptype_id = st.id
+        WHERE u.usertype_id = ${type}
+        AND u.laboratory_id = ${labid}
+        AND s.usercareer_id = ${userCareer}
+        `;
+        return result.rows as GetScholar[];
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el becario");
+    }
+}
+
+export async function getScholarsByScholarshipAndUserCareer(labid: number, scholarship: number, userCareer: number) {
+    try {
+        const type = await getTypeScholar();
+        const result = await client.sql`
+        SELECT u.id, u.name, u.email, u.created_at, u.dropped_at, 
+            us.name AS userstatus, 
+            s.file, s.dni, s.address, s.phone, s.careerlevel, s.usercareer_id, s.scholarshiptype_id,
+            uc.name AS usercareer, 
+            st.name AS scholarshiptype
+        FROM "user" u
+        JOIN "userstatus" us ON u.userstatus_id = us.id
+        JOIN "scholar" s ON u.id = s.id
+        JOIN "usercareer" uc ON s.usercareer_id = uc.id
+        JOIN "scholarshiptype" st ON s.scholarshiptype_id = st.id
+        WHERE u.usertype_id = ${type}
+        AND u.laboratory_id = ${labid}
+        AND s.scholarshiptype_id = ${scholarship}
+        AND s.usercareer_id = ${userCareer}
+        `;
+        return result.rows as GetScholar[];
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el becario");
+    }
+}
+
 export async function getScholarByName(name: string, labid: number) {
     try {
         const type = await getTypeScholar();
@@ -42,7 +118,7 @@ export async function getScholarByName(name: string, labid: number) {
         JOIN "scholar" s ON u.id = s.id
         JOIN "usercareer" uc ON s.usercareer_id = uc.id
         JOIN "scholarshiptype" st ON s.scholarshiptype_id = st.id
-        WHERE u.name ILIKE ${`%${name}%`}
+        WHERE unaccent(u.name) ILIKE unaccent(${`%${name}%`})
             AND u.usertype_id = ${type}
             AND u.laboratory_id = ${labid}
         `;
@@ -51,6 +127,85 @@ export async function getScholarByName(name: string, labid: number) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el becario");
     }
+}
+
+export async function getScholarByNameAndScholarship(name: string, labid: number, scholarship: number) {
+    try {
+        const type = await getTypeScholar();
+        const result = await client.sql`
+        SELECT u.id, u.name, u.email, u.created_at, u.dropped_at, 
+            us.name AS userstatus, 
+            s.file, s.dni, s.address, s.phone, s.careerlevel, s.usercareer_id, s.scholarshiptype_id,
+            uc.name AS usercareer, 
+            st.name AS scholarshiptype
+        FROM "user" u
+        JOIN "userstatus" us ON u.userstatus_id = us.id
+        JOIN "scholar" s ON u.id = s.id
+        JOIN "usercareer" uc ON s.usercareer_id = uc.id
+        JOIN "scholarshiptype" st ON s.scholarshiptype_id = st.id
+        WHERE unaccent(u.name) ILIKE unaccent(${`%${name}%`})
+            AND u.usertype_id = ${type}
+            AND u.laboratory_id = ${labid}
+            AND s.scholarshiptype_id = ${scholarship}
+        `;
+        return result.rows as GetScholar[];
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el becario");
+    } 
+}
+
+export async function getScholarByNameAndUserCareer(name: string, labid: number, userCareer: number) {
+    try {
+        const type = await getTypeScholar();
+        const result = await client.sql`
+        SELECT u.id, u.name, u.email, u.created_at, u.dropped_at, 
+            us.name AS userstatus, 
+            s.file, s.dni, s.address, s.phone, s.careerlevel, s.usercareer_id, s.scholarshiptype_id,
+            uc.name AS usercareer, 
+            st.name AS scholarshiptype
+        FROM "user" u
+        JOIN "userstatus" us ON u.userstatus_id = us.id
+        JOIN "scholar" s ON u.id = s.id
+        JOIN "usercareer" uc ON s.usercareer_id = uc.id
+        JOIN "scholarshiptype" st ON s.scholarshiptype_id = st.id
+        WHERE unaccent(u.name) ILIKE unaccent(${`%${name}%`})
+            AND u.usertype_id = ${type}
+            AND u.laboratory_id = ${labid}
+            AND s.usercareer_id = ${userCareer}
+        `;
+        return result.rows as GetScholar[];
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el becario");
+    } 
+}
+
+export async function getScholarByNameAndScholarshipAndUserCareer(name: string, labid: number, scholarship: number, userCareer: number) {
+    try {
+        const type = await getTypeScholar();
+        const result = await client.sql`
+        SELECT u.id, u.name, u.email, u.created_at, u.dropped_at, 
+            us.name AS userstatus, 
+            s.file, s.dni, s.address, s.phone, s.careerlevel, s.usercareer_id, s.scholarshiptype_id,
+            uc.name AS usercareer, 
+            st.name AS scholarshiptype
+        FROM "user" u
+        JOIN "userstatus" us ON u.userstatus_id = us.id
+        JOIN "scholar" s ON u.id = s.id
+        JOIN "usercareer" uc ON s.usercareer_id = uc.id
+        JOIN "scholarshiptype" st ON s.scholarshiptype_id = st.id
+        WHERE unaccent(u.name) ILIKE unaccent(${`%${name}%`})
+            AND u.usertype_id = ${type}
+            AND u.laboratory_id = ${labid}
+            AND s.usercareer_id = ${userCareer}
+            AND s.scholarshiptype_id = ${scholarship}
+        `;
+        return result.rows as GetScholar[];
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el becario");
+    } 
 }
 
 export async function createScholar(user: NewScholar)  {

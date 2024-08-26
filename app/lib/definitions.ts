@@ -50,7 +50,7 @@ export type NewProjecttype = {
     name: string;
 }
 
-export type Scolarshiptype = {
+export type Scholarshiptype = {
     id: number;
     name: string;
 }
@@ -237,6 +237,7 @@ export type GetMessages = {
     sender_id: number;
     receiver_id: number;
     timestamp: Date;
+    is_read: boolean
 }
 
 export type NewMessage = {
@@ -248,4 +249,76 @@ export type NewMessage = {
 export type GetAdmin = {
     id: number;
     name: string;
+}
+
+export type GetScholarMessages = {
+    id: number;
+    name: string;
+    email: string;
+    created_at: Date;
+    dropped_at?: Date;
+    userstatus: string;
+    file: string;
+    dni: string;
+    address?: string;
+    phone?: string;
+    careerlevel: number;
+    usercareer_id: number;
+    usercareer: string;
+    scholarshiptype_id: number;
+    scholarshiptype: string;
+    unreadCount: any;
+}
+
+export type GetAdminMessages = {
+    id: number;
+    name: string;
+    unreadCount: any;
+}
+
+export type GetHistoricScholar = {
+    id: number;
+    name: string;
+    email?: string;
+    dni?: string;
+    file?: string;
+    phone?: string;
+    careerlevel?: number;
+    historicusercareer_id: number;
+    historicusercareername: string;
+    historicscholarshiptype_id: number;
+    historicscholarshiptypename: string;
+}
+
+export type GetHistoricProject = {
+    id: number;
+    name: string;
+    description: string;
+    year: number;
+    historicprojecttype_id: number;
+    historicprojecttypename: string;
+    historicprojectstatus_id: number;
+    historicprojectstatusname: string;
+    historicscholars: GetHistoricScholar[];
+}
+
+export type NewHistoricScholar = {
+    name: string;
+    email?: string;
+    dni?: string;
+    file?: string;
+    phone?: string;
+    careerlevel?: number;
+    historicusercareer_id?: number;
+    historicscholarshiptype_id?: number;
+}
+
+export type NewHistoricProject = {
+    name: string;
+    description: string;
+    year: number;
+    projectstatus_id: number;
+    projecttype_id: number;
+    laboratory_id: number;
+    scholars: NewHistoricScholar[];
 }
