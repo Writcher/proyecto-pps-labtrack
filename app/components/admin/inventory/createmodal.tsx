@@ -62,7 +62,7 @@ export default function CreateSupplyModal({ open, handleClose, supplytypes, supp
             const supplystatus_id = supplystatusstring ? parseInt(supplystatusstring as string, 10) : undefined;
             const year = yearstring ? parseInt(yearstring as string, 10) : undefined;
 
-            const response = await fetch("/api/inventory", {
+            const response = await fetch("/api/admin/inventory", {
                 method: 'POST',
                 headers: {
                     "content-type": "application/json"
@@ -127,7 +127,16 @@ export default function CreateSupplyModal({ open, handleClose, supplytypes, supp
                                 <TextField id="name" name="name" label="Nombre" helperText="Ingrese Nombre" type="text" variant="outlined" color="warning" fullWidth required/>
                             </div>                    
                             <div className='flex w-full md:w-2/6'>
-                                <TextField id="year" name="year" label="Año" helperText="Seleccione el Año" type="text" variant="outlined" color="warning" select fullWidth required value={year} onChange={handleYearChange}>
+                                <TextField id="year" name="year" label="Año" helperText="Seleccione el Año" type="text" variant="outlined" color="warning" select fullWidth required value={year} onChange={handleYearChange} SelectProps={{
+                                    MenuProps: {
+                                        PaperProps: {
+                                            style: {
+                                                maxHeight: 200,
+                                                overflowY: 'auto',
+                                            },
+                                        },
+                                    },
+                                }}>
                                 {años.map((año) => (
                                     <MenuItem key={año} value={año}>
                                         {año}
@@ -148,11 +157,11 @@ export default function CreateSupplyModal({ open, handleClose, supplytypes, supp
                                 </TextField>
                             </div>
                             <div className='flex w-full mb-4 md:mb-0 md:w-3/6'>
-                            <TextField id="supplystatus" name="supplystatus" label="Estado" helperText="Selecciona el Estado del Insumo" type="text" variant="outlined" color="warning" select fullWidth required value={supplyStatus} onChange={handleSupplyStatusChange}> 
-                                {supplystatuses.map(status => (
-                                    <MenuItem key={status.id} value={status.id}>{status.name}</MenuItem>
-                                ))}
-                            </TextField>
+                                <TextField id="supplystatus" name="supplystatus" label="Estado" helperText="Selecciona el Estado del Insumo" type="text" variant="outlined" color="warning" select fullWidth required value={supplyStatus} onChange={handleSupplyStatusChange}> 
+                                    {supplystatuses.map(status => (
+                                        <MenuItem key={status.id} value={status.id}>{status.name}</MenuItem>
+                                    ))}
+                                </TextField>
                             </div>
                         </div>
                     </div>

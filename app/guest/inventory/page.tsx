@@ -2,7 +2,7 @@ import { auth } from "@/app/lib/auth";
 import InventoryTable from "@/app/components/guest/inventory/table";
 import { redirect } from "next/navigation";
 
-export default async function Invitados() {
+export default async function InventarioInvitados() {
     const session = await auth();
     if (!session?.user) redirect("/");
     

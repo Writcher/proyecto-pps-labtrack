@@ -4,8 +4,10 @@ import { usePathname } from 'next/navigation';//Para ressaltar el link activo.
 import clsx from 'clsx';//Para aplicar estilos condicionalmente. Los dos se usan para resaltar el link activo
 import Link from 'next/link';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import HistoryIcon from '@mui/icons-material/History';
 
 const linksguest = [
+  { name: 'Historico', href: '/guest/historic', icon: HistoryIcon },
   { name: 'Inventario', href: '/guest/inventory', icon: InventoryIcon },
   
   //Añadir links segun necesario aca.

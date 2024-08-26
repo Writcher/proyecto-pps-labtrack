@@ -82,7 +82,7 @@ export default function EditSupplyModal({ open, handleClose, supplytypes, supply
 
             const id = row.id as number;
 
-            const response = await fetch("/api/inventory", {
+            const response = await fetch("/api/admin/inventory", {
                 method: 'PUT',
                 headers: {
                     "content-type": "application/json"

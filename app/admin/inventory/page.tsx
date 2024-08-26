@@ -15,8 +15,8 @@ export default async function Invitados() {
 
     return (
         <main className="flex flex-col w-full h-full">
-            <div className="flex flex-col mt-10 text-xl md:text-3xl text-gray-700 text-center font-bold">
-                <p className="">
+            <div className="flex flex-col text-xl md:text-3xl text-gray-700 text-center font-bold">
+                <p className="mt-16">
                     Inventario
                 </p>
             </div>

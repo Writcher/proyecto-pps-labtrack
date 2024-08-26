@@ -21,7 +21,7 @@ export default async function Login({searchParams}: {searchParams: {verified: st
     return (
         <main className="flex flex-row h-screen w-screen bg-gray-100">
 
-            <div className="absolute flex h-full w-2/5 inset-0 bg-gradient-to-b from-black to-gray-500 opacity-80 hidden md:block"/>
+            <div className="absolute flex h-full w-2/5 inset-0 bg-gradient-to-b from-gray-800 to-gray-700 opacity-80 hidden md:block"/>
             <div className="flex flex-col h-full w-2/5 hidden md:block" style={{ backgroundImage: "url('/research-background.png')" }}>
                 <div className="flex-grow"/>
                 <div className="relative flex flex-col items-end p-16">

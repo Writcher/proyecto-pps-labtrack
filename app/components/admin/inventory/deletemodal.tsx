@@ -18,7 +18,7 @@ export default function DeleteSupplyModal({ open, handleClose, id, name }: Delet
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         try {
-            const response = await fetch(`/api/inventory?id=${encodeURIComponent(id)}`, {
+            const response = await fetch(`/api/admin/inventory?id=${encodeURIComponent(id)}`, {
                 method: 'DELETE',
             });
 

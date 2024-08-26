@@ -17,8 +17,8 @@ const linksadmin = [
     { name: 'Inicio', href: '/admin/dashboard', icon: HomeIcon },
     { name: 'Proyectos', href: '/admin/projects', icon: WorkIcon },
     { name: 'Historico', href: '/admin/historic', icon: HistoryIcon },
-    { name: 'Mensajes', href: '/admin/messages', icon: ChatIcon },
     { name: 'Inventario', href: '/admin/inventory', icon: InventoryIcon },
+    { name: 'Mensajes', href: '/admin/messages', icon: ChatIcon },
     { name: 'Usuarios', href: '/admin/usermanagement', icon: GroupIcon },
     { name: 'Gestión de Parametros', href: '/admin/paramsmanagement', icon: BuildIcon },
     

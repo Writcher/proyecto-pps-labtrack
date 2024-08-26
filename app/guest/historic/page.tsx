@@ -1,12 +1,12 @@
+import HistoricTable from "@/app/components/guest/historic/table";
 import { auth } from "@/app/lib/auth";
 import { getHistoricProjectStatuses } from "@/app/lib/queries/historicprojectstatus";
 import { getHistoricProjectTypes } from "@/app/lib/queries/historicprojecttype";
 import { getHistoricScholarshipTypes } from "@/app/lib/queries/historicscholarshiptype";
 import { getHistoricUserCareers } from "@/app/lib/queries/historicusercareer";
 import { redirect } from "next/navigation";
-import ABMHistoricTable from "@/app/components/admin/historic/table";
 
-export default async function Invitados() {
+export default async function HistoricoInvitados() {
     const session = await auth();
     if (!session?.user) redirect("/");
 
@@ -24,7 +24,7 @@ export default async function Invitados() {
                 </p>
             </div>
             <div className="flex flex-col min-h-[80%] max-h-[80%] mt-10 md:px-10 items-center justify-center">
-                <ABMHistoricTable 
+                <HistoricTable 
                     laboratory_id={laboratory_id}
                     historicusercareers={historicussercareers}
                     historicscholarships={historicscholarships}

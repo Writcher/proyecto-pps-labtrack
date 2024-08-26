@@ -299,5 +299,26 @@ export type GetHistoricProject = {
     historicprojecttypename: string;
     historicprojectstatus_id: number;
     historicprojectstatusname: string;
-    historicshcolars: GetHistoricScholar[];
+    historicscholars: GetHistoricScholar[];
+}
+
+export type NewHistoricScholar = {
+    name: string;
+    email?: string;
+    dni?: string;
+    file?: string;
+    phone?: string;
+    careerlevel?: number;
+    historicusercareer_id?: number;
+    historicscholarshiptype_id?: number;
+}
+
+export type NewHistoricProject = {
+    name: string;
+    description: string;
+    year: number;
+    projectstatus_id: number;
+    projecttype_id: number;
+    laboratory_id: number;
+    scholars: NewHistoricScholar[];
 }

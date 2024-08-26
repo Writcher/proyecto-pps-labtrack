@@ -18,7 +18,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 import { Divider, ButtonGroup } from "@mui/material";
-import CreateHistoricProjectModal from "./createmodal";
+
 
 interface AMBScholarTableProps {
     historicusercareers: Usercareer[];
@@ -28,7 +28,7 @@ interface AMBScholarTableProps {
     laboratory_id: number;
 }
 
-export default function ABMHistoricTable({ historicusercareers, historicscholarships, historicprojecttypes, historicprojectstatus, laboratory_id }: AMBScholarTableProps ) {
+export default function HistoricTable({ historicusercareers, historicscholarships, historicprojecttypes, historicprojectstatus, laboratory_id }: AMBScholarTableProps ) {
 //filtros
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const menuOpen = Boolean(anchorEl);
@@ -288,25 +288,7 @@ export default function ABMHistoricTable({ historicusercareers, historicscholars
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
-    };
-
-//modales
-    //create
-    const [modalOpenCreate, setModalOpenCreate] = useState(false);
-    const handleOpenCreateModal = () => setModalOpenCreate(true);
-    const handleCloseCreateModal = () => {
-        setModalOpenCreate(false);
-    };
-    useEffect(() => {
-        if (!modalOpenCreate) {
-            debouncedFetchData(projectsearch, scholarshipFilter, userCareerFilter, scholarsearch, projectStatusFilter, projectTypeFilter, yearFilter);
-        }
-    }, [debouncedFetchData, modalOpenCreate, scholarshipFilter, projectsearch, userCareerFilter, scholarsearch, projectStatusFilter, projectTypeFilter, yearFilter]);
-
-    //fila seleccionada
-    const [selectedRow, setSelectedRow] = useState<GetHistoricProject | null>(null);
-    const [selectedRowId, setSelectedRowId] = useState<number | null>(null);
-    const [selectedRowName, setSelectedRowName] = useState<string | null>(null);       
+    };  
 
 //expandir fila
     const [expandedRowId, setExpandedRowId] = useState<number | null>(null);
@@ -363,15 +345,6 @@ export default function ABMHistoricTable({ historicusercareers, historicscholars
                     </ButtonGroup>
                     <div className="flex grow"/>
                     <div className="flex block md:hidden">
-                        <Button
-                            variant="contained"
-                            color="success"
-                            disableElevation
-                            endIcon={<AddIcon />}
-                            onClick={handleOpenCreateModal}
-                        >
-                            Añadir
-                        </Button>
                     </div>
                 </div>
                 <Menu
@@ -509,15 +482,6 @@ export default function ABMHistoricTable({ historicusercareers, historicscholars
                 </form>
                 <div className="flex grow" />
                 <div className="md:flex hidden md:block">
-                    <Button
-                        variant="contained"
-                        color="success"
-                        disableElevation
-                        startIcon={<AddIcon />}
-                        onClick={handleOpenCreateModal}
-                    >
-                        Añadir
-                    </Button>
                 </div>
             </div>
             <div className="flex flex-col gap-2 md:flex-row md:flex-wrap">
@@ -678,15 +642,6 @@ export default function ABMHistoricTable({ historicusercareers, historicscholars
                     />
                 </div>
             </div>
-            <CreateHistoricProjectModal
-                open={modalOpenCreate}
-                handleClose={handleCloseCreateModal}
-                historicusercareers={historicusercareers}
-                historicscholarships={historicscholarships}
-                historicprojecttypes={historicprojecttypes}
-                historicprojectstatus={historicprojectstatus}
-                laboratory_id={laboratory_id}
-            />
         </main>
     );
 }
