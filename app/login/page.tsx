@@ -20,11 +20,10 @@ export default async function Login({searchParams}: {searchParams: {verified: st
 
     return (
         <main className="flex flex-row h-screen w-screen bg-gray-100">
-
-            <div className="absolute flex h-full w-2/5 inset-0 bg-gradient-to-b from-gray-800 to-gray-700 opacity-80 hidden md:block"/>
+            <div className="absolute h-full w-2/5 inset-0 bg-gradient-to-b from-gray-800 to-gray-700 opacity-80 hidden md:block"/>
             <div className="flex flex-col h-full w-2/5 hidden md:block" style={{ backgroundImage: "url('/research-background.png')" }}>
-                <div className="flex-grow"/>
-                <div className="relative flex flex-col items-end p-16">
+                <div className="relative flex h-full flex-col items-end p-16">
+                    <div className="flex grow"/>
                     <LabTrackLogoWhite />
                     <p className="text-xl md:text-3xl text-white font-medium">
                         Sistema de Gestion de Laboratorios
@@ -33,7 +32,7 @@ export default async function Login({searchParams}: {searchParams: {verified: st
             </div>
             <div className="w-2 h-screen bg-gradient-to-t from-orange-500 to-orange-400 hidden md:block"/>
             <div className="flex flex-col items-center justify-center gap-6 h-full w-full md:w-3/5">
-                <div className="flexd"/>
+                <div className="flex"/>
                 <div className="flex block md:hidden">
                     <LabTrackLogoBlack />
                 </div>
@@ -48,7 +47,7 @@ export default async function Login({searchParams}: {searchParams: {verified: st
                 <div className="flex w-screen md:w-full justify-center">
                     <LoginForm admin={adminType} guest={guestType} scholar={scholarType}/>
                 </div>
-                <div className="flex">
+                <div className="flex flex-col gap-6">
                     <Button variant="text" href="/" size="large" color="warning" disableElevation startIcon={<KeyboardArrowLeftIcon />}> ATRAS </Button>
                 </div>
             </div>

@@ -1,7 +1,6 @@
 "use client"
 
-import React, { useCallback, useEffect } from "react";
-import { FormEvent, useState } from "react";
+import React, { useCallback } from "react";
 import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
 import TableRow from "@mui/material/TableRow";
@@ -14,8 +13,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import CreateModal from "./createmodal";
 import TablePagination from '@mui/material/TablePagination';
-import debounce from "lodash.debounce";
 import EditModal from "./editmodal";
+import { useQuery } from "@tanstack/react-query";
+import { fetchTableData } from "@/app/services/abm/abm.service";
+import { useForm } from "react-hook-form";
+import debounce from "lodash.debounce";
 
 
 interface ABMTableProps {
@@ -23,97 +25,80 @@ interface ABMTableProps {
 }
 
 export default function ABMTable({ table }: ABMTableProps) {
-    const [data, setData] = useState<{ id: number; name: string }[]>([]);
-
-    //busqueda
-    const [search, setSearch] = useState("");
-    
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-    };
-
-    async function fetchData(searchTerm: string) {
-        try {
-            const response = await fetch(`/api/admin/paramsmanagement?name=${encodeURIComponent(searchTerm)}&table=${encodeURIComponent(table)}`, {
-                method: 'GET',
-            });
-            const fetchedData = await response.json();
-            setData(fetchedData);
-        } catch (error) {
-            if (error instanceof Error) {
-                console.error(error.message);
-            } else {
-                console.error("Error desconocido, la cagaste");
-            }
+    const { register, watch, setValue } = useForm({
+        defaultValues: {
+            page: 0,
+            rowsPerPage: 10,
+            search: "",
+            modalOpenCreate: false,
+            modalOpenEdit: false,
+            selectedRowId: 0,
+            selectedRowName: ""
         }
-    }
+    });
+
+    const search = watch("search");
+    const page = watch("page");
+    const rowsPerPage = watch("rowsPerPage");
+    const modalOpenCreate = watch("modalOpenCreate");
+    const modalOpenEdit = watch("modalOpenEdit");
+    const selectedRowId = watch("selectedRowId");
+    const selectedRowName = watch("selectedRowName");
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const debouncedFetchData = useCallback(
-        debounce((searchTerm: string) => fetchData(searchTerm), 300),
-        [table]
-    );
-    useEffect(() => {
-        debouncedFetchData(search);
-    }, [search, debouncedFetchData]);
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearch(e.target.value);
+    const handleSearch = useCallback(debounce((searchTerm: string) => {
+        setValue("search", searchTerm);
+    }, 500), []);
+
+    // Function to handle search input change
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        handleSearch(event.target.value);
     };
+
+    const { data, isLoading, refetch } = useQuery({
+        queryKey: ['tableData', search],
+        queryFn: () => fetchTableData(search, table),
+        refetchOnWindowFocus: false
+    });
+    
     //paginacion
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const paginatedItems = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+    const paginatedItems = Array.isArray(data) ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : [];
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-        setPage(newPage);
+        setValue("page", newPage);
     };
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
+        setValue("rowsPerPage", parseInt(event.target.value, 10));
+        setValue("page", 0);
     };
     //modales
         //create
-    const [modalOpenCreate, setModalOpenCreate] = useState(false);
-    const handleOpenCreateModal = () => setModalOpenCreate(true);
+    const handleOpenCreateModal = () => setValue("modalOpenCreate", true);
     const handleCloseCreateModal = () => {
-        setModalOpenCreate(false);
+        setValue("modalOpenCreate", false);
+        refetch();
     };
-    useEffect(() => {
-        if (!modalOpenCreate) {
-            debouncedFetchData(search);
-        }
-    }, [debouncedFetchData, modalOpenCreate, search]);
-        //fila seleccionada
-        const [selectedRowId, setSelectedRowId] = useState<number | null>(null);
-        const [selectedRowName, setSelectedRowName] = useState<string | null>(null);       
-            //edit
-    const [modalOpenEdit, setModalOpenEdit] = useState(false);
+        //edit
     const handleOpenEditModal = (id: number, name: string) => {
-        setSelectedRowId(id);
-        setSelectedRowName(name);
-        setModalOpenEdit(true);
+        setValue("selectedRowId", id);
+        setValue("selectedRowName", name);
+        setValue("modalOpenEdit", true);
     }
     const handleCloseEditModal = () => {
-        setModalOpenEdit(false);
+        setValue("modalOpenEdit", false);
+        refetch();
     }
-    useEffect(()=> {
-        if (!modalOpenEdit) {
-            debouncedFetchData(search);
-        }
-    },[debouncedFetchData, modalOpenEdit, search]);
 
     return (
         <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
             <div className="flex flex-row w-full mb-4">
-                <form className="flew items-center justify-start w-2/6" onSubmit={handleSubmit}>
+                <form className="flew items-center justify-start w-2/6">
                     <TextField 
                         id="search"
-                        name="search"
                         label="Buscar por Nombre"
                         type="search"
                         variant="outlined"
                         color="warning"
                         fullWidth
-                        value={search}
                         onChange={handleSearchChange}
                     />
                 </form>
@@ -179,7 +164,7 @@ export default function ABMTable({ table }: ABMTableProps) {
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 15, 20]}
                         component="div"
-                        count={data.length}
+                        count={Array.isArray(data) ? data.length : 0}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}

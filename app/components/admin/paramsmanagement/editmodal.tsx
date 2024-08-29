@@ -1,4 +1,4 @@
-import React, { FormEvent } from 'react';
+import React from 'react';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -7,6 +7,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { editTableData } from '@/app/services/abm/abm.service';
+import { useMutation } from '@tanstack/react-query';
 
 interface EditModalProps {
     open: boolean;
@@ -16,36 +19,32 @@ interface EditModalProps {
     name: string;
 }
 
+interface FormData {
+    name: string;
+}
+
+interface MutationData {
+    name: string;
+    id: number;
+    table: string;
+}
+
 export default function EditModal({ open, handleClose, table, id, name }: EditModalProps) {
-    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        try {
-            const formData = new FormData(event.currentTarget);
-            const name = formData.get("name") as string;
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>();
 
-            const response = await fetch("/api/admin/paramsmanagement", {
-                method: 'PUT',
-                headers: {
-                    "Content-type": "application/json"
-                },
-                body: JSON.stringify({
-                    name,
-                    id,
-                    table
-                })
-            })
-
-            if (response.status === 200) {
-                handleClose();
-            }
-
-        } catch (error) {
-            if (error instanceof Error) {
-                throw new Error(error.message);
-            } else {
-                throw new Error("Error desconocido, la cagaste");
-            }
+    const mutation = useMutation({
+        mutationFn: (data: MutationData) => editTableData(data),
+        onSuccess: () => {
+            handleClose(); // Cerrar el modal en caso de éxito
+            reset(); // Limpiar el formulario
+        },
+        onError: (error: Error) => {
+            console.error("Error al crear el ítem:", error);
         }
+    });
+
+    const onSubmit: SubmitHandler<FormData> = (data) => {
+        mutation.mutate({ name: data.name, id, table });
     };
 
     //evita que se cierre si sse clickea el background
@@ -65,7 +64,7 @@ export default function EditModal({ open, handleClose, table, id, name }: EditMo
                 fullWidth
                 PaperProps={{ 
                     component: 'form',
-                    onSubmit: handleSubmit,
+                    onSubmit: handleSubmit(onSubmit),
                     onClick: handleDialogClick,
                     style: { width: '600px', maxWidth: 'none' }
                 }} 
@@ -88,6 +87,8 @@ export default function EditModal({ open, handleClose, table, id, name }: EditMo
                                         return " Tipo de Beca ";
                                     case "grade":
                                         return " Calificación ";
+                                    case "usercareer":
+                                        return " Carrera ";
                                     default:
                                         return "";
                                 }
@@ -97,7 +98,7 @@ export default function EditModal({ open, handleClose, table, id, name }: EditMo
                     </DialogTitle>
                     <DialogContent>
                         <div className='flex flex-col w-full items-center justify-center pt-4 gap-4'>
-                            <TextField id="name" name="name" label="Nombre" helperText="Nombre de Nuevo Tipo" type="text" variant="outlined" color="warning" fullWidth required/>
+                            <TextField id="name" label="Nombre" helperText="Nombre de Nuevo Tipo" type="text" variant="outlined" color="warning" fullWidth required {...register("name", { required: true })}/>
                         </div>
                     </DialogContent>
                     <DialogActions>

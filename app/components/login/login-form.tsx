@@ -57,8 +57,9 @@ export default function LoginForm({ admin, guest, scholar }: LoginFormProps ) {
                 <div className="mb-6">
                     <TextField id="email" name="email" label="Email" helperText="Ingresa tu Email" type="email" variant="outlined" color="warning" fullWidth/>
                 </div>
-                <div className="mb-6">
+                <div className="flex flex-col items-center mb-6 gap-4">
                     <TextField id="password" name="password" label="Contraseña" helperText="Ingresa tu Contraseña" type="password" variant="outlined" color="warning" fullWidth/>
+                    {/*<strong className="text-gray-700">¿Olvidaste tu contraseña? <Link className="text-orange-500" href={"/register"}>Recuperala</Link>.</strong>*/}
                 </div>
                 <Button variant="contained" size="large" color="warning" disableElevation endIcon={<KeyboardArrowRightIcon />} fullWidth type="submit">
                     INICIAR SESIÓN

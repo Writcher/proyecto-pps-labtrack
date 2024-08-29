@@ -352,7 +352,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                     </Button>
                 </div>
             </div>
-            <div className="flex flex-col gap-2 md:flex-row">
+            <div className="flex flex-col gap-2 md:flex-row md:flex-wrap">
                 {Object.entries(activeFilters).map(([key, value]) => (
                     value && (
                         <span key={key} className="border border-gray-700 p-2 rounded text-xs md:text-sm">

@@ -76,47 +76,6 @@ export async function createInstance(query: ABMcreate) {
     }
 }
 
-{/*export async function deleteInstance(query: ABMdelete) {
-    try {
-        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade", "usercareer"];
-        if (!allowedTables.includes(query.table)) {
-            throw new Error(`Tabla no valida: ${query.table}`);
-        }
-
-        switch (query.table) {
-            case "supplytype":
-                await dropSupplyType(query.id);
-                break;
-            case "supplystatus":
-                await dropSupplyStatus(query.id);
-                break;
-            case "projecttype":
-                await dropProjectType(query.id);
-                break;
-            case "projectstatus":
-                await dropProjectStatus(query.id);
-                break;
-            case "scholarshiptype":
-                await dropScholarshipType(query.id);
-                break;
-            case "grade":
-                await dropGrade(query.id);
-                break;
-            case "usercareer":
-                await dropUserCareer(query.id);
-                break;
-            default:
-                throw new Error(`No se puede manejar la tabla: ${query.table}`);
-        }
-
-        return { success: true };
-
-    } catch (error) {
-        console.error("Error de Base de Datos:", error);
-        throw new Error("Error al eliminar la tabla (profundo)");
-    }
-}*/}
-
 export async function editInstance(query: ABMedit) {
     try {
         const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade", "usercareer"];
