@@ -9,7 +9,6 @@ import { redirect } from "next/navigation";
 export default async function Becarios() {
     const session = await auth();
     if (!session?.user) redirect("/");
-    
     const laboratory_id = session?.user?.laboratory_id as number;
     
     const usercareers = await getUserCareers(); 

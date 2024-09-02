@@ -1,19 +1,3 @@
-{/*export async function fetchTableData(searchTerm: string, table: string) {
-    try {
-        const response = await fetch(`/api/admin/paramsmanagement?name=${encodeURIComponent(searchTerm)}&table=${encodeURIComponent(table)}`, {
-            method: 'GET',
-        });
-        const fetchedData = await response.json();
-        return fetchedData;
-    } catch (error) {
-        if (error instanceof Error) {
-            console.error(error.message);
-        } else {
-            console.error("Error desconocido, la cagaste");
-        }
-    }
-}; aca la vieja para ver como cambiar las demas */}
-
 export async function fetchTableData(searchTerm: string, table: string) {
     try {
         const response = await fetch(`/api/admin/paramsmanagement?name=${encodeURIComponent(searchTerm)}&table=${encodeURIComponent(table)}`, {
@@ -28,7 +12,7 @@ export async function fetchTableData(searchTerm: string, table: string) {
         if (error instanceof Error) {
             console.error("Error en fetchTableData:", error.message);
         } else {
-            console.error("Error desconocido en fetchTableData");
+            console.error("Error desconocido");
         }
         return [];
     }
@@ -51,7 +35,7 @@ export async function createTableData(data: { name: string; table: string }) {
         if (error instanceof Error) {
             throw new Error(error.message);
         } else {
-            throw new Error("Error desconocido, la cagaste");
+            throw new Error("Error desconocido");
         }
     }
 }
@@ -73,7 +57,7 @@ export async function editTableData(data: { name: string; table: string; id:numb
         if (error instanceof Error) {
             throw new Error(error.message);
         } else {
-            throw new Error("Error desconocido, la cagaste");
+            throw new Error("Error desconocido");
         }
     }
 }

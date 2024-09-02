@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import { SideNavLinksAdmin } from "./sidenav-links";
 import { auth } from "@/app/lib/auth";
@@ -6,7 +5,6 @@ import { redirect } from "next/navigation";
 import LabTrackLogoWhite from "../labtrack-logo";
 import Button from "@mui/material/Button";
 import LogoutIcon from '@mui/icons-material/Logout';
-import IconButton from "@mui/material/IconButton";
 import { getLabById } from "@/app/lib/queries/laboratory";
 import { doLogout } from "@/app/actions";
 import { getTypeAdmin } from "@/app/lib/queries/usertype";

@@ -15,7 +15,7 @@ import CreateModal from "./createmodal";
 import TablePagination from '@mui/material/TablePagination';
 import EditModal from "./editmodal";
 import { useQuery } from "@tanstack/react-query";
-import { fetchTableData } from "@/app/services/abm/abm.service";
+import { fetchTableData } from "@/app/services/paramsmanagement/abm.service";
 import { useForm } from "react-hook-form";
 import debounce from "lodash.debounce";
 

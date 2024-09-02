@@ -3,25 +3,24 @@ import { createInstance, editInstance, getAllInstances, searchInstance } from "@
 
 export const POST = async (request: Request) => {
     try {
-        const { name, table } = await request.json();
-
+        const { 
+            name,
+            table 
+        } = await request.json();
         if (typeof name !== 'string' || typeof table !== 'string') {
             return new NextResponse("Parametros no validos", { status: 400 });
         }
-
         const query = {
             name,
             table
         }
-
         try {
             await createInstance(query)
+            return NextResponse.json({ status: 201 });
         } catch(error) {
-            console.error("Error manejando POST:", error);
-            return new NextResponse("Error al crear instancia", { status: 500 });
+            console.error("Error al crear Item:", error);
+            return new NextResponse("Error al crear Item", { status: 500 });
         } 
-        
-        return new NextResponse("Instancia creada", { status: 201 });
     } catch(error) {
         console.error("Error manejando POST:", error);
         return new NextResponse("Error al crear instancia", { status: 500 });

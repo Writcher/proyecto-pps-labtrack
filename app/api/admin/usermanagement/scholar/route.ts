@@ -6,6 +6,12 @@ import { getTypeScholar } from "@/app/lib/queries/usertype";
 import { GetScholar } from "@/app/lib/definitions";
 import { createScholar, editScholar, getScholarByName, getScholarByNameAndScholarship, getScholarByNameAndScholarshipAndUserCareer, getScholarByNameAndUserCareer, getScholars, getScholarsByScholarship, getScholarsByScholarshipAndUserCareer, getScholarsByUserCareer } from "@/app/lib/queries/scholar";
 
+interface APIErrors {
+    dni?: string,
+    file?: string,
+    email?: string,
+}
+
 export const GET = async (request: Request) => {
     try {
         const url = new URL(request.url);
@@ -59,22 +65,22 @@ export const GET = async (request: Request) => {
 
 export const POST = async (request: Request) => {
     try {
-        const { name,
-                file,
-                dni,
-                address,
-                phone,
-                careerlevel,
-                email,
-                password,
-                laboratory_id,
-                scholarshiptype_id,
-                usercareer_id } = await request.json();
-                
+        const { 
+            name,
+            file,
+            dni,
+            address,
+            phone,
+            careerlevel,
+            email,
+            password,
+            laboratory_id,
+            scholarshiptype_id,
+            usercareer_id 
+        } = await request.json();   
         const hashedPassword = await bcrypt.hash(password, 5);
         const userstatus = await getStatusPending();
         const usertype = await getTypeScholar();
-
         const user = {
                 name,
                 file,
@@ -90,84 +96,101 @@ export const POST = async (request: Request) => {
                 scholarshiptype_id,
                 usercareer_id,
         }
-
         const client = db;
         const existingUserEmail = await client.sql`
-        SELECT * FROM "user" WHERE email = ${email} LIMIT 1
+            SELECT * FROM "user" WHERE email = ${email} LIMIT 1
         `;    
-
-        if (existingUserEmail.rows.length > 0) {
-            return NextResponse.json({ error: 'El correo electrónico ya está en uso.' }, { status: 400 });
-        }
-
         const existingScholarFile = await client.sql`
-        SELECT * FROM "scholar" WHERE file = ${file} LIMIT 1
+            SELECT * FROM "scholar" WHERE file = ${file} LIMIT 1
         `;    
-
-        if (existingScholarFile.rows.length > 0) {
-            return NextResponse.json({ error: 'Ya existe una cuenta con este legajo.' }, { status: 400 });
-        }
-
         const existingScholarDNI = await client.sql`
-        SELECT * FROM "scholar" WHERE dni = ${dni} LIMIT 1
+            SELECT * FROM "scholar" WHERE dni = ${dni} LIMIT 1
         `;    
-
+        const apiErrors: APIErrors = {};
+        if (existingUserEmail.rows.length > 0) {
+            apiErrors.email = "Email en uso";
+        }
+        if (existingScholarFile.rows.length > 0) {
+            apiErrors.file = "Legajo ya existe";
+        }
         if (existingScholarDNI.rows.length > 0) {
-            return NextResponse.json({ error: 'Ya existe una cuenta con este DNI.' }, { status: 400 });
+            apiErrors.dni = "DNI ya existe";
         }
-
+        if (Object.keys(apiErrors).length > 0) {
+            return NextResponse.json(
+                { apiError: apiErrors }, 
+                { status: 400 }
+            );
+        }
         try {
-            await createScholar(user)
+            await createScholar(user);
+            return NextResponse.json({ status: 201 });
         } catch(error) {
-            console.error("Error manejando POST:", error);
-            return new NextResponse("Error al crear usuario", { status: 500 });
+            console.error("Error al crear Becario:", error);
+            return NextResponse.json({ message: "Error al crear becario" }, { status: 500 })
         }
-    
-        return NextResponse.json({ status: 201 });
     } catch (error) {
         console.error("Error manejando POST:", error);
-        return new NextResponse("Error al crear becario", { status: 500 });
+        return NextResponse.json({ message: "Error procesando la solicitud" }, { status: 500 });
     }
 }
 
 export const PUT = async (request: Request) => {
     try {
-        const { id, name, file, dni, address, phone, careerlevel, scholarshiptype_id, usercareer_id } = await request.json();
-
+        const { 
+            id,
+            name,
+            file,
+            dni,
+            address,
+            phone,
+            careerlevel,
+            scholarshiptype_id,
+            usercareer_id 
+        } = await request.json();
         if (typeof id !== 'number' || typeof name !== 'string' || typeof file !== 'string' || typeof dni !== 'string' || typeof address !== 'string' || typeof phone !== 'string' || typeof careerlevel !== 'number' || typeof scholarshiptype_id !== 'number' || typeof usercareer_id !== 'number') {
             return new NextResponse("Parametros no válidos", {status: 400});
         }
-
         const client = db;
-
         const existingScholarFile = await client.sql`
-        SELECT * FROM "scholar" WHERE file = ${file} AND id <> ${id} LIMIT 1
+            SELECT * FROM "scholar" WHERE file = ${file} LIMIT 1
         `;    
-        if (existingScholarFile.rows.length > 0) {
-            return NextResponse.json({ error: 'Ya existe una cuenta con este legajo.' }, { status: 400 });
-        }
-
         const existingScholarDNI = await client.sql`
-        SELECT * FROM "scholar" WHERE dni = ${dni} AND id <> ${id} LIMIT 1
+            SELECT * FROM "scholar" WHERE dni = ${dni} LIMIT 1
         `;    
-        if (existingScholarDNI.rows.length > 0) {
-            return NextResponse.json({ error: 'Ya existe una cuenta con este DNI.' }, { status: 400 });
+        const apiErrors: APIErrors = {};
+        if (existingScholarFile.rows.length > 0) {
+            apiErrors.file = "Legajo ya existe";
         }
-
-        const query = {
-            id, name, file, dni, address, phone, careerlevel, scholarshiptype_id, usercareer_id
+        if (existingScholarDNI.rows.length > 0) {
+            apiErrors.dni = "DNI ya existe";
+        }
+        if (Object.keys(apiErrors).length > 0) {
+            return NextResponse.json(
+                { apiError: apiErrors }, 
+                { status: 400 }
+            );
+        }
+        const editUser = {
+            id,
+            name,
+            file,
+            dni,
+            address,
+            phone,
+            careerlevel,
+            scholarshiptype_id,
+            usercareer_id
         };
-
         try {
-            await editScholar(query);
+            await editScholar(editUser);
+            return NextResponse.json({ status: 201 });
         } catch(error) {
-            console.error("Error manejando PUT:", error);
-            return new NextResponse("Error al editar usuario", { status: 500 });
-        } 
-
-        return NextResponse.json({ status: 200 });
-    } catch(error) {
+            console.error("Error al editar Becario:", error);
+            return NextResponse.json({ message: "Error al editar becario" }, { status: 500 })
+        }
+    } catch (error) {
         console.error("Error manejando PUT:", error);
-        return new NextResponse("Error al editar usuario", { status: 500 });
+        return NextResponse.json({ message: "Error procesando la solicitud" }, { status: 500 });
     }
 }

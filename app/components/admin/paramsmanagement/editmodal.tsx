@@ -8,7 +8,7 @@ import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { editTableData } from '@/app/services/abm/abm.service';
+import { editTableData } from '@/app/services/paramsmanagement/abm.service';
 import { useMutation } from '@tanstack/react-query';
 
 interface EditModalProps {
@@ -35,8 +35,8 @@ export default function EditModal({ open, handleClose, table, id, name }: EditMo
     const mutation = useMutation({
         mutationFn: (data: MutationData) => editTableData(data),
         onSuccess: () => {
-            handleClose(); // Cerrar el modal en caso de éxito
-            reset(); // Limpiar el formulario
+            handleClose();
+            reset();
         },
         onError: (error: Error) => {
             console.error("Error al crear el ítem:", error);
@@ -51,6 +51,11 @@ export default function EditModal({ open, handleClose, table, id, name }: EditMo
     const handleDialogClick = (event: React.MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
     };
+
+    const handleExit = () => {
+        handleClose();
+        reset();
+    }
 
     return (
             <Dialog 
@@ -98,19 +103,32 @@ export default function EditModal({ open, handleClose, table, id, name }: EditMo
                     </DialogTitle>
                     <DialogContent>
                         <div className='flex flex-col w-full items-center justify-center pt-4 gap-4'>
-                            <TextField id="name" label="Nombre" helperText="Nombre de Nuevo Tipo" type="text" variant="outlined" color="warning" fullWidth required {...register("name", { required: true })}/>
+                            <TextField 
+                                id="name" 
+                                label="Nombre"
+                                type="text" 
+                                variant="outlined" 
+                                color="warning" 
+                                fullWidth
+                                {...register("name", { 
+                                        required: "Este campo es requerido" 
+                                    }
+                                )}
+                                error={!!errors.name}
+                                helperText={errors.name ? errors.name.message : "Nombre de Nuevo Elemento"}
+                            />
                         </div>
                     </DialogContent>
                     <DialogActions>
                         <div className='flex flex-row m-4 hidden md:block'>
                             <div className='flex flex-row gap-4'>
-                                <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                                <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
                                 <Button variant="contained" size="large" color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
                             </div>
                         </div>
                         <div className='flex flex-row m-3 block md:hidden'>
                             <div className='flex flex-row justify-center gap-1'>
-                                <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                                <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
                                 <Button variant="contained"  color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
                             </div>
                         </div>

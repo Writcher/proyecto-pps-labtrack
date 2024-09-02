@@ -1,15 +1,15 @@
-import { ABMcreate, ABMdelete, ABMedit, Grade, NewGrade, NewProjecttype, NewScolarchiptype, NewSupplystatus, NewSupplytype, NewUsercareer, Projectstatus, Projecttype, Scholarshiptype, Supplystatus, Supplytype, Usercareer } from '../lib/definitions';
-import { createGrade, dropGrade, getGradeByName, getGrades, updateGrade} from './queries/grade';
+import { ABMcreate, ABMedit, Grade, NewGrade, NewProjecttype, NewScolarchiptype, NewSupplystatus, NewSupplytype, NewUsercareer, Projectstatus, Projecttype, Scholarshiptype, Supplystatus, Supplytype, Usercareer } from '../lib/definitions';
+import { createGrade, getGradeByName, getGrades, updateGrade} from './queries/grade';
 import { createHistoricProjectStatus } from './queries/historicprojectstatus';
 import { createHistoricProjectType } from './queries/historicprojecttype';
 import { createHistoricScholarshipType } from './queries/historicscholarshiptype';
 import { createHistoricUserCareer } from './queries/historicusercareer';
-import { createProjectStatus, dropProjectStatus, getProjectStatusByName, getProjectStatuses, updateProjectStatus } from './queries/projectstatus';
-import { createProjectType, dropProjectType, getProjectTypeByName, getProjectTypes, updateProjectType } from './queries/projecttype';
-import { createScholarshipType, dropScholarshipType, getScholarshipTypeByName, getScholarshipTypes, updateScholarshipType } from './queries/scholarshiptype';
-import { createSupplyStatus, dropSupplyStatus, getSupplyStatusByName, getSupplyStatuses, updateSupplyStatus } from './queries/supplystatus';
-import { createSupplyType, dropSupplyType, getSupplyTypeByName, getSupplyTypes, updateSupplyType } from './queries/supplytype';
-import { createUserCareer, dropUserCareer, getUserCareerByName, getUserCareers, updateUserCareer } from './queries/usercareer';
+import { createProjectStatus, getProjectStatusByName, getProjectStatuses, updateProjectStatus } from './queries/projectstatus';
+import { createProjectType, getProjectTypeByName, getProjectTypes, updateProjectType } from './queries/projecttype';
+import { createScholarshipType, getScholarshipTypeByName, getScholarshipTypes, updateScholarshipType } from './queries/scholarshiptype';
+import { createSupplyStatus, getSupplyStatusByName, getSupplyStatuses, updateSupplyStatus } from './queries/supplystatus';
+import { createSupplyType, getSupplyTypeByName, getSupplyTypes, updateSupplyType } from './queries/supplytype';
+import { createUserCareer, getUserCareerByName, getUserCareers, updateUserCareer } from './queries/usercareer';
 
 export async function createInstance(query: ABMcreate) {
     try {
