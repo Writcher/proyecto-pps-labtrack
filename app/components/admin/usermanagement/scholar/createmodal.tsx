@@ -58,12 +58,16 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
 
     const mutation = useMutation({
         mutationFn: (data: MutationData) => createTableData(data),
-        onSuccess: () => {
-            handleClose();
-            reset();
+        onSuccess: (result) => {
+            if (result.success) {
+                handleClose();
+                reset();
+            } else {
+                setApiError(result.error);
+            }
         },
-        onError: (errorData: APIErrors) => {
-            setApiError(errorData);
+        onError: (error: APIErrors) => {
+            setApiError({ dni: error.dni, file: error.file, email: error.email });
         },
     });
     

@@ -153,10 +153,10 @@ export const PUT = async (request: Request) => {
         }
         const client = db;
         const existingScholarFile = await client.sql`
-            SELECT * FROM "scholar" WHERE file = ${file} LIMIT 1
+            SELECT * FROM "scholar" WHERE file = ${file} AND id != ${id} LIMIT 1
         `;    
         const existingScholarDNI = await client.sql`
-            SELECT * FROM "scholar" WHERE dni = ${dni} LIMIT 1
+            SELECT * FROM "scholar" WHERE dni = ${dni} AND id != ${id} LIMIT 1
         `;    
         const apiErrors: APIErrors = {};
         if (existingScholarFile.rows.length > 0) {

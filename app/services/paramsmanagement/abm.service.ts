@@ -1,6 +1,8 @@
+"use server"
+
 export async function fetchTableData(searchTerm: string, table: string) {
     try {
-        const response = await fetch(`/api/admin/paramsmanagement?name=${encodeURIComponent(searchTerm)}&table=${encodeURIComponent(table)}`, {
+        const response = await fetch(`${process.env.BASE_URL}/api/admin/paramsmanagement?name=${encodeURIComponent(searchTerm)}&table=${encodeURIComponent(table)}`, {
             method: 'GET',
         });
         if (!response.ok) {
@@ -20,7 +22,7 @@ export async function fetchTableData(searchTerm: string, table: string) {
 
 export async function createTableData(data: { name: string; table: string }) {
     try {
-        const response = await fetch("/api/admin/paramsmanagement", {
+        const response = await fetch(`${process.env.BASE_URL}/api/admin/paramsmanagement`, {
             method: 'POST',
             headers: {
                 "Content-type": "application/json"
@@ -30,7 +32,6 @@ export async function createTableData(data: { name: string; table: string }) {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return response;
     } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message);
@@ -42,7 +43,7 @@ export async function createTableData(data: { name: string; table: string }) {
 
 export async function editTableData(data: { name: string; table: string; id:number }) {
     try {
-        const response = await fetch("/api/admin/paramsmanagement", {
+        const response = await fetch(`${process.env.BASE_URL}/api/admin/paramsmanagement`, {
             method: 'PUT',
             headers: {
                 "Content-type": "application/json"
@@ -52,7 +53,6 @@ export async function editTableData(data: { name: string; table: string; id:numb
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return response;
     } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message);

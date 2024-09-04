@@ -1,4 +1,6 @@
-import React from 'react';
+"use client"
+
+import React, { useEffect } from 'react';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -30,7 +32,11 @@ interface MutationData {
 }
 
 export default function EditModal({ open, handleClose, table, id, name }: EditModalProps) {
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>();
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
+        defaultValues: {
+            name: name
+        },
+      });
 
     const mutation = useMutation({
         mutationFn: (data: MutationData) => editTableData(data),
@@ -39,7 +45,7 @@ export default function EditModal({ open, handleClose, table, id, name }: EditMo
             reset();
         },
         onError: (error: Error) => {
-            console.error("Error al crear el ítem:", error);
+            console.error("Error al editar el ítem:", error);
         }
     });
 
@@ -55,7 +61,13 @@ export default function EditModal({ open, handleClose, table, id, name }: EditMo
     const handleExit = () => {
         handleClose();
         reset();
-    }
+    };
+
+    useEffect(() => {
+        reset({
+            name: name
+        });
+    }, [name, reset]);
 
     return (
             <Dialog 

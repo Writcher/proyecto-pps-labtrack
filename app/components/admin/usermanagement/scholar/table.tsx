@@ -244,8 +244,8 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
 
     return (
         <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
-            <div className="flex flex-col justify-center md:flex-row w-full md:h-14 gap-4 md:gap-2 text-gray-700">
-                <div className="flex flex-row gap-2 h-14">
+            <div className="flex flex-row w-full mb-4">
+                <div className="flex flex-row gap-2 h-14 text-gray-700">
                     <ButtonGroup variant="outlined" color="inherit">
                         <Button 
                             variant="outlined" 
@@ -352,7 +352,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                     </Button>
                 </div>
             </div>
-            <div className="flex flex-col gap-2 md:flex-row md:flex-wrap">
+            <div className="flex gap-2 md:flex-row md:flex-wrap">
                 {Object.entries(activeFilters).map(([key, value]) => (
                     value && (
                         <span key={key} className="border border-gray-700 p-2 rounded text-xs md:text-sm">

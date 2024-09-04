@@ -56,17 +56,21 @@ export default function EditScholarModal({ open, handleClose, row, usercareers, 
             usercareer_id: row?.usercareer_id,
             scholarshiptype_id: row?.scholarshiptype_id,
         },
-      });
+    });
     const [apiError, setApiError] = useState<APIErrors>({});
 
     const mutation = useMutation({
         mutationFn: (data: MutationData) => editTableData(data),
-        onSuccess: () => {
-            handleClose();
-            reset();
+        onSuccess: (result) => {
+            if (result.success) {
+                handleClose();
+                reset();
+            } else {
+                setApiError(result.error);
+            }
         },
-        onError: (errorData: APIErrors) => {
-            setApiError(errorData);
+        onError: (error: APIErrors) => {
+            setApiError({ dni: error.dni, file: error.file });
         },
     });
 

@@ -20,7 +20,7 @@ export default function ABMcarrera() {
             <div className="flex flex-col min-h-[80%] max-h-[80%] mt-10 md:px-10 items-center justify-center">
                 <QueryClientProvider client={queryClient}>
                     <ABMTable 
-                        table="usercareer"   
+                        table="supplystatus"   
                     />
                 </QueryClientProvider>
             </div>
