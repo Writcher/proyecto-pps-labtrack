@@ -23,3 +23,10 @@ export type editData = {
     phone: string;
     id: number;
 }
+
+export type fetchData = {
+    search: string;
+    scholarshiptype_id: number;
+    usercareer_id: number;
+    laboratory_id: number;
+}
