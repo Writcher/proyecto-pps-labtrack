@@ -1,3 +1,5 @@
+"use client"
+
 import { scholarshipType } from "@/app/lib/dtos/scholarshiptype";
 import { userCareer } from "@/app/lib/dtos/usercareer";
 import CreateScholarModal from "./createmodal";
@@ -9,7 +11,12 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import FilterAltOffIcon from '@mui/icons-material/FilterAltOff'
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -30,41 +37,95 @@ interface AMBScholarTableProps {
 }
 
 interface FormData {
+    //filters
+    filterAnchor: null | HTMLElement;
+    filterMenuOpen: boolean;
+    activeFilters: { [key: string ]: any }
+    showSearchForm: boolean;
+    search: string;
+    
+    //pagination
     page: number;
     rowsPerPage: number;
-    search: string;
+    //modals
     modalOpenCreate: boolean;
     modalOpenDelete: boolean;
     modalOpenEdit: boolean;
+    //selected row
     selectedRowId: number;
     selectedRowName: string;
     selectedRow: null | GetScholar;
+    //expanded row
+    expandedRowId: null | number;
 }
 
 export default function ABMScholarTableNEW({ usercareers, scholarships, laboratory_id }: AMBScholarTableProps ) {
-    const { register, watch, setValue } = useForm<FormData>({
+    const { register, watch, setValue, getValue } = useForm<FormData>({
         defaultValues: {
+            //filters
+            filterAnchor: null,
+            filterMenuOpen: Boolean(filterAnchor),
+            activeFilters: {},
+            search: "",
+            showSearchForm: true,
+            
+
+
+
+            //pagination
             page: 0,
             rowsPerPage: 10,
-            search: "",
+            //modals
             modalOpenCreate: false,
             modalOpenDelete: false,
             modalOpenEdit: false,
+            //selected row
             selectedRowId: 0,
             selectedRowName: "",
             selectedRow: null,
+            //expanded row
+            expandedRowId: null,
         }
     });
+    //filters
+    const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setValue("filterAnchor", event.currentTarget);
+    }
+    const handleFilterClose = () => {
+        setValue("filterAnchor", null);
+    }
+    const handleClearFilters = () => {
+            //reset values
+        setValue("search", "");
 
+            //reset default filter show
+        setValue("showSearchForm", true);
+
+            //reset active filters and close
+        setValue("activeFilters", {});
+        handleFilterClose();
+    }
+        //search
     const search = watch("search");
+    const handleSearchFilterSelect = () => {
+        setValue("showSearchForm", true);
+            //aca los otros filtros en false
+        handleFilterClose();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const handleSearch = useCallback(debounce((searchTerm: string) => {
         setValue("search", searchTerm);
     }, 500), []);
-    // Function to handle search input change
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         handleSearch(event.target.value);
+        const currentFilters = getValues("activeFilters");
+        setValue("activeFilters", {
+            ...currentFilters,
+            search: event.target.value,
+        });
     };
+
+
     const usercareer_id = 0
     const scholarshiptype_id = 0
 
@@ -75,7 +136,11 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
         queryFn: () => fetchTableData({ search, laboratory_id, usercareer_id, scholarshiptype_id}),
         refetchOnWindowFocus: false
     });
-    
+    //expanded row
+    const expandedRowId = watch("expandedRowId");
+    const toggleRowExpansion = (id: number) => {
+        setValue("expandedRowId", expandedRowId === id ? null : id);
+    }
     //pagination
     const page = watch("page");
     const rowsPerPage = watch("rowsPerPage")
@@ -120,32 +185,87 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
         setValue("modalOpenEdit", false);
         refetch();
     }
-
     return (
         <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
             <div className="flex flex-row w-full mb-4">
-                <form className="flew items-center justify-start w-2/6">
-                    <TextField 
-                        id="search"
-                        label="Buscar por Nombre"
-                        type="search"
-                        variant="outlined"
-                        color="warning"
-                        fullWidth
-                        onChange={handleSearchChange}
-                    />
+                <div className="flex flex-row gap-2 h-14 text-gray-700">
+                    <ButtonGroup variant="outlined" color="inherit">
+                        <Button 
+                            variant="outlined" 
+                            color="inherit"
+                            disableElevation 
+                            endIcon={<FilterAltIcon />}
+                            onClick={handleFilterClick} 
+                        >
+                            Filtros
+                        </Button>
+                        <Button 
+                            variant="outlined" 
+                            color="error"
+                            disableElevation 
+                            onClick={handleClearFilters}
+                        >
+                            <FilterAltOffIcon/>
+                        </Button>
+                    </ButtonGroup>
+                    <div className="flex grow"/>
+                    <div className="flex block md:hidden">
+                        <Button
+                            variant="contained"
+                            color="success"
+                            disableElevation
+                            endIcon={<AddIcon />}
+                            onClick={handleOpenCreateModal}
+                        >
+                            Añadir
+                        </Button>
+                    </div>
+                </div>
+                <Menu
+                    anchorEl={anchorEl}
+                    open={menuOpen}
+                    onClose={handleFilterClose}
+                >
+                    <MenuItem onClick={handleSearchFilterSelect}>Buscar por Nombre</MenuItem>
+                    <MenuItem >Filtrar por Beca</MenuItem>
+                    <MenuItem >Filtrar por Carrera</MenuItem>
+                </Menu>
+                <form className="flex items-center justify-start md:w-2/6" onSubmit={handleSubmit}>
+                    {showSearchForm && (
+                        <TextField 
+                            id="search"
+                            name="search"
+                            label="Buscar por Nombre"
+                            type="search"
+                            variant="outlined"
+                            color="warning"
+                            fullWidth
+                            value={search}
+                            onChange={handleSearchChange}
+                        />
+                    )}
                 </form>
                 <div className="flex grow" />
-                <Button
-                    variant="contained"
-                    size="large"
-                    color="success"
-                    disableElevation
-                    startIcon={<AddIcon />}
-                    onClick={handleOpenCreateModal}
-                >
-                    AÑADIR
-                </Button>
+                <div className="md:flex hidden md:block">
+                    <Button
+                        variant="contained"
+                        color="success"
+                        disableElevation
+                        startIcon={<AddIcon />}
+                        onClick={handleOpenCreateModal}
+                    >
+                        Añadir
+                    </Button>
+                </div>
+            </div>
+            <div className="flex gap-2 md:flex-row md:flex-wrap">
+                {Object.entries(activeFilters).map(([key, value]) => (
+                    value && (
+                        <span key={key} className="border border-gray-700 p-2 rounded text-xs md:text-sm">
+                            {key === "search" && `Nombre: ${value}`}
+                        </span>
+                    )
+                ))}
             </div>
             <div className="flex flex-col overflow-y-auto h-full">
                 <TableContainer>
