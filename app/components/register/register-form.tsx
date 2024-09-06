@@ -3,7 +3,7 @@
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import { FormEvent, use, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Laboratory } from "@/app/lib/definitions"
+import { laboratory } from "@/app/lib/dtos/laboratory"
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
@@ -11,7 +11,7 @@ import React from 'react';
 import Alert from '@mui/material/Alert';
 
 interface RegisterFormProps {
-    laboratories: Laboratory[];
+    laboratories: laboratory[];
 }
 
 export default function RegisterForm({ laboratories }: RegisterFormProps) {

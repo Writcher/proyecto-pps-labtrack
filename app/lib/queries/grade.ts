@@ -1,5 +1,5 @@
 import { db } from '@vercel/postgres';
-import { Grade, NewGrade } from '../definitions'; 
+import { grade, newGrade } from '../dtos/grade';
 
 const client = db;
 
@@ -8,7 +8,7 @@ export async function getGrades() {
         const result = await client.sql`
         SELECT * FROM "grade"
         `;
-        return result.rows as Grade[];
+        return result.rows as grade[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el grade");
@@ -28,7 +28,7 @@ export async function getGradeByName(name: string) {
     }
 }
 
-export async function createGrade(grade: NewGrade) {
+export async function createGrade(grade: newGrade) {
     try {
         return client.sql`
         INSERT INTO "grade" (name)
@@ -52,7 +52,7 @@ export async function dropGrade(id: number) {
     }
 }
 
-export async function updateGrade(grade: Grade) {
+export async function updateGrade(grade: grade) {
 
     try {
         return client.sql`

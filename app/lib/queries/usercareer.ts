@@ -1,5 +1,5 @@
 import { db } from '@vercel/postgres';
-import { Usercareer, NewUsercareer } from '../definitions';
+import { userCareer, newUserCareer } from '../dtos/usercareer';
 
 const client = db;
 
@@ -8,7 +8,7 @@ export async function getUserCareers() {
         const result = await client.sql`
         SELECT * FROM "usercareer"
         `;
-        return result.rows as Usercareer[];
+        return result.rows as userCareer[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el usercareer");
@@ -28,7 +28,7 @@ export async function getUserCareerByName(name: string) {
     }
 }
 
-export async function createUserCareer(usercareer: NewUsercareer) {
+export async function createUserCareer(usercareer: newUserCareer) {
     try {
         return client.sql`
         INSERT INTO "usercareer" (name)
@@ -52,7 +52,7 @@ export async function dropUserCareer(id: number) {
     }
 }
 
-export async function updateUserCareer(usercareer: Usercareer) {
+export async function updateUserCareer(usercareer: userCareer) {
     try {
         return client.sql`
         UPDATE "usercareer"

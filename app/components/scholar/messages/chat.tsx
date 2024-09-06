@@ -1,6 +1,6 @@
 "use client"
 
-import { GetMessages, GetAdminMessages } from "@/app/lib/definitions";
+import { fetchedMessages, fetchedAdminMessages } from "@/app/lib/dtos/message";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import TextField from "@mui/material/TextField";
@@ -21,14 +21,14 @@ interface ChatMenuProps {
 export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: ChatMenuProps) {
 
     const current_id_number = Number(current_id);
-    const [admins, setAdmins] = useState<GetAdminMessages[]>([]);
+    const [admins, setAdmins] = useState<fetchedAdminMessages[]>([]);
     useEffect(() => {
         async function fetchData() {
             try {
                 const response = await fetch(`/api/messages?labid=${encodeURIComponent(laboratory_id)}&typeid=${encodeURIComponent(usertype_id)}&currentid=${encodeURIComponent(current_id_number)}`, {
                     method: 'GET',
                 });
-                const fetchedData: GetAdminMessages[] = await response.json();
+                const fetchedData: fetchedAdminMessages[] = await response.json();
                 setAdmins(fetchedData);
             } catch (error) {
                 if (error instanceof Error) {
@@ -71,7 +71,7 @@ export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: Ch
         setMessage(event.target.value as string | '');
     };
 
-    const [messages, setMessages] = useState<GetMessages[]>([]);
+    const [messages, setMessages] = useState<fetchedMessages[]>([]);
 
     useEffect(() => {
         const fetchMessages = async () => {

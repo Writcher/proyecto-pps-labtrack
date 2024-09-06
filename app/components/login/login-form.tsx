@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Alert from "@mui/material/Alert";
-import { getTypeAdmin, getTypeGuest, getTypeScholar } from "@/app/lib/queries/usertype";
 
 interface LoginFormProps {
     admin: number;

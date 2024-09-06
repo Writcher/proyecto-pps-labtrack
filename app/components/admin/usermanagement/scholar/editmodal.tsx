@@ -9,7 +9,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
-import { Scholarshiptype, Usercareer, GetScholar } from '@/app/lib/definitions';
+import { scholarshipType } from '@/app/lib/dtos/scholarshiptype';
+import { userCareer } from '@/app/lib/dtos/usercareer';
+import { fetchedScholar } from '@/app/lib/dtos/scholar';
 import { MenuItem } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
@@ -18,9 +20,9 @@ import { editTableData } from '@/app/services/usermanagement/scholar.service';
 interface EditModalProps {
     open: boolean;
     handleClose: () => void;
-    usercareers: Usercareer[];
-    scholarships: Scholarshiptype[];
-    row: GetScholar;
+    usercareers: userCareer[];
+    scholarships: scholarshipType[];
+    row: fetchedScholar;
 }
 
 interface FormData {

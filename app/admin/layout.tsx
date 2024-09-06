@@ -2,7 +2,6 @@ import SideNav from '@/app/components/admin/sidenav';
 import { getTypeAdmin } from '../lib/queries/usertype';
 import { auth } from '../lib/auth';
 import { redirect } from 'next/navigation';
-import IconButton from '@mui/material/IconButton';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { doLogout } from '../actions';
 import Button from '@mui/material/Button';

@@ -1,5 +1,5 @@
 import { db } from '@vercel/postgres';
-import { Supplytype, NewSupplytype } from '../definitions';
+import { supplyType, newSupplyType } from '../dtos/supplytype';
 
 const client = db;
 
@@ -8,7 +8,7 @@ export async function getSupplyTypes() {
         const result = await client.sql`
         SELECT * FROM "supplytype"
         `;
-        return result.rows as Supplytype[];
+        return result.rows as supplyType[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el supplytype");
@@ -28,7 +28,7 @@ export async function getSupplyTypeByName(name: string) {
     }
 }
 
-export async function createSupplyType(supplytype: NewSupplytype) {
+export async function createSupplyType(supplytype: newSupplyType) {
     try {
         return client.sql`
         INSERT INTO "supplytype" (name)
@@ -52,7 +52,7 @@ export async function dropSupplyType(id: number) {
     }
 }
 
-export async function updateSupplyType(supplytype: Supplytype) {
+export async function updateSupplyType(supplytype: supplyType) {
     try {
         return client.sql`
         UPDATE "supplytype"

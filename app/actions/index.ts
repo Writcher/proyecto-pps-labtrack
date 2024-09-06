@@ -2,13 +2,13 @@
 
 import { signIn, signOut } from "../lib/auth";
 import { getUserByEmail, userChangeStatus } from "../lib/queries/user";
-import bcrypt from 'bcryptjs';
 import { createVerificationToken, deleteVerificationToken, getVerificationTokenByEmail } from "../lib/queries/validationtoken";
-import { nanoid } from "nanoid";
-import sendVerificationEmail from "../lib/verificationemail";
 import { getStatusDeactivated, getStatusExpired, getStatusPending } from "../lib/queries/userstatus";
 import { getTypeGuest } from "../lib/queries/usertype";
 import { getGuestExpirationDate } from "../lib/queries/guest";
+import sendVerificationEmail from "../lib/verificationemail";
+import { nanoid } from "nanoid";
+import bcrypt from 'bcryptjs';
 
 export async function doLogout() {
     await signOut({ redirectTo: "/" });

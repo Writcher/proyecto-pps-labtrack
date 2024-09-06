@@ -2,6 +2,7 @@
 
 import { NextResponse } from "next/server";
 import { createInstance, editInstance, getAllInstances, searchInstance } from "@/app/lib/abm";
+import { ABMcreateQuery, ABMeditQuery } from "@/app/lib/dtos/abm";
 
 export const POST = async (request: Request) => {
     try {
@@ -15,7 +16,7 @@ export const POST = async (request: Request) => {
         const query = {
             name,
             table
-        }
+        } as ABMcreateQuery;
         try {
             await createInstance(query)
             return new NextResponse("Instancia creada", { status: 201 });
@@ -39,7 +40,7 @@ export const PUT = async (request: Request) => {
             name,
             id,
             table
-        }
+        } as ABMeditQuery;
         try {
             await editInstance(query);
             return new NextResponse("Instancia editada", { status: 200 });

@@ -1,6 +1,6 @@
 import { db } from "@vercel/postgres";
 import { getTypeScholar } from "./usertype";
-import { EditScholar, GetScholar, NewScholar } from "../definitions";
+import { editScholarQuery, fetchedScholar, newScholarQuery } from "../dtos/scholar";
 
 const client = db;
 
@@ -21,7 +21,7 @@ export async function getScholars(labid: number) {
         WHERE u.usertype_id = ${type}
         AND u.laboratory_id = ${labid}
         `;
-        return result.rows as GetScholar[];
+        return result.rows as fetchedScholar[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el becario");
@@ -46,7 +46,7 @@ export async function getScholarsByScholarship(labid: number, scholarship: numbe
         AND u.laboratory_id = ${labid}
         AND s.scholarshiptype_id = ${scholarship}
         `;
-        return result.rows as GetScholar[];
+        return result.rows as fetchedScholar[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el becario");
@@ -71,7 +71,7 @@ export async function getScholarsByUserCareer(labid: number, userCareer: number)
         AND u.laboratory_id = ${labid}
         AND s.usercareer_id = ${userCareer}
         `;
-        return result.rows as GetScholar[];
+        return result.rows as fetchedScholar[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el becario");
@@ -97,7 +97,7 @@ export async function getScholarsByScholarshipAndUserCareer(labid: number, schol
         AND s.scholarshiptype_id = ${scholarship}
         AND s.usercareer_id = ${userCareer}
         `;
-        return result.rows as GetScholar[];
+        return result.rows as fetchedScholar[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el becario");
@@ -122,7 +122,7 @@ export async function getScholarByName(name: string, labid: number) {
             AND u.usertype_id = ${type}
             AND u.laboratory_id = ${labid}
         `;
-        return result.rows as GetScholar[];
+        return result.rows as fetchedScholar[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el becario");
@@ -148,7 +148,7 @@ export async function getScholarByNameAndScholarship(name: string, labid: number
             AND u.laboratory_id = ${labid}
             AND s.scholarshiptype_id = ${scholarship}
         `;
-        return result.rows as GetScholar[];
+        return result.rows as fetchedScholar[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el becario");
@@ -174,7 +174,7 @@ export async function getScholarByNameAndUserCareer(name: string, labid: number,
             AND u.laboratory_id = ${labid}
             AND s.usercareer_id = ${userCareer}
         `;
-        return result.rows as GetScholar[];
+        return result.rows as fetchedScholar[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el becario");
@@ -201,14 +201,14 @@ export async function getScholarByNameAndScholarshipAndUserCareer(name: string, 
             AND s.usercareer_id = ${userCareer}
             AND s.scholarshiptype_id = ${scholarship}
         `;
-        return result.rows as GetScholar[];
+        return result.rows as fetchedScholar[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el becario");
     } 
 }
 
-export async function createScholar(user: NewScholar)  {
+export async function createScholar(user: newScholarQuery)  {
     try {
         await client.sql`BEGIN`;
         const response = await client.sql`
@@ -230,7 +230,7 @@ export async function createScholar(user: NewScholar)  {
     }
 }
 
-export async function editScholar(user: EditScholar) {
+export async function editScholar(user: editScholarQuery) {
     try {
         await client.sql`BEGIN`;
         await client.sql`

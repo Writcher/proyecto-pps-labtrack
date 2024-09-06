@@ -1,5 +1,5 @@
 import { db } from '@vercel/postgres';
-import { Projectstatus, NewProjectstatus } from '../definitions';
+import { projectStatus, newProjectStatus } from '../dtos/projectstatus';
 
 const client = db;
 
@@ -8,14 +8,14 @@ export async function getHistoricProjectStatuses() {
         const result = await client.sql`
         SELECT * FROM "historicprojectstatus"
         `;
-        return result.rows as Projectstatus[];
+        return result.rows as projectStatus[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el projectstatus");
     }
 }
 
-export async function createHistoricProjectStatus(historicprojectstatus: NewProjectstatus) {
+export async function createHistoricProjectStatus(historicprojectstatus: newProjectStatus) {
     try {
         return client.sql`
         INSERT INTO "historicprojectstatus" (name)

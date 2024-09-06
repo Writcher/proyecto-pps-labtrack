@@ -10,7 +10,8 @@ import TextField from "@mui/material/TextField";
 import MenuItem from '@mui/material/MenuItem';
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
-import { Scholarshiptype, Usercareer } from '@/app/lib/definitions';
+import { scholarshipType } from '@/app/lib/dtos/scholarshiptype';
+import { userCareer } from '@/app/lib/dtos/usercareer';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { createTableData } from '@/app/services/usermanagement/scholar.service';
@@ -18,8 +19,8 @@ import { createTableData } from '@/app/services/usermanagement/scholar.service';
 interface CreateModalProps {
     open: boolean;
     handleClose: () => void;
-    usercareers: Usercareer[];
-    scholarships: Scholarshiptype[];
+    usercareers: userCareer[];
+    scholarships: scholarshipType[];
     laboratory_id: number;
 }
 

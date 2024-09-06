@@ -12,18 +12,15 @@ export const GET = async (request: Request) => {
         const projectStatusString = url.searchParams.get('projectstatus');
         const projectTypeString = url.searchParams.get('projecttype');
         const yearString = url.searchParams.get('year');
-
         const labid = labidString ? parseInt(labidString, 10) : undefined;
         const scholarship = scholarshipString ? parseInt(scholarshipString, 10) : undefined;
         const userCareer = userCareerString ? parseInt(userCareerString, 10) : undefined;
         const projectStatus = projectStatusString ? parseInt(projectStatusString, 10) : undefined;
         const projectType = projectTypeString ? parseInt(projectTypeString, 10) : undefined;
         const year = yearString ? parseInt(yearString, 10) : undefined;
-
         if (labid === undefined) {
             return new NextResponse("labid is required", { status: 400 });
         }
-
         const filters = {
             projectname,
             scholarship,
@@ -33,7 +30,6 @@ export const GET = async (request: Request) => {
             projectType,
             year
         };
-
         const data = await getHistoricProjects(labid, filters);
 
         return new NextResponse(JSON.stringify(data), { status: 200, headers: { 'Content-Type': 'application/json' } });

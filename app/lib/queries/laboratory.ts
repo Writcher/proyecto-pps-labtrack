@@ -1,5 +1,5 @@
 import { db } from '@vercel/postgres';
-import { Laboratory } from '../definitions';
+import { laboratory } from '../dtos/laboratory';
 
 const client = db;
 
@@ -8,7 +8,7 @@ export async function getLabs() {
         const result = await client.sql`
         SELECT * FROM "laboratory"
         `;
-        return result.rows as Laboratory[];
+        return result.rows as laboratory[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el laboratory");

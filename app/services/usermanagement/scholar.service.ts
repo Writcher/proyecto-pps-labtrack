@@ -1,12 +1,17 @@
 "use server"
 
-import { createData, editData, fetchData } from "@/app/lib/dtos/scholar"
+import { createScholarData, editScholarData, fetchScholarData } from "@/app/lib/dtos/scholar"
 
-export async function fetchTableData(data: fetchData) {
+export async function fetchTableData(data: fetchScholarData) {
     try {    
-        const url = new URL(`/api/admin/usermanagement/scholar`, window.location.origin);
+        const url = new URL(`${process.env.BASE_URL}/api/admin/usermanagement/scholar`);
         url.searchParams.append('name', data.search);
+        url.searchParams.append('sortcolumn', data.sortColumn);
+        url.searchParams.append('sortdirection', data.sortDirection);
+        url.searchParams.append('page', data.page.toString());
+        url.searchParams.append('rowsPerPage', data.rowsPerPage.toString());
         url.searchParams.append('labid', data.laboratory_id.toString());
+        console.log(url.toString())
         if (data.scholarshiptype_id !== 0) {
             url.searchParams.append('scholarship', data.scholarshiptype_id.toString());
         }
@@ -29,10 +34,9 @@ export async function fetchTableData(data: fetchData) {
         }
         return [];
     }
-}
+};
 
-
-export async function createTableData(data: createData) {
+export async function createTableData(data: createScholarData) {
     try {
         const response = await fetch(`${process.env.BASE_URL}/api/admin/usermanagement/scholar`, {
             method: 'POST',
@@ -59,7 +63,7 @@ export async function createTableData(data: createData) {
     }
 };
 
-export async function editTableData(data: editData) {
+export async function editTableData(data: editScholarData) {
     try {
         const response = await fetch(`${process.env.BASE_URL}/api/admin/usermanagement/scholar`, {
             method: 'PUT',
@@ -103,4 +107,4 @@ export async function deactivateTableData(id: number) {
             throw new Error("Error desconocido");
         }
     }
-}
+};

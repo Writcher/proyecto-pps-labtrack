@@ -1,5 +1,5 @@
 import { db } from '@vercel/postgres';
-import { GetAdmin, NewUser, User } from "../definitions";
+import { newUserQuery, User, fetchedAdmin } from '../dtos/user';
 import { getTypeAdmin } from './usertype';
 
 const client = db;
@@ -24,7 +24,7 @@ export async function getUserByEmail(email: string) {
     }
 }
 
-export async function createUser(user: NewUser) {
+export async function createUser(user: newUserQuery) {
     try {
         return client.sql`
         INSERT INTO "user" (name, email, password, laboratory_id, usertype_id, userstatus_id)
@@ -76,7 +76,7 @@ export async function getAdmins(labid: number) {
         WHERE usertype_id = ${type}
         AND laboratory_id = ${labid}
         `;
-        return result.rows as GetAdmin[];
+        return result.rows as fetchedAdmin[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el becario");

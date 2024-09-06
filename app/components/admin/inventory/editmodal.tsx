@@ -10,14 +10,16 @@ import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
 import { MenuItem } from '@mui/material';
-import { GetSupply, Supplystatus, Supplytype } from '@/app/lib/definitions';
+import { fetchedSupply } from '@/app/lib/dtos/supply';
+import { supplyStatus } from '@/app/lib/dtos/supplystatus';
+import { supplyType } from '@/app/lib/dtos/supplytype';
 
 interface CreateModalProps {
     open: boolean;
     handleClose: () => void;
-    supplytypes: Supplytype[];
-    supplystatuses: Supplystatus[];
-    row: GetSupply;
+    supplytypes: supplyType[];
+    supplystatuses: supplyStatus[];
+    row: fetchedSupply;
 }
 
 export default function EditSupplyModal({ open, handleClose, supplytypes, supplystatuses, row }: CreateModalProps) {

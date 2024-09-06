@@ -1,5 +1,5 @@
 import { db } from '@vercel/postgres';
-import { GetHistoricProject, NewHistoricProject } from '../definitions';
+import { fetchedHistoricProject, newHistoricProjectQuery } from '../dtos/historicproject';
 
 const client = db;
 
@@ -105,14 +105,14 @@ export async function getHistoricProjects(
                 hp.id, hpt.name, hps.name;
         `;
         const resultproject = await client.query(query, params);
-        return resultproject.rows as GetHistoricProject[];
+        return resultproject.rows as fetchedHistoricProject[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener los proyectos históricos");
     }
 }
 
-export async function createHistoricProject(historicProject: NewHistoricProject) {
+export async function createHistoricProject(historicProject: newHistoricProjectQuery) {
     try {
         await client.sql`BEGIN`;
         const response = await client.sql`

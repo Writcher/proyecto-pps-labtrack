@@ -49,8 +49,6 @@ export default function ABMTable({ table }: ABMTableProps) {
     const handleSearch = useCallback(debounce((searchTerm: string) => {
         setValue("search", searchTerm);
     }, 500), []);
-
-    // Function to handle search input change
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         handleSearch(event.target.value);
     };

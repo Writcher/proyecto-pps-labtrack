@@ -1,6 +1,6 @@
 "use client"
 
-import { GetMessages, GetScholarMessages } from "@/app/lib/definitions";
+import { fetchedMessages, fetchedScholarMessages } from "@/app/lib/dtos/message";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import TextField from "@mui/material/TextField";
@@ -21,14 +21,14 @@ interface ChatMenuProps {
 
 export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: ChatMenuProps) {
     const current_id_number = Number(current_id);
-    const [scholars, setScholars] = useState<GetScholarMessages[]>([]);
+    const [scholars, setScholars] = useState<fetchedScholarMessages[]>([]);
     useEffect(() => {
         async function fetchData() {
             try {
                 const response = await fetch(`/api/messages?labid=${encodeURIComponent(laboratory_id)}&typeid=${encodeURIComponent(usertype_id)}&currentid=${encodeURIComponent(current_id_number)}`, {
                     method: 'GET',
                 });
-                const fetchedData: GetScholarMessages[] = await response.json();
+                const fetchedData: fetchedScholarMessages[] = await response.json();
                 setScholars(fetchedData);
             } catch (error) {
                 if (error instanceof Error) {
@@ -71,7 +71,7 @@ export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: Ch
         setMessage(event.target.value as string | '');
     };
 
-    const [messages, setMessages] = useState<GetMessages[]>([]);
+    const [messages, setMessages] = useState<fetchedMessages[]>([]);
 
     useEffect(() => {
         const fetchMessages = async () => {

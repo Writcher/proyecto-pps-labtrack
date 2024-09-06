@@ -1,6 +1,6 @@
 import { db } from '@vercel/postgres';
 import { getTypeGuest } from './usertype';
-import { GetGuest, NewGuest } from '../definitions';
+import { fetchedGuest, newGuestQuery } from '../dtos/guest';
 
 const client = db;
 
@@ -15,7 +15,7 @@ export async function getGuests(labid: number) {
         WHERE u.usertype_id = ${type}
         AND u.laboratory_id = ${labid}
         `;
-        return result.rows as GetGuest[];
+        return result.rows as fetchedGuest[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el invitado");
@@ -34,7 +34,7 @@ export async function getGuestsByName(name: string, labid: number) {
         AND    u.usertype_id = ${type}
         AND u.laboratory_id = ${labid}
         `;
-        return result.rows as GetGuest[];
+        return result.rows as fetchedGuest[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el invitado");
@@ -56,7 +56,7 @@ export async function getGuestExpirationDate(id: number) {
     }
 }
 
-export async function createGuest(user: NewGuest)  {
+export async function createGuest(user: newGuestQuery)  {
     try {
         const date = new Date(user.expires_at);
         const dateExpiration = date.toISOString().split('T')[0];

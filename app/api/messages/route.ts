@@ -10,18 +10,14 @@ export const GET = async (request: Request) => {
         const labidString = url.searchParams.get('labid');
         const typeidString = url.searchParams.get('typeid');
         const currentidString = url.searchParams.get('currentid');
-
         const labid = labidString ? parseInt(labidString, 10) : undefined;
         const typeid = typeidString ? parseInt(typeidString, 10) : undefined;
         const currentid = currentidString ? parseInt(currentidString, 10) : undefined;
-
         if (labid === undefined || typeid === undefined || currentid === undefined) {
             return new NextResponse("labid, typeid, y currentid son requeridos", { status: 400 });
         }
-
         const adminType = await getTypeAdmin();
         const scholarType = await getTypeScholar();
-
         if (typeid === adminType) {
             try {
                 const scholars = await getScholars(labid);
@@ -48,8 +44,7 @@ export const GET = async (request: Request) => {
             }
         } else {
             return new NextResponse("Tipo de usuario no reconocido", { status: 400 });
-        }
-        
+        }  
     } catch (error) {
         console.error("Error manejando GET:", error);
         return new NextResponse("Error manejando GET", { status: 500 });

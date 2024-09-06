@@ -12,7 +12,11 @@ import TextField from "@mui/material/TextField";
 import AddIcon from '@mui/icons-material/Add';
 import TablePagination from '@mui/material/TablePagination';
 import debounce from "lodash.debounce";
-import { Scholarshiptype, Usercareer, Projecttype, Projectstatus, GetHistoricProject } from "@/app/lib/definitions";
+import { fetchedHistoricProject } from "@/app/lib/dtos/historicproject";
+import { projectStatus } from '@/app/lib/dtos/projectstatus';
+import { projectType } from '@/app/lib/dtos/projecttype';
+import { scholarshipType } from '@/app/lib/dtos/scholarshiptype';
+import { userCareer } from '@/app/lib/dtos/usercareer';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -21,10 +25,10 @@ import { Divider, ButtonGroup } from "@mui/material";
 import CreateHistoricProjectModal from "./createmodal";
 
 interface AMBScholarTableProps {
-    historicusercareers: Usercareer[];
-    historicscholarships: Scholarshiptype[];
-    historicprojecttypes: Projecttype[];
-    historicprojectstatus: Projectstatus[];
+    historicusercareers: userCareer[];
+    historicscholarships: scholarshipType[];
+    historicprojecttypes: projectType[];
+    historicprojectstatus: projectStatus[];
     laboratory_id: number;
 }
 
@@ -229,7 +233,7 @@ export default function ABMHistoricTable({ historicusercareers, historicscholars
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
     };
-    const [data, setData] = useState<GetHistoricProject[]>([]);
+    const [data, setData] = useState<fetchedHistoricProject[]>([]);
     async function fetchData(projectsearch: string, scholarshipFilter: number | '', userCareerFilter: number | '', scholarsearch: string, projectStatusFilter: number | '', projectTypeFilter: number | '', yearFilter: number | '') {
         try {
             const url = new URL(`/api/historic`, window.location.origin);
@@ -304,7 +308,7 @@ export default function ABMHistoricTable({ historicusercareers, historicscholars
     }, [debouncedFetchData, modalOpenCreate, scholarshipFilter, projectsearch, userCareerFilter, scholarsearch, projectStatusFilter, projectTypeFilter, yearFilter]);
 
     //fila seleccionada
-    const [selectedRow, setSelectedRow] = useState<GetHistoricProject | null>(null);
+    const [selectedRow, setSelectedRow] = useState<fetchedHistoricProject | null>(null);
     const [selectedRowId, setSelectedRowId] = useState<number | null>(null);
     const [selectedRowName, setSelectedRowName] = useState<string | null>(null);       
 
@@ -317,10 +321,10 @@ export default function ABMHistoricTable({ historicusercareers, historicscholars
 //ordenar por columna
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
     const [sortColumn, setSortColumn] = useState<string>('id');
-    const sortData = (data: GetHistoricProject[]) => {
+    const sortData = (data: fetchedHistoricProject[]) => {
         return data.slice().sort((a, b) => {
-            const aValue = a[sortColumn as keyof GetHistoricProject] ?? '';
-            const bValue = b[sortColumn as keyof GetHistoricProject] ?? '';
+            const aValue = a[sortColumn as keyof fetchedHistoricProject] ?? '';
+            const bValue = b[sortColumn as keyof fetchedHistoricProject] ?? '';
     
             if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
             if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;

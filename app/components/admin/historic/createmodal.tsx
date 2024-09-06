@@ -10,15 +10,19 @@ import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
 import { Divider, MenuItem } from '@mui/material';
-import { NewHistoricScholar, Projectstatus, Projecttype, Scholarshiptype, Usercareer } from '@/app/lib/definitions';
+import { newHistoricScholarQuery } from '@/app/lib/dtos/historicscholar';
+import { projectStatus } from '@/app/lib/dtos/projectstatus';
+import { projectType } from '@/app/lib/dtos/projecttype';
+import { scholarshipType } from '@/app/lib/dtos/scholarshiptype';
+import { userCareer } from '@/app/lib/dtos/usercareer';
 
 interface CreateModalProps {
     open: boolean;
     handleClose: () => void;
-    historicusercareers: Usercareer[];
-    historicscholarships: Scholarshiptype[];
-    historicprojecttypes: Projecttype[];
-    historicprojectstatus: Projectstatus[];
+    historicusercareers: userCareer[];
+    historicscholarships: scholarshipType[];
+    historicprojecttypes: projectType[];
+    historicprojectstatus: projectStatus[];
     laboratory_id: number;
 }
 
@@ -45,7 +49,7 @@ export default function CreateHistoricProjectModal({ open, handleClose, historic
     const handleYearChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setYear(event.target.value as number);
     };
-    const [scholars, setScholars] = useState<NewHistoricScholar[]>([]);
+    const [scholars, setScholars] = useState<newHistoricScholarQuery[]>([]);
     const handleScholarChange = ( index: number, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> ) => {
         const { name, value, type } = event.target;
         const newScholars = [...scholars];

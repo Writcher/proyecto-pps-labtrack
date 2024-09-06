@@ -1,5 +1,5 @@
 import { db } from '@vercel/postgres';
-import { Projectstatus, NewProjectstatus } from '../definitions';
+import { projectStatus, newProjectStatus } from '../dtos/projectstatus';
 
 const client = db;
 
@@ -8,7 +8,7 @@ export async function getProjectStatuses() {
         const result = await client.sql`
         SELECT * FROM "projectstatus"
         `;
-        return result.rows as Projectstatus[];
+        return result.rows as projectStatus[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el projectstatus");
@@ -28,7 +28,7 @@ export async function getProjectStatusByName(name: string) {
     }
 }
 
-export async function createProjectStatus(projectstatus: NewProjectstatus) {
+export async function createProjectStatus(projectstatus: newProjectStatus) {
     try {
         return client.sql`
         INSERT INTO "projectstatus" (name)
@@ -52,7 +52,7 @@ export async function dropProjectStatus(id: number) {
     }
 }
 
-export async function updateProjectStatus(projectstatus: Projectstatus) {
+export async function updateProjectStatus(projectstatus: projectStatus) {
     try {
         return client.sql`
         UPDATE "projectstatus"

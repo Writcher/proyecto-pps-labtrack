@@ -8,11 +8,9 @@ import { getTypeAdmin } from "@/app/lib/queries/usertype";
 export const POST = async (request: Request) => {
     try {
         const { name, email, password, laboratory_id } = await request.json();
-
         const hashedPassword = await bcrypt.hash(password, 5);
         const userstatus = await getStatusPending();
         const usertype_id = await getTypeAdmin();
-
         const user = {
             name,
             email,
@@ -21,23 +19,19 @@ export const POST = async (request: Request) => {
             usertype_id,
             userstatus_id: userstatus,
         }
-
         const client = db;
         const existingUserEmail = await client.sql`
         SELECT * FROM "user" WHERE email = ${email} LIMIT 1
         `;    
-
         if (existingUserEmail.rows.length > 0) {
             return NextResponse.json({ error: 'El correo electrónico ya está en uso.' }, { status: 400 });
         }
-
         try {
             await createUser(user)
         } catch(error) {
             console.error("Error manejando POST:", error);
             return new NextResponse("Error al crear usuario", { status: 500 });
         }
-
         return NextResponse.json({ status: 201 });
     } catch (error) {
         console.error("Error manejando POST:", error);

@@ -10,7 +10,7 @@ import TableBody from "@mui/material/TableBody";
 import TextField from "@mui/material/TextField";
 import TablePagination from '@mui/material/TablePagination';
 import debounce from "lodash.debounce";
-import { GetSupply } from "@/app/lib/definitions";
+import { fetchedSupply } from "@/app/lib/dtos/supply";
 
 interface InventoryTableProps {
     laboratory_id: number;
@@ -24,7 +24,7 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
         event.preventDefault();
     };
 
-    const [data, setData] = useState<GetSupply[]>([]);
+    const [data, setData] = useState<fetchedSupply[]>([]);
     async function fetchData(searchTerm: string) {
         try {
             const response = await fetch(`/api/inventory?name=${encodeURIComponent(searchTerm)}&labid=${encodeURIComponent(laboratory_id)}`, {
@@ -77,10 +77,10 @@ export default function InventoryTable({ laboratory_id }: InventoryTableProps ) 
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
     const [sortColumn, setSortColumn] = useState<string>('id');
 
-    const sortData = (data: GetSupply[]) => {
+    const sortData = (data: fetchedSupply[]) => {
         return data.slice().sort((a, b) => {
-            const aValue = a[sortColumn as keyof GetSupply] ?? '';
-            const bValue = b[sortColumn as keyof GetSupply] ?? '';
+            const aValue = a[sortColumn as keyof fetchedSupply] ?? '';
+            const bValue = b[sortColumn as keyof fetchedSupply] ?? '';
     
             if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
             if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;

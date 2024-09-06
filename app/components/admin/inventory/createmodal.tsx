@@ -10,13 +10,14 @@ import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
 import { MenuItem } from '@mui/material';
-import { Supplystatus, Supplytype } from '@/app/lib/definitions';
+import { supplyStatus } from '@/app/lib/dtos/supplystatus';
+import { supplyType } from '@/app/lib/dtos/supplytype';
 
 interface CreateModalProps {
     open: boolean;
     handleClose: () => void;
-    supplytypes: Supplytype[];
-    supplystatuses: Supplystatus[];
+    supplytypes: supplyType[];
+    supplystatuses: supplyStatus[];
     laboratory_id: number;
 }
 

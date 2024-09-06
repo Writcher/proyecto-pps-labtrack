@@ -1,5 +1,5 @@
 import { db } from "@vercel/postgres";
-import { EditSupply, GetSupply, NewSupply } from "../definitions";
+import { editSupplyQuery, fetchedSupply, newSupplyQuery } from "../dtos/supply";
 
 const client = db;
 
@@ -15,7 +15,7 @@ export async function getSupplies(labid: number) {
         JOIN "supplystatus" ss ON s.supplystatus_id = ss.id
         WHERE s.laboratory_id = ${labid}
         `;
-        return result.rows as GetSupply[];
+        return result.rows as fetchedSupply[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el supply");
@@ -35,14 +35,14 @@ export async function getSupplyByName(name: string, labid: number) {
         WHERE s.name ILIKE ${`%${name}%`}
             AND s.laboratory_id = ${labid}
         `;
-        return result.rows as GetSupply[];
+        return result.rows as fetchedSupply[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el supply");
     }
 }
 
-export async function createSupply(supply: NewSupply) {
+export async function createSupply(supply: newSupplyQuery) {
     try {
         return client.sql`
         INSERT INTO "supply" (name, description, year, laboratory_id, supplytype_id, supplystatus_id)
@@ -54,7 +54,7 @@ export async function createSupply(supply: NewSupply) {
     }
 }
 
-export async function editSupply(supply: EditSupply) {
+export async function editSupply(supply: editSupplyQuery) {
     try {
         return client.sql`
         UPDATE "supply"

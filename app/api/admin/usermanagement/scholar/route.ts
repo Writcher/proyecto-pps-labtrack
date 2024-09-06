@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { db } from "@vercel/postgres";
 import { getStatusPending } from "@/app/lib/queries/userstatus";
 import { getTypeScholar } from "@/app/lib/queries/usertype";
-import { GetScholar } from "@/app/lib/definitions";
+import { editScholarQuery, fetchedScholar, newScholarQuery } from "@/app/lib/dtos/scholar";
 import { createScholar, editScholar, getScholarByName, getScholarByNameAndScholarship, getScholarByNameAndScholarshipAndUserCareer, getScholarByNameAndUserCareer, getScholars, getScholarsByScholarship, getScholarsByScholarshipAndUserCareer, getScholarsByUserCareer } from "@/app/lib/queries/scholar";
 
 interface APIErrors {
@@ -19,21 +19,16 @@ export const GET = async (request: Request) => {
         const labidString = url.searchParams.get('labid');
         const scholarshipString = url.searchParams.get('scholarship');
         const userCareerString = url.searchParams.get('usercareer');
-
         const labid = labidString ? parseInt(labidString, 10) : undefined;
         const scholarship = scholarshipString ? parseInt(scholarshipString, 10) : undefined;
         const userCareer = userCareerString ? parseInt(userCareerString, 10) : undefined;
-
         if (typeof name !== 'string') {
             return new NextResponse("Mandaste cualquier parametro loco", { status: 400 });
         }
-
         if (labid === undefined) {
             return new NextResponse("labid is required", { status: 400 });
         }
-
-        let data: GetScholar[];
-
+        let data: fetchedScholar[];
         if (name.trim() === "") {
             if (scholarship !== undefined && userCareer !== undefined) {
                 data = await getScholarsByScholarshipAndUserCareer(labid, scholarship, userCareer);
@@ -55,7 +50,6 @@ export const GET = async (request: Request) => {
                 data = await getScholarByName(name, labid);
             }
         }
-
         return new NextResponse(JSON.stringify(data), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } catch (error) {
         console.error("Error manejando GET:", error);
@@ -95,7 +89,7 @@ export const POST = async (request: Request) => {
                 userstatus_id: userstatus,
                 scholarshiptype_id,
                 usercareer_id,
-        }
+        } as newScholarQuery;
         const client = db;
         const existingUserEmail = await client.sql`
             SELECT * FROM "user" WHERE email = ${email} LIMIT 1
@@ -181,7 +175,7 @@ export const PUT = async (request: Request) => {
             careerlevel,
             scholarshiptype_id,
             usercareer_id
-        };
+        } as editScholarQuery; 
         try {
             await editScholar(editUser);
             return NextResponse.json({ status: 201 });

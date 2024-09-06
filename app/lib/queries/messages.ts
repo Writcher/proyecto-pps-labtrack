@@ -1,5 +1,5 @@
 import { db } from "@vercel/postgres";
-import { GetMessages, NewMessage } from "../definitions";
+import { fetchedMessages, newMessageQuery } from "../dtos/message";
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -18,14 +18,14 @@ export async function getMessages(sender_id: number, receiver_id: number) {
             OR (sender_id = ${receiver_id} AND receiver_id = ${sender_id})
         ORDER BY timestamp ASC
         `;
-        return result.rows as GetMessages[];
+        return result.rows as fetchedMessages[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el message");
     }
 }
 
-export async function createMessage(message: NewMessage) {
+export async function createMessage(message: newMessageQuery) {
     try {
         const argentinaTimestamp = dayjs().tz('America/Argentina/Buenos_Aires').format();
         await client.sql`

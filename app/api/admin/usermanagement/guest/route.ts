@@ -1,4 +1,4 @@
-import { GetGuest } from "@/app/lib/definitions";
+import { fetchedGuest, newGuestQuery } from "@/app/lib/dtos/guest";
 import { createGuest, dropGuest, getGuests, getGuestsByName, getGuestStatus } from "@/app/lib/queries/guest";
 import { getStatusExpired, getStatusPending } from "@/app/lib/queries/userstatus";
 import { getTypeGuest } from "@/app/lib/queries/usertype";
@@ -11,19 +11,14 @@ export const GET = async (request: Request) => {
         const url = new URL(request.url);
         const name = url.searchParams.get('name');
         const labidString = url.searchParams.get('labid');
-
         const labid = labidString ? parseInt(labidString, 10) : undefined
-
         if (typeof name !== 'string') {
             return new NextResponse("Mandaste cualquier parametro loco", { status: 400 });
         }
-
         if (labid === undefined) {
             return new NextResponse("labid es necesario.", { status: 400 });
         }
-
-        let data: GetGuest[];
-
+        let data: fetchedGuest[];
         if (name.trim() === "") {
             try {
                 data = await getGuests(labid);
@@ -39,7 +34,6 @@ export const GET = async (request: Request) => {
                 return new NextResponse("Error buscando datos", { status: 500 });
             }
         } 
-
         return new NextResponse(JSON.stringify(data), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } catch (error) {
         console.error("Error manejando GET:", error);
@@ -49,30 +43,26 @@ export const GET = async (request: Request) => {
 
 export const POST = async (request: Request) => {
     try {
-        const { name,
-                email,
-                expires_at,
-                password,
-                laboratory_id } = await request.json();
-
+        const {
+            name,
+            email,
+            expires_at,
+            password,
+            laboratory_id
+        } = await request.json();
         if (!name || !email || !expires_at || !password || !laboratory_id) {
             return NextResponse.json({ error: 'Faltan datos requeridos.' }, { status: 400 });
-        }
-                
+        }  
         const hashedPassword = await bcrypt.hash(password, 5);
-
-        const userstatus = await getStatusPending() as number;  //cambiar aca si quiero que el estado inicial sea pendiente
+        const userstatus = await getStatusPending() as number;
         const usertype = await getTypeGuest() as number;
-
         const client = db;
         const existingUserEmail = await client.sql`
         SELECT * FROM "user" WHERE email = ${email} LIMIT 1
-        `;  
-
+        `;
         if (existingUserEmail.rows.length > 0) {
             return NextResponse.json({ error: 'El correo electrónico ya está en uso.' }, { status: 400 });
         }
-
         const user = {
                 name,
                 email,
@@ -81,15 +71,13 @@ export const POST = async (request: Request) => {
                 laboratory_id,
                 usertype_id: usertype,
                 userstatus_id: userstatus,
-        }
-
+        } as newGuestQuery;
         try {
             await createGuest(user);
         } catch(error) {
             console.error("Error manejando POST:", error);
             return new NextResponse("Error al crear usuario", { status: 500 });
         }
-    
         return NextResponse.json({ status: 201 });
     } catch (error) {
         console.error("Error manejando POST:", error);
@@ -101,16 +89,12 @@ export const DELETE = async (request: Request) => {
     try {
         const url = new URL(request.url);
         const idStr = url.searchParams.get('id');
-
         const id = idStr ? parseInt(idStr, 10) : null;
-
         if (typeof id !== 'number') {
             return NextResponse.json({ error: "Mandaste cualquier parametro loco"}, { status: 400 });
         }
-
         const isExpired = await getStatusExpired();
         const guestStatus = await getGuestStatus(id);
-
         if (isExpired === guestStatus) {
             try {
                 await dropGuest(id);

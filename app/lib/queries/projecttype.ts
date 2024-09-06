@@ -1,5 +1,5 @@
 import { db } from '@vercel/postgres';
-import { Projecttype, NewProjecttype } from '../definitions';
+import { projectType, newProjectType } from '../dtos/projecttype';
 
 const client = db;
 
@@ -8,7 +8,7 @@ export async function getProjectTypes() {
         const result = await client.sql`
         SELECT * FROM "projecttype"
         `;
-        return result.rows as Projecttype[];
+        return result.rows as projectType[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el projecttype");
@@ -28,7 +28,7 @@ export async function getProjectTypeByName(name: string) {
     }
 }
 
-export async function createProjectType(projecttype: NewProjecttype) {
+export async function createProjectType(projecttype: newProjectType) {
     try {
         return client.sql`
         INSERT INTO "projecttype" (name)
@@ -52,7 +52,7 @@ export async function dropProjectType(id: number) {
     }
 }
 
-export async function updateProjectType(projecttype: Projecttype) {
+export async function updateProjectType(projecttype: projectType) {
     try {
         return client.sql`
         UPDATE "projecttype"

@@ -14,7 +14,7 @@ import TextField from "@mui/material/TextField";
 import AddIcon from '@mui/icons-material/Add';
 import TablePagination from '@mui/material/TablePagination';
 import debounce from "lodash.debounce";
-import { GetGuest } from "@/app/lib/definitions";
+import { fetchedGuest } from "@/app/lib/dtos/guest";
 import CreateGuestModal from "./createmodal";
 import DeleteGuestModal from "./deletemodal";
 
@@ -30,7 +30,7 @@ export default function ABMGuestTable({ laboratory_id }: AMBGuestTableProps ) {
         event.preventDefault();
     };
 
-    const [data, setData] = useState<GetGuest[]>([]);
+    const [data, setData] = useState<fetchedGuest[]>([]);
     async function fetchData(searchTerm: string) {
         try {
             const response = await fetch(`/api/admin/usermanagement/guest?name=${encodeURIComponent(searchTerm)}&labid=${encodeURIComponent(laboratory_id)}`, {
@@ -116,10 +116,10 @@ export default function ABMGuestTable({ laboratory_id }: AMBGuestTableProps ) {
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
     const [sortColumn, setSortColumn] = useState<string>('id');
 
-    const sortData = (data: GetGuest[]) => {
+    const sortData = (data: fetchedGuest[]) => {
         return data.slice().sort((a, b) => {
-            const aValue = a[sortColumn as keyof GetGuest] ?? '';
-            const bValue = b[sortColumn as keyof GetGuest] ?? '';
+            const aValue = a[sortColumn as keyof fetchedGuest] ?? '';
+            const bValue = b[sortColumn as keyof fetchedGuest] ?? '';
     
             if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
             if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;

@@ -1,5 +1,5 @@
 import { db } from '@vercel/postgres';
-import { Scholarshiptype, NewScolarchiptype } from '../definitions';
+import { scholarshipType, newScolarchipType } from '../dtos/scholarshiptype';
 
 const client = db;
 
@@ -8,7 +8,7 @@ export async function getScholarshipTypes() {
         const result = await client.sql`
         SELECT * FROM "scholarshiptype"
         `;
-        return result.rows as Scholarshiptype[];
+        return result.rows as scholarshipType[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el scholarshiptype");
@@ -28,7 +28,7 @@ export async function getScholarshipTypeByName(name: string) {
     }
 }
 
-export async function createScholarshipType(scholarshiptype: NewScolarchiptype) {
+export async function createScholarshipType(scholarshiptype: newScolarchipType) {
     try {
         return client.sql`
         INSERT INTO "scholarshiptype" (name)
@@ -52,7 +52,7 @@ export async function dropScholarshipType(id: number) {
     }
 }
 
-export async function updateScholarshipType(scholarshiptype: Scholarshiptype) {
+export async function updateScholarshipType(scholarshiptype: scholarshipType) {
     try {
         return client.sql`
         UPDATE "scholarshiptype"

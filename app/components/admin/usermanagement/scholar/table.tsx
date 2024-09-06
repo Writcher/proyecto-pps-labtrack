@@ -1,247 +1,252 @@
 "use client"
 
-import React, { useCallback, useEffect, useState } from "react";
-import { FormEvent } from "react";
-import DeleteIcon from '@mui/icons-material/Delete';
+import { scholarshipType } from "@/app/lib/dtos/scholarshiptype";
+import { userCareer } from "@/app/lib/dtos/usercareer";
+import CreateScholarModal from "./createmodal";
+import EditScholarModal from "./editmodal";
+import DeleteScholarModal from "./deletemodal";
+import TablePagination from "@mui/material/TablePagination";
 import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
-import TableBody from "@mui/material/TableBody";
-import Button from '@mui/material/Button';
-import IconButton from "@mui/material/IconButton";
-import TextField from "@mui/material/TextField";
-import EditIcon from '@mui/icons-material/Edit';
-import AddIcon from '@mui/icons-material/Add';
-import TablePagination from '@mui/material/TablePagination';
-import debounce from "lodash.debounce";
-import CreateScholarModal from "./createmodal";
-import { Scholarshiptype, Usercareer, GetScholar } from "@/app/lib/definitions";
-import DeleteScholarModal from "./deletemodal";
-import EditScholarModal from "./editmodal";
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
-import { ButtonGroup } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import FilterAltOffIcon from '@mui/icons-material/FilterAltOff'
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import debounce from "lodash.debounce";
+import React, { useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { fetchTableData } from "@/app/services/usermanagement/scholar.service";
+import { useForm } from "react-hook-form";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import { fetchedScholar } from "@/app/lib/dtos/scholar";
 
 interface AMBScholarTableProps {
-    usercareers: Usercareer[];
-    scholarships: Scholarshiptype[];
+    usercareers: userCareer[];
+    scholarships: scholarshipType[];
     laboratory_id: number;
 }
 
-export default function ABMScholarTable({ usercareers, scholarships, laboratory_id }: AMBScholarTableProps ) {
-//filtros
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const menuOpen = Boolean(anchorEl);
-    const [showSearchForm, setShowSearchForm] = useState(true);
-    const [showScholarshipFilter, setShowScholarshipFilter] = useState(false);
-    const [showCarrerFilter, setShowCareerFilter] = useState(false);
-    const [activeFilters, setActiveFilters] = useState<{ [key: string]: any }>({});
+interface FormData {
+    //filters
+    filterAnchor: null | HTMLElement;
+    filterMenuOpen: boolean;
+    activeFilters: { [key: string ]: any }
+    showSearchForm: boolean;
+    search: string;
+    normalsearch: string;
+    showScholarshipTypeFilter: boolean;
+    scholarshipTypeFilter: number;
+    userCareerFilter: number;
+    showUserCareerFilter: boolean;    
+    //pagination
+    page: number;
+    rowsPerPage: number;
+    //modals
+    modalOpenCreate: boolean;
+    modalOpenDelete: boolean;
+    modalOpenEdit: boolean;
+    //selected row
+    selectedRowId: number;
+    selectedRowName: string;
+    selectedRow: null | fetchedScholar;
+    //expanded row
+    expandedRowId: null | number;
+    //sort by column
+    sortDirection: 'asc' | 'desc';
+    sortColumn: string;
+}
 
+export default function ABMScholarTableNEW({ usercareers, scholarships, laboratory_id }: AMBScholarTableProps ) {
+    const { register, watch, setValue, getValues } = useForm<FormData>({
+        defaultValues: {
+            //filters
+            filterAnchor: null,
+            activeFilters: {},
+            search: "",
+            normalsearch: "",
+            showSearchForm: true,
+            scholarshipTypeFilter: 0,
+            showScholarshipTypeFilter: false,
+            userCareerFilter: 0,
+            showUserCareerFilter: false,
+            //pagination
+            page: 0,
+            rowsPerPage: 10,
+            //modals
+            modalOpenCreate: false,
+            modalOpenDelete: false,
+            modalOpenEdit: false,
+            //selected row
+            selectedRowId: 0,
+            selectedRowName: "",
+            selectedRow: null,
+            //expanded row
+            expandedRowId: null,
+            //sort by column
+            sortDirection: "asc",
+            sortColumn: "name"
+        }
+    });
+    //filters
+    const filterAnchor = watch("filterAnchor") as null | HTMLElement;
+    const filterMenuOpen = Boolean(filterAnchor);
+    const activeFilters = watch("activeFilters") as { [key: string ]: any };
     const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
+        setValue("filterAnchor", event.currentTarget);
+    }
     const handleFilterClose = () => {
-        setAnchorEl(null);
-    };
+        setValue("filterAnchor", null);
+    }
+    const handleClearFilters = () => {
+            //reset values
+        setValue("search", "");
+        setValue("normalsearch", "");
+        setValue("scholarshipTypeFilter", 0);
+        setValue("userCareerFilter", 0);
+            //reset default filter show
+        setValue("showSearchForm", true);
+        setValue("showScholarshipTypeFilter", false);
+        setValue("showUserCareerFilter", false);
+            //reset active filters and close
+        setValue("activeFilters", {});
+        handleFilterClose();
+    }
+        //search
+    const search = watch("search") as string;
+    const normalsearch = watch("normalsearch") as string;
+    const showSearchForm = watch("showSearchForm") as boolean;
     const handleSearchFilterSelect = () => {
-        setShowSearchForm(true);
-        setShowCareerFilter(false);
-        setShowScholarshipFilter(false);
-        handleFilterClose();
-    };
-    const handleScholarshipFilterSelect = () => {
-        setShowScholarshipFilter(true);
-        setShowCareerFilter(false);
-        setShowSearchForm(false);
+        setValue("showSearchForm", true);
+        setValue("showScholarshipTypeFilter", false);
+        setValue("showUserCareerFilter", false);
         handleFilterClose();
     }
-    const handleCareerFilterSelect = () => {
-        setShowCareerFilter(true);
-        setShowScholarshipFilter(false);
-        setShowSearchForm(false);
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValue("normalsearch", event.target.value);
+        handleSearch(event.target.value);
+        const currentFilters = getValues("activeFilters");
+        setValue("activeFilters", {
+            ...currentFilters,
+            search: event.target.value,
+        });
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const handleSearch = useCallback(debounce((searchTerm: string) => {
+        setValue("search", searchTerm);
+    }, 500), []);
+        //scholarshiptype filter
+    const scholarshiptype_id = watch("scholarshipTypeFilter") as number;
+    const showScholarshipTypeFilter = watch("showScholarshipTypeFilter") as boolean;
+    const handleScholarshipTypeFilterSelect = () => {
+        setValue("showScholarshipTypeFilter", true);
+        setValue("showSearchForm", false);
+        setValue("showUserCareerFilter", false);
         handleFilterClose();
     }
-    //filtro beca
-    const [scholarship, setScholarship] = useState<number | ''>('');
-    const handleScholarshipChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        const scholarshipValue = event.target.value as number;
-        setScholarship(scholarshipValue);
-        setActiveFilters((prevFilters) => ({
-            ...prevFilters,
-            scholarship: scholarshipValue,
-        }));
-    };
+    const handleScholarshipTypeFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValue("scholarshipTypeFilter", event.target.value);
+        const currentFilters = getValues("activeFilters");
+        setValue("activeFilters", {
+            ...currentFilters,
+            scholarship: event.target.value,
+        });
+    }
     const getScholarshipNameById = (id: number) => {
         const scholarship = scholarships.find(sch => sch.id === id);
         return scholarship ? scholarship.name : 'Desconocida';
     };
-    //filtro busqueda
-    const [search, setSearch] = useState("");
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const searchValue = e.target.value;
-        setSearch(searchValue);
-        setActiveFilters((prevFilters) => ({
-            ...prevFilters,
-            search: searchValue,
-        }));
-    };
-    //filtro carrera
-    const [userCareer, setUserCareer] = useState<number | ''>('');
-    const handleUserCareerChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        const careerValue = event.target.value as number;
-        setUserCareer(careerValue);
-        setActiveFilters((prevFilters) => ({
-            ...prevFilters,
-            career: careerValue,
-        }));
-    };
+        //usercareer filter
+    const usercareer_id = watch("userCareerFilter") as number;
+    const showUserCareerFilter = watch("showUserCareerFilter") as boolean;
+    const handleUserCareerFilterSelect = () => {
+        setValue("showUserCareerFilter", true);
+        setValue("showScholarshipTypeFilter", false);
+        setValue("showSearchForm", false);
+        handleFilterClose();
+    }
+    const handleUserCareerFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValue("userCareerFilter", event.target.value);
+        const currentFilters = getValues("activeFilters");
+        setValue("activeFilters", {
+            ...currentFilters,
+            career: event.target.value,
+        });
+    }
     const getCareerNameById = (id: number) => {
         const career = usercareers.find(sch => sch.id === id);
         return career ? career.name : 'Desconocida';
     };
-    //limpiar filtros
-    const handleClearFilters = () => {
-        setSearch("");
-        setScholarship('');
-        setUserCareer('');
-        setShowSearchForm(true);
-        setShowCareerFilter(false);
-        setShowScholarshipFilter(false);
-        setActiveFilters({});
-        handleFilterClose();
-    };
-//fetch data
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-    };
-    const [data, setData] = useState<GetScholar[]>([]);
-    async function fetchData(searchTerm: string, scholarship: number | '', userCareer: number | '') {
-        try {
-            const url = new URL(`/api/admin/usermanagement/scholar`, window.location.origin);
-            url.searchParams.append('name', searchTerm);
-            url.searchParams.append('labid', laboratory_id.toString());
-            if (scholarship !== '') {
-                url.searchParams.append('scholarship', scholarship.toString());
-            }
-            if (userCareer !== '') {
-                url.searchParams.append('usercareer', userCareer.toString());
-            }
-            const response = await fetch(url.toString(), {
-                method: 'GET',
-            });
-            const fetchedData = await response.json();
-            setData(fetchedData);
-        } catch (error) {
-            if (error instanceof Error) {
-                console.error(error.message);
-            } else {
-                console.error("Error desconocido, la cagaste");
-            }
-        }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const debouncedFetchData = useCallback(
-        debounce((searchTerm: string, scholarship: number | '', userCareer: number | '') => fetchData(searchTerm, scholarship, userCareer), 300),
-        []
-    );
-    useEffect(() => {
-        debouncedFetchData(search, scholarship, userCareer);
-    }, [search, debouncedFetchData, scholarship, userCareer]);
-
-//paginacion
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const paginatedItems = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-    const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-        setPage(newPage);
-    };
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
-
-//modales
-    //create
-    const [modalOpenCreate, setModalOpenCreate] = useState(false);
-    const handleOpenCreateModal = () => setModalOpenCreate(true);
-    const handleCloseCreateModal = () => {
-        setModalOpenCreate(false);
-    };
-    useEffect(() => {
-        if (!modalOpenCreate) {
-            debouncedFetchData(search, scholarship, userCareer);
-        }
-    }, [debouncedFetchData, modalOpenCreate, scholarship, search, userCareer]);
-
-    //fila seleccionada
-    const [selectedRow, setSelectedRow] = useState<GetScholar | null>(null);
-    const [selectedRowId, setSelectedRowId] = useState<number | null>(null);
-    const [selectedRowName, setSelectedRowName] = useState<string | null>(null);       
-
-    //delete
-    const [modalOpenDelete, setModalOpenDelete] = useState(false);
-    const handleOpenDeleteModal = (id: number, name: string) => {
-        setSelectedRowId(id);
-        setSelectedRowName(name);
-        setModalOpenDelete(true);
-    }
-    const handleCloseDeleteModal = () => {
-        setModalOpenDelete(false);
-    };
-    useEffect(() => {
-        if (!modalOpenDelete) {
-            debouncedFetchData(search, scholarship, userCareer);
-        }
-    }, [debouncedFetchData, modalOpenDelete, scholarship, search, userCareer]);
-
-    //edit
-    const [modalOpenEdit, setModalOpenEdit] = useState(false);
-    const handleOpenEditModal = (row: GetScholar) => {
-        setSelectedRow(row);
-        setModalOpenEdit(true);
-    }
-    const handleCloseEditModal = () => {
-        setModalOpenEdit(false);
-    }
-    useEffect(()=> {
-        if (!modalOpenEdit) {
-            debouncedFetchData(search, scholarship, userCareer);
-        }
-    },[debouncedFetchData, modalOpenEdit, scholarship, search, userCareer]);
-
-//expandir fila
-    const [expandedRowId, setExpandedRowId] = useState<number | null>(null);
-    const toggleRowExpansion = (id: number) => {
-        setExpandedRowId(expandedRowId === id ? null : id);
-    };
-
-//ordenar por columna
-    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-    const [sortColumn, setSortColumn] = useState<string>('id');
-    const sortData = (data: GetScholar[]) => {
-        return data.slice().sort((a, b) => {
-            const aValue = a[sortColumn as keyof GetScholar] ?? '';
-            const bValue = b[sortColumn as keyof GetScholar] ?? '';
-    
-            if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
-            if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
-            return 0;
-        });
-    };
-    useEffect(() => {
-        const sortedData = sortData(data);
-        setData(sortedData);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [sortColumn, sortDirection]);
+    //sort by column
+    const sortDirection = watch("sortDirection");
+    const sortColumn = watch("sortColumn");
     const handleSort = (column: string) => {
         const newDirection = sortColumn === column && sortDirection === 'asc' ? 'desc' : 'asc';
-        setSortColumn(column);
-        setSortDirection(newDirection);
+        setValue("sortColumn", column);
+        setValue("sortDirection", newDirection);
     };
-
+    //pagination
+    const page = watch("page");
+    const rowsPerPage = watch("rowsPerPage")
+    const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+        setValue("page", newPage);
+    };
+    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setValue("rowsPerPage", parseInt(event.target.value, 10));
+        setValue("page", 0);
+    };
+    //fetch
+    const { data, isLoading, refetch } = useQuery({
+        queryKey: ['tableData', search, usercareer_id , scholarshiptype_id, sortColumn, sortDirection, page, rowsPerPage ],
+        queryFn: () => fetchTableData({ search, laboratory_id, usercareer_id, scholarshiptype_id, sortColumn, sortDirection, page, rowsPerPage }),
+        refetchOnWindowFocus: false
+    });
+    //expanded row
+    const expandedRowId = watch("expandedRowId");
+    const toggleRowExpansion = (id: number) => {
+        setValue("expandedRowId", expandedRowId === id ? null : id);
+    }
+    //modales
+        //create
+    const modalOpenCreate = watch("modalOpenCreate");
+    const handleOpenCreateModal = () => setValue("modalOpenCreate", true);
+    const handleCloseCreateModal = () => {
+        setValue("modalOpenCreate", false);
+        refetch();
+    };
+        //selected row
+    const selectedRowId = watch("selectedRowId");
+    const selectedRowName = watch("selectedRowName");
+    const selectedRow = watch("selectedRow");
+        //delete
+    const modalOpenDelete = watch("modalOpenDelete");
+    const handleOpenDeleteModal = (id: number, name: string) => {
+        setValue("selectedRowId", id);
+        setValue("selectedRowName", name);
+        setValue("modalOpenEdit", true);
+    }
+    const handleCloseDeleteModal = () => {
+        setValue("modalOpenEdit", false);
+        refetch();
+    }
+        //edit
+    const modalOpenEdit = watch("modalOpenEdit");
+    const handleOpenEditModal = (row: fetchedScholar) => {
+        setValue("selectedRow", row);
+        setValue("modalOpenEdit", true);
+    }
+    const handleCloseEditModal = () => {
+        setValue("modalOpenEdit", false);
+        refetch();
+    }
     return (
         <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
             <div className="flex flex-row w-full mb-4">
@@ -279,15 +284,15 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                     </div>
                 </div>
                 <Menu
-                    anchorEl={anchorEl}
-                    open={menuOpen}
+                    anchorEl={filterAnchor}
+                    open={filterMenuOpen}
                     onClose={handleFilterClose}
                 >
                     <MenuItem onClick={handleSearchFilterSelect}>Buscar por Nombre</MenuItem>
-                    <MenuItem onClick={handleScholarshipFilterSelect}>Filtrar por Beca</MenuItem>
-                    <MenuItem onClick={handleCareerFilterSelect}>Filtrar por Carrera</MenuItem>
+                    <MenuItem onClick={handleScholarshipTypeFilterSelect}>Filtrar por Beca</MenuItem>
+                    <MenuItem onClick={handleUserCareerFilterSelect}>Filtrar por Carrera</MenuItem>
                 </Menu>
-                <form className="flex items-center justify-start md:w-2/6" onSubmit={handleSubmit}>
+                <form className="flex items-center justify-start md:w-2/6">
                     {showSearchForm && (
                         <TextField 
                             id="search"
@@ -297,12 +302,11 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                             variant="outlined"
                             color="warning"
                             fullWidth
-                            value={search}
+                            value={normalsearch}
                             onChange={handleSearchChange}
                         />
-                        
                     )}
-                    {showScholarshipFilter && (
+                    {showScholarshipTypeFilter && (
                         <TextField 
                             id="scholarship" 
                             name="scholarship" 
@@ -312,15 +316,15 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                             color="warning"
                             select 
                             fullWidth 
-                            value={scholarship} 
-                            onChange={handleScholarshipChange}
+                            value={scholarshiptype_id} 
+                            onChange={handleScholarshipTypeFilterChange}
                         > 
                             {scholarships.map(scholarshipprop => (
                                 <MenuItem key={scholarshipprop.id} value={scholarshipprop.id}>{scholarshipprop.name}</MenuItem>
                             ))}
                         </TextField>
                     )}
-                    {showCarrerFilter && (
+                    {showUserCareerFilter && (
                         <TextField 
                             id="career" 
                             name="career" 
@@ -330,8 +334,8 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                             color="warning"
                             select 
                             fullWidth
-                            value={userCareer} 
-                            onChange={handleUserCareerChange}
+                            value={usercareer_id} 
+                            onChange={handleUserCareerFilterChange}
                         >
                             {usercareers.map(usercareerprop => (
                                 <MenuItem key={usercareerprop.id} value={usercareerprop.id}>{usercareerprop.name}</MenuItem>
@@ -355,7 +359,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
             <div className="flex gap-2 md:flex-row md:flex-wrap">
                 {Object.entries(activeFilters).map(([key, value]) => (
                     value && (
-                        <span key={key} className="border border-gray-700 p-2 rounded text-xs md:text-sm">
+                        <span key={key} className="border border-gray-700 p-2 rounded text-xs text-gray-700 md:text-sm">
                             {key === "search" && `Nombre: ${value}`}
                             {key === "scholarship" && `Beca: ${getScholarshipNameById(value as number)}`}
                             {key === "career" && `Carrera: ${getCareerNameById(value as number)}`}
@@ -368,7 +372,8 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                     <Table stickyHeader>
                         <TableBody>
                             <TableRow>
-                                <TableCell align="left"
+                                <TableCell
+                                    align="left"
                                     onClick={() => handleSort('name')}
                                     style={{ cursor: 'pointer' }}
                                     width="40%"
@@ -377,7 +382,8 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                                         Nombre
                                     </div>
                                 </TableCell>
-                                <TableCell align="center"
+                                <TableCell 
+                                    align="center"
                                     onClick={() => handleSort('userstatus')}
                                     style={{ cursor: 'pointer' }}
                                     width="30%"
@@ -386,7 +392,8 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                                         Estado
                                     </div>
                                 </TableCell>
-                                <TableCell align="right"
+                                <TableCell 
+                                    align="right"
                                     width="30%"
                                 >
                                     <div className="mr-4 text-gray-700 font-medium md:font-bold text-[17px] md:text-lg">
@@ -396,7 +403,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                             </TableRow>
                         </TableBody>
                         <TableBody>
-                            {paginatedItems.map((row) => (
+                            {data.map((row: any) => (
                                 <React.Fragment key={row.id}>
                                     <TableRow 
                                         onClick={() => toggleRowExpansion(row.id)}
@@ -490,7 +497,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                                     )}
                                 </React.Fragment>
                             ))}
-                            {Array.from({ length: rowsPerPage - paginatedItems.length }).map((_, index) => (
+                            {Array.from({ length: rowsPerPage - data.length }).map((_, index) => (
                                 <TableRow key={`empty-row-${index}`}>
                                     <TableCell colSpan={3} />
                                 </TableRow>
@@ -500,9 +507,9 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                 </TableContainer>
                 <div className="flex justify-end items-end grow overflow-x-hide">
                     <TablePagination
-                        rowsPerPageOptions={[5, 10, 15, 20]}
+                        rowsPerPageOptions={[5, 10, 15]}
                         component="div"
-                        count={data.length}
+                        count={Array.isArray(data) ? data.length : 0}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}

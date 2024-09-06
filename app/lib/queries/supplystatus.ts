@@ -1,5 +1,5 @@
 import { db } from '@vercel/postgres';
-import { Supplystatus, NewSupplystatus } from '../definitions';
+import { Supplystatus, NewSupplystatus } from '../dtos/supplystatus';
 
 const client = db;
 
