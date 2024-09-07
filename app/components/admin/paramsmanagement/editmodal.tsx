@@ -10,7 +10,7 @@ import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { editTableData } from '@/app/services/paramsmanagement/abm.service';
+import { editTableData } from '@/app/services/admin/paramsmanagement/abm.service';
 import { useMutation } from '@tanstack/react-query';
 
 interface EditModalProps {

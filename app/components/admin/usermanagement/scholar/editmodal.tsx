@@ -15,7 +15,7 @@ import { fetchedScholar } from '@/app/lib/dtos/scholar';
 import { MenuItem } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
-import { editTableData } from '@/app/services/usermanagement/scholar.service';
+import { editTableData } from '@/app/services/admin/usermanagement/scholar.service';
 
 interface EditModalProps {
     open: boolean;

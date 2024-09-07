@@ -7,7 +7,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { useMutation } from '@tanstack/react-query';
-import { deactivateTableData } from '@/app/services/usermanagement/scholar.service';
+import { deactivateTableData } from '@/app/services/admin/usermanagement/scholar.service';
 import { useForm } from 'react-hook-form';
 
 interface DeleteScholarModalProps {

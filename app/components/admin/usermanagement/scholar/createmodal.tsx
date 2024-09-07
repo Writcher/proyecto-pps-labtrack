@@ -14,7 +14,7 @@ import { scholarshipType } from '@/app/lib/dtos/scholarshiptype';
 import { userCareer } from '@/app/lib/dtos/usercareer';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
-import { createTableData } from '@/app/services/usermanagement/scholar.service';
+import { createTableData } from '@/app/services/admin/usermanagement/scholar.service';
 
 interface CreateModalProps {
     open: boolean;

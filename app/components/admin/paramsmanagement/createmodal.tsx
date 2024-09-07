@@ -11,7 +11,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import { createTableData } from '@/app/services/paramsmanagement/abm.service';
+import { createTableData } from '@/app/services/admin/paramsmanagement/abm.service';
 
 
 interface CreateModalProps {

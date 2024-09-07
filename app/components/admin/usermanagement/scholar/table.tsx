@@ -3,7 +3,7 @@
 import { scholarshipType } from "@/app/lib/dtos/scholarshiptype";
 import { userCareer } from "@/app/lib/dtos/usercareer";
 import { fetchedScholar } from "@/app/lib/dtos/scholar";
-import { fetchTableData } from "@/app/services/usermanagement/scholar.service";
+import { fetchTableData } from "@/app/services/admin/usermanagement/scholar.service";
 import CreateScholarModal from "./createmodal";
 import EditScholarModal from "./editmodal";
 import DeleteScholarModal from "./deletemodal";
@@ -234,10 +234,10 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
     const handleOpenDeleteModal = (id: number, name: string) => {
         setValue("selectedRowId", id);
         setValue("selectedRowName", name);
-        setValue("modalOpenEdit", true);
+        setValue("modalOpenDelete", true);
     }
     const handleCloseDeleteModal = () => {
-        setValue("modalOpenEdit", false);
+        setValue("modalOpenDelete", false);
         refetch();
     }
         //edit
@@ -409,19 +409,20 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
                             <TableBody>
                                 {Array.from({ length: rowsPerPage }).map((_, index) => (
                                     <TableRow key={index}>
-                                        <TableCell align="left">
+                                        <TableCell align="left" size="small" width="40%">
                                             <div className="flex items-center justify-start">
                                                 <Skeleton variant="text" width={300} />
                                             </div>
                                         </TableCell>
-                                        <TableCell align="center">
+                                        <TableCell align="center" size="small" width="30%">
                                             <div className="flex items-center justify-center">
                                                 <Skeleton variant="text" width={200} />
                                             </div>
                                         </TableCell>
-                                        <TableCell align="right">
-                                            <div className="flex items-center justify-end">
-                                                <Skeleton variant="text" width={100} />
+                                        <TableCell align="right" size="small" width="30%">
+                                            <div className="flex items-center gap-6 mr-5 justify-end">
+                                                <Skeleton variant="circular" width={25} height={25} />
+                                                <Skeleton variant="circular" width={25} height={25} />
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -436,12 +437,12 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
                                                 onClick={() => toggleRowExpansion(row.id)}
                                                 className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-100' : ''}`}
                                             >
-                                                <TableCell align="left" size="small">
+                                                <TableCell align="left" size="small" width="40%">
                                                     <div className="text-gray-700 font-medium text-[15px] md:text-lg">
                                                         {row.name}
                                                     </div>
                                                 </TableCell>
-                                                <TableCell align="center" size="small">
+                                                <TableCell align="center" size="small" width="30%">
                                                     <div className={`
                                                         md:max-w-[50%] flex justify-center items-center mx-auto text-center  text-white font-medium text-[15px] md:text-lg py-2 px-2 rounded-3xl
                                                         ${row.userstatus === 'Activo' ? 'bg-green-600' : ''}
@@ -451,7 +452,7 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
                                                         {row.userstatus}
                                                     </div>
                                                 </TableCell>
-                                                <TableCell align="right" size="small">
+                                                <TableCell align="right" size="small" width="30%">
                                                     <div className="flex flex-row justify-end gap-5 text-gray-700">
                                                         <IconButton color="inherit" onClick={() => handleOpenEditModal(row)}>
                                                             <EditIcon />
@@ -515,7 +516,7 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
                                                                             month: 'long',
                                                                             day: 'numeric'
                                                                         })
-                                                                        : ''}
+                                                                    : ''}
                                                                 </div>
                                                             </div>
                                                         </div>

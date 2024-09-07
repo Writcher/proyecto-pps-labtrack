@@ -15,7 +15,7 @@ import CreateModal from "./createmodal";
 import TablePagination from '@mui/material/TablePagination';
 import EditModal from "./editmodal";
 import { useQuery } from "@tanstack/react-query";
-import { fetchTableData } from "@/app/services/paramsmanagement/abm.service";
+import { fetchTableData } from "@/app/services/admin/paramsmanagement/abm.service";
 import { useForm } from "react-hook-form";
 import debounce from "lodash.debounce";
 import Skeleton from "@mui/material/Skeleton";
@@ -120,14 +120,14 @@ export default function ABMTable({ table }: ABMTableProps) {
                     <Table stickyHeader>
                         <TableBody>
                             <TableRow>
-                                <TableCell align="center" width="40%">
+                                <TableCell align="center" size="small" width="40%">
                                     <div className="text-gray-700 font-medium md:font-bold text-lg">
                                         Nombre
                                     </div>
                                 </TableCell>
-                                <TableCell align="left" width="40%">
+                                <TableCell align="left" size="small" width="40%">
                                 </TableCell>
-                                <TableCell align="center" width="20%">
+                                <TableCell align="center" size="small" width="20%">
                                     <div className="mr-5 text-gray-700 font-medium md:font-bold text-lg">
                                         Acciones
                                     </div>
@@ -138,16 +138,16 @@ export default function ABMTable({ table }: ABMTableProps) {
                             <TableBody>
                                 {Array.from({ length: rowsPerPage }).map((_, index) => (
                                     <TableRow key={index}>
-                                        <TableCell align="center">
+                                        <TableCell align="center" size="small" width="40%">
                                             <div className="flex items-center justify-center">
                                                 <Skeleton variant="text" width={300} />
                                             </div>
                                         </TableCell>
-                                        <TableCell align="left">
+                                        <TableCell align="left" size="small" width="20%">
                                         </TableCell>
-                                        <TableCell align="center">
-                                            <div className="flex mr-5 items-center justify-center">
-                                                <Skeleton variant="text" width={100} />
+                                        <TableCell align="center" size="small" width="40%">
+                                            <div className="flex items-center mr-2 justify-center">
+                                                <Skeleton variant="circular" width={25} height={25} />
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -158,14 +158,14 @@ export default function ABMTable({ table }: ABMTableProps) {
                                 {data && data.items && data.items.length > 0 ? (
                                     data.items.map((row: any) => (
                                         <TableRow key={row.id}>
-                                            <TableCell align="center" size="small">
+                                            <TableCell align="center" size="small" width="40%">
                                                 <div className="text-gray-700 font-medium text-lg">
                                                     {row.name}
                                                 </div>
                                             </TableCell>
-                                            <TableCell align="center" size="small">
+                                            <TableCell align="center" size="small" width="20%">
                                             </TableCell>
-                                            <TableCell align="center" size="small">
+                                            <TableCell align="center" size="small" width="40%">
                                                 <div className="flex flex-row justify-center mr-5 items-center text-gray-700">
                                                     <IconButton color="inherit" onClick={() => handleOpenEditModal(row.id, row.name)}>
                                                         <EditIcon />
