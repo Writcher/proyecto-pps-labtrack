@@ -28,11 +28,22 @@ export type editScholarData = {
 
 export type fetchScholarData = {
     search: string;
+    scholarshiptype_id?: number;
+    usercareer_id?: number;
+    laboratory_id: number;
+    sortColumn: string;
+    sortDirection: "ASC" | "DESC";
+    page: number;
+    rowsPerPage: number;
+}
+
+export type fetchScholarQuery = {
+    search: string;
     scholarshiptype_id: number;
     usercareer_id: number;
     laboratory_id: number;
     sortColumn: string;
-    sortDirection: "asc" | "desc";
+    sortDirection: "ASC" | "DESC";
     page: number;
     rowsPerPage: number;
 }

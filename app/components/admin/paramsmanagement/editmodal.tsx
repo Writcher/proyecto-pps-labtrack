@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -31,44 +31,50 @@ interface MutationData {
     table: string;
 }
 
+interface APIError {
+    name?: string
+}
+
 export default function EditModal({ open, handleClose, table, id, name }: EditModalProps) {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
         defaultValues: {
             name: name
         },
       });
-
+    const [apiError, setApiError] = useState<APIError>({});
     const mutation = useMutation({
         mutationFn: (data: MutationData) => editTableData(data),
-        onSuccess: () => {
-            handleClose();
-            reset();
+        onSuccess: (result) => {
+            if (result && result.success) {
+                handleClose();
+                reset();
+            } else if (result) {
+                setApiError(result.error);
+            }
         },
-        onError: (error: Error) => {
-            console.error("Error al editar el ítem:", error);
-        }
+        onError: (error: APIError) => {
+            setApiError({ name: error.name });
+        },
     });
-
     const onSubmit: SubmitHandler<FormData> = (data) => {
-        mutation.mutate({ name: data.name, id, table });
+        mutation.mutate({ 
+            name: data.name, 
+            id, table 
+        });
     };
-
-    //evita que se cierre si sse clickea el background
+    const handleExit = () => {
+        handleClose();
+        setApiError({});
+        reset();
+    };
     const handleDialogClick = (event: React.MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
     };
-
-    const handleExit = () => {
-        handleClose();
-        reset();
-    };
-
     useEffect(() => {
         reset({
             name: name
         });
     }, [name, reset]);
-
     return (
             <Dialog 
                 open={open} 
@@ -122,12 +128,9 @@ export default function EditModal({ open, handleClose, table, id, name }: EditMo
                                 variant="outlined" 
                                 color="warning" 
                                 fullWidth
-                                {...register("name", { 
-                                        required: "Este campo es requerido" 
-                                    }
-                                )}
-                                error={!!errors.name}
-                                helperText={errors.name ? errors.name.message : "Nombre de Nuevo Elemento"}
+                                {...register("name", { required: "Este campo es requerido" })}
+                                error={!!errors.name || !!apiError.name}
+                                helperText={errors.name ? errors.name.message : apiError.name ? apiError.name : "Nombre de Nuevo Elemento"}
                             />
                         </div>
                     </DialogContent>
@@ -148,4 +151,4 @@ export default function EditModal({ open, handleClose, table, id, name }: EditMo
                 </div>
             </Dialog>
     );
-}
+};

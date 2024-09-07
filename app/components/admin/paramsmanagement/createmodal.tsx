@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react';
+import React, { useState } from 'react';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -29,33 +29,41 @@ interface MutationData {
     table: string;
 }
 
+interface APIError {
+    name?: string
+}
+
 export default function CreateModal({ open, handleClose, table }: CreateModalProps) {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>();
-
+    const [apiError, setApiError] = useState<APIError>({});
     const mutation = useMutation({
         mutationFn: (data: MutationData) => createTableData(data),
-        onSuccess: () => {
-            handleClose();
-            reset();
+        onSuccess: (result) => {
+            if (result && result.success) {
+                handleClose();
+                reset();
+            } else if (result) {
+                setApiError(result.error);
+            }
         },
-        onError: (error: Error) => {
-            console.error("Error al crear el ítem:", error);
+        onError: (error: APIError) => {
+            setApiError({ name: error.name });
         }
     });
-
     const onSubmit: SubmitHandler<FormData> = (data) => {
-        mutation.mutate({ name: data.name, table });
+        mutation.mutate({ 
+            name: data.name, 
+            table 
+        });
     };
-
+    const handleExit = () => {
+        handleClose();
+        setApiError({});
+        reset();
+    };
     const handleDialogClick = (event: React.MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
     };
-
-    const handleExit = () => {
-        handleClose();
-        reset();
-    }
-
     return (
         <Dialog
             open={open}
@@ -112,8 +120,8 @@ export default function CreateModal({ open, handleClose, table }: CreateModalPro
                                     required: "Este campo es requerido" 
                                 }
                             )}
-                            error={!!errors.name}
-                            helperText={errors.name ? errors.name.message : "Nombre de Nuevo Elemento"}
+                            error={!!errors.name || !!apiError.name}
+                            helperText={errors.name ? errors.name.message : apiError.name ? apiError.name : "Nombre de Nuevo Elemento"}
                         />
                     </div>
                 </DialogContent>
@@ -134,4 +142,4 @@ export default function CreateModal({ open, handleClose, table }: CreateModalPro
             </div>
         </Dialog>
     );
-}
+};

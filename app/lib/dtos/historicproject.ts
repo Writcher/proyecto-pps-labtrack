@@ -12,8 +12,6 @@ export type fetchedHistoricProject = {
     historicscholars: fetchedHistoricScholar[];
 }
 
-
-
 export type newHistoricProjectQuery = {
     name: string;
     description: string;

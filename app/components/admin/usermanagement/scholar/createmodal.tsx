@@ -56,14 +56,13 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
         },
       });
     const [apiError, setApiError] = useState<APIErrors>({});
-
     const mutation = useMutation({
         mutationFn: (data: MutationData) => createTableData(data),
         onSuccess: (result) => {
-            if (result.success) {
+            if (result && result.success) {
                 handleClose();
                 reset();
-            } else {
+            } else if (result) {
                 setApiError(result.error);
             }
         },
@@ -71,7 +70,6 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
             setApiError({ dni: error.dni, file: error.file, email: error.email });
         },
     });
-    
     const onSubmit: SubmitHandler<FormData> = (data) => {
         mutation.mutate({ 
             name: data.name,
@@ -87,17 +85,14 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
             laboratory_id: laboratory_id
         });
     };
-
     const handleExit = () => {
         handleClose();
         setApiError({});
         reset();
-    }
-
+    };
     const handleDialogClick = (event: React.MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
     };
-    
     return (
         <Dialog
             open={open}
@@ -317,4 +312,4 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
             </div>
         </Dialog>
     );
-}
+};

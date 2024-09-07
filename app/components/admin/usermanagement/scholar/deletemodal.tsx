@@ -19,7 +19,6 @@ interface DeleteScholarModalProps {
 
 export default function DeleteScholarModal({ open, handleClose, id, name }: DeleteScholarModalProps) {
     const { handleSubmit } = useForm();
-
     const mutation = useMutation({
         mutationFn: () => deactivateTableData(id),
         onSuccess: () => {
@@ -29,16 +28,12 @@ export default function DeleteScholarModal({ open, handleClose, id, name }: Dele
             console.error("Error al crear el ítem:", error);
         }
     });
-
     const onSubmit = () => {
         mutation.mutate();
     };
-
-    //evita que se cierre si sse clickea el background
     const handleDialogClick = (event: React.MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
     };
-
     return (
             <Dialog 
                 open={open} 
@@ -86,4 +81,4 @@ export default function DeleteScholarModal({ open, handleClose, id, name }: Dele
                 </div>
             </Dialog>
     );
-}
+};

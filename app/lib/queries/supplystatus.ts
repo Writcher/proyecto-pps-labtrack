@@ -1,66 +1,96 @@
 import { db } from '@vercel/postgres';
-import { Supplystatus, NewSupplystatus } from '../dtos/supplystatus';
+import { supplyStatus } from '../dtos/supplystatus';
+import { checkItemExistanceQuery, createABMItemQuery, editABMItemQuery, fetchABMItemQuery, fetchedABMItem } from '../dtos/abm';
 
 const client = db;
 
 export async function getSupplyStatuses() {
     try {
-        const result = await client.sql`
+        const text = `
         SELECT * FROM "supplystatus"
         `;
-        return result.rows as Supplystatus[];
+        const result = await client.query(text);
+        return result.rows as supplyStatus[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el supplystatus");
     }
-}
+};
 
-export async function getSupplyStatusByName(name: string) {
+export async function getSupplyStatusesABM(params: fetchABMItemQuery) {
     try {
-        const result = await client.sql`
-        SELECT * FROM "supplystatus"
-        WHERE name ILIKE ${`%${name}%`}
+        const offset = (params.page) * params.rowsPerPage;
+        const name = `%${params.name}%`;
+        const baseValues: (number | string)[] = [ params.rowsPerPage, offset ];
+        let text = `
+        SELECT * FROM "supplystatus" 
         `;
+        let values = [...baseValues];
+        let filtertext = '';
+        if (params.name !== "") {
+            filtertext += `WHERE unaccent(name) ILIKE unaccent($${values.length + 1}) 
+            `;
+            values.push(name);
+        }
+        text += filtertext + `
+        LIMIT $1 OFFSET $2
+        `;
+        const result = await client.query(text, values)
+        const text2 = `
+        SELECT COUNT(*) AS total
+        FROM "supplystatus"
+        `;
+        const countresult = await client.query(text2)
+        return {
+            items: result.rows as fetchedABMItem[],
+            totalItems: countresult.rows[0].total,
+        };
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el supplystatus");
+    }
+};
+
+export async function checkSupplyStatusesABM(params: checkItemExistanceQuery) {
+    try {
+        const text = `SELECT * FROM "supplystatus" WHERE name = $1 LIMIT 1
+        `;
+        const values = [params.name];
+        const result = await client.query(text, values);
         return result;
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el supplystatus");
     }
-}
+};
 
-export async function createSupplyStatus(supplystatus: NewSupplystatus) {
+export async function createSupplyStatus(params: createABMItemQuery) {
     try {
-        return client.sql`
+        const text = `
         INSERT INTO "supplystatus" (name)
-        VALUES (${supplystatus.name})
+        VALUES ($1)
         `;
+        const values = [params.name];
+        await client.query(text, values);
+        return { success: true, message: "Instancia creada correctamente" };
     } catch(error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo crear el supplystatus");
     }
-}
+};
 
-export async function dropSupplyStatus(id: number) {
+export async function editSupplyStatus(params: editABMItemQuery) {
     try {
-        return client.sql`
-        DELETE FROM "supplystatus"
-        WHERE id = ${id}
-        `;
-    } catch(error) {
-        console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo eliminar el supplystatus");
-    }
-}
-
-export async function updateSupplyStatus(supplystatus: Supplystatus) {
-    try {
-        return client.sql`
+        const text = `
         UPDATE "supplystatus"
-        SET name = ${supplystatus.name}
-        WHERE id = ${supplystatus.id}
+        SET name = $1
+        WHERE id = $2
         `;
+        const values = [params.name, params.id];
+        await client.query(text, values);
+        return { success: true, message: "Instancia editada correctamente" };
     } catch(error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo editar el supplystatus");
     }
-}
+};

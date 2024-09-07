@@ -1,10 +1,12 @@
+"use server"
+
 import { NextResponse } from "next/server";
 import bcrypt from 'bcryptjs';
 import { db } from "@vercel/postgres";
 import { getStatusPending } from "@/app/lib/queries/userstatus";
 import { getTypeScholar } from "@/app/lib/queries/usertype";
-import { editScholarQuery, fetchedScholar, newScholarQuery } from "@/app/lib/dtos/scholar";
-import { createScholar, editScholar, getScholarByName, getScholarByNameAndScholarship, getScholarByNameAndScholarshipAndUserCareer, getScholarByNameAndUserCareer, getScholars, getScholarsByScholarship, getScholarsByScholarshipAndUserCareer, getScholarsByUserCareer } from "@/app/lib/queries/scholar";
+import { editScholarQuery, fetchedScholar, fetchScholarQuery, newScholarQuery } from "@/app/lib/dtos/scholar";
+import { createScholar, editScholar, getScholars } from "@/app/lib/queries/scholar";
 
 interface APIErrors {
     dni?: string,
@@ -16,10 +18,16 @@ export const GET = async (request: Request) => {
     try {
         const url = new URL(request.url);
         const name = url.searchParams.get('name');
-        const labidString = url.searchParams.get('labid');
-        const scholarshipString = url.searchParams.get('scholarship');
-        const userCareerString = url.searchParams.get('usercareer');
-        const labid = labidString ? parseInt(labidString, 10) : undefined;
+        const sortcolumn = url.searchParams.get('sortcolumn') as string;
+        const sortdirection = url.searchParams.get('sortdirection') as string;
+        const pageString = url.searchParams.get('page') as string;
+        const rowsPerPageString = url.searchParams.get('rowsPerPage') as string;
+        const labidString = url.searchParams.get('labid') as string;
+        const scholarshipString = url.searchParams.get('scholarship') as string;
+        const userCareerString = url.searchParams.get('usercareer') as string;
+        const page = parseInt(pageString, 10);
+        const rowsPerPage = parseInt(rowsPerPageString, 10);
+        const labid = parseInt(labidString, 10);
         const scholarship = scholarshipString ? parseInt(scholarshipString, 10) : undefined;
         const userCareer = userCareerString ? parseInt(userCareerString, 10) : undefined;
         if (typeof name !== 'string') {
@@ -28,28 +36,18 @@ export const GET = async (request: Request) => {
         if (labid === undefined) {
             return new NextResponse("labid is required", { status: 400 });
         }
-        let data: fetchedScholar[];
-        if (name.trim() === "") {
-            if (scholarship !== undefined && userCareer !== undefined) {
-                data = await getScholarsByScholarshipAndUserCareer(labid, scholarship, userCareer);
-            } else if (scholarship !== undefined) {
-                data = await getScholarsByScholarship(labid, scholarship);
-            } else if (userCareer !== undefined) {
-                data = await getScholarsByUserCareer(labid, userCareer);
-            } else {
-                data = await getScholars(labid);
-            }
-        } else {
-            if (scholarship !== undefined && userCareer !== undefined) {
-                data = await getScholarByNameAndScholarshipAndUserCareer(name, labid, scholarship, userCareer);
-            } else if (scholarship !== undefined) {
-                data = await getScholarByNameAndScholarship(name, labid, scholarship);
-            } else if (userCareer !== undefined) {
-                data = await getScholarByNameAndUserCareer(name, labid, userCareer);
-            } else {
-                data = await getScholarByName(name, labid);
-            }
-        }
+        const params = {
+            search: name,
+            scholarshiptype_id: scholarship,
+            usercareer_id: userCareer,
+            laboratory_id: labid,
+            sortColumn: sortcolumn,
+            sortDirection: sortdirection,
+            page: page,
+            rowsPerPage: rowsPerPage,
+        } as fetchScholarQuery;
+        let data: { scholars: fetchedScholar[]; totalScholars: any; };
+        data = await getScholars(params);
         return new NextResponse(JSON.stringify(data), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } catch (error) {
         console.error("Error manejando GET:", error);
@@ -91,15 +89,21 @@ export const POST = async (request: Request) => {
                 usercareer_id,
         } as newScholarQuery;
         const client = db;
-        const existingUserEmail = await client.sql`
-            SELECT * FROM "user" WHERE email = ${email} LIMIT 1
+        const text1 = `
+            SELECT * FROM "user" WHERE email = $1 LIMIT 1
         `;    
-        const existingScholarFile = await client.sql`
-            SELECT * FROM "scholar" WHERE file = ${file} LIMIT 1
-        `;    
-        const existingScholarDNI = await client.sql`
+        const values1 = [email];
+        const existingUserEmail = await client.query(text1, values1);
+        const text2 = `
+            SELECT * FROM "scholar" WHERE file = $1 LIMIT 1
+        `;
+        const values2 = [file];
+        const existingScholarFile = await client.query(text2, values2);
+        const text3 = `
             SELECT * FROM "scholar" WHERE dni = ${dni} LIMIT 1
-        `;    
+        `; 
+        const values3 = [dni] ;
+        const existingScholarDNI = await client.query(text3, values3);
         const apiErrors: APIErrors = {};
         if (existingUserEmail.rows.length > 0) {
             apiErrors.email = "Email en uso";
@@ -146,12 +150,16 @@ export const PUT = async (request: Request) => {
             return new NextResponse("Parametros no válidos", {status: 400});
         }
         const client = db;
-        const existingScholarFile = await client.sql`
-            SELECT * FROM "scholar" WHERE file = ${file} AND id != ${id} LIMIT 1
+        const text1 = `
+            SELECT * FROM "scholar" WHERE file = $1 AND id != 2 LIMIT 1
+        `;
+        const values1 = [file, id];
+        const existingScholarFile = await client.query(text1, values1);
+        const text2 = `
+            SELECT * FROM "scholar" WHERE dni = $1 AND id != $2 LIMIT 1
         `;    
-        const existingScholarDNI = await client.sql`
-            SELECT * FROM "scholar" WHERE dni = ${dni} AND id != ${id} LIMIT 1
-        `;    
+        const values2 = [dni, id];
+        const existingScholarDNI = await client.query(text2, values2);
         const apiErrors: APIErrors = {};
         if (existingScholarFile.rows.length > 0) {
             apiErrors.file = "Legajo ya existe";
@@ -178,7 +186,7 @@ export const PUT = async (request: Request) => {
         } as editScholarQuery; 
         try {
             await editScholar(editUser);
-            return NextResponse.json({ status: 201 });
+            return NextResponse.json({ status: 200 });
         } catch(error) {
             console.error("Error al editar Becario:", error);
             return NextResponse.json({ message: "Error al editar becario" }, { status: 500 })

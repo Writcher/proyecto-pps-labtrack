@@ -1,28 +1,33 @@
 import { db } from '@vercel/postgres';
-import { projectStatus, newProjectStatus } from '../dtos/projectstatus';
+import { projectStatus } from '../dtos/projectstatus';
+import { createABMItemQuery } from '../dtos/abm';
 
 const client = db;
 
 export async function getHistoricProjectStatuses() {
     try {
-        const result = await client.sql`
+        const text = `
         SELECT * FROM "historicprojectstatus"
         `;
+        const result = await client.query(text);
         return result.rows as projectStatus[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo obtener el projectstatus");
+        throw new Error("No se pudo obtener el historicprojectstatus");
     }
-}
+};
 
-export async function createHistoricProjectStatus(historicprojectstatus: newProjectStatus) {
+export async function createHistoricProjectStatus(params: createABMItemQuery) {
     try {
-        return client.sql`
+        const text = `
         INSERT INTO "historicprojectstatus" (name)
-        VALUES (${historicprojectstatus.name})
+        VALUES ($1)
         `;
+        const values = [params.name];
+        await client.query(text, values);
+        return { success: true, message: "Instancia creada correctamente" };
     } catch(error) {
         console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo crear el projectstatus");
+        throw new Error("No se pudo crear el historicprojectstatus");
     }
-}
+};

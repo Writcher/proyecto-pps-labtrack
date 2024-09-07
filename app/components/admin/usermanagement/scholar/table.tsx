@@ -2,6 +2,8 @@
 
 import { scholarshipType } from "@/app/lib/dtos/scholarshiptype";
 import { userCareer } from "@/app/lib/dtos/usercareer";
+import { fetchedScholar } from "@/app/lib/dtos/scholar";
+import { fetchTableData } from "@/app/services/usermanagement/scholar.service";
 import CreateScholarModal from "./createmodal";
 import EditScholarModal from "./editmodal";
 import DeleteScholarModal from "./deletemodal";
@@ -15,6 +17,9 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
 import ButtonGroup from "@mui/material/ButtonGroup";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Skeleton from "@mui/material/Skeleton";
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff'
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import EditIcon from '@mui/icons-material/Edit';
@@ -23,11 +28,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import debounce from "lodash.debounce";
 import React, { useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchTableData } from "@/app/services/usermanagement/scholar.service";
 import { useForm } from "react-hook-form";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import { fetchedScholar } from "@/app/lib/dtos/scholar";
 
 interface AMBScholarTableProps {
     usercareers: userCareer[];
@@ -37,7 +38,7 @@ interface AMBScholarTableProps {
 
 interface FormData {
     //filters
-    filterAnchor: null | HTMLElement;
+    filterAnchor: any;
     filterMenuOpen: boolean;
     activeFilters: { [key: string ]: any }
     showSearchForm: boolean;
@@ -61,7 +62,7 @@ interface FormData {
     //expanded row
     expandedRowId: null | number;
     //sort by column
-    sortDirection: 'asc' | 'desc';
+    sortDirection: 'ASC' | 'DESC';
     sortColumn: string;
 }
 
@@ -92,12 +93,12 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
             //expanded row
             expandedRowId: null,
             //sort by column
-            sortDirection: "asc",
-            sortColumn: "name"
+            sortDirection: "ASC",
+            sortColumn: "u.name"
         }
     });
     //filters
-    const filterAnchor = watch("filterAnchor") as null | HTMLElement;
+    const filterAnchor = watch("filterAnchor") as any;
     const filterMenuOpen = Boolean(filterAnchor);
     const activeFilters = watch("activeFilters") as { [key: string ]: any };
     const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -130,7 +131,7 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
         setValue("showUserCareerFilter", false);
         handleFilterClose();
     }
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSearchFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue("normalsearch", event.target.value);
         handleSearch(event.target.value);
         const currentFilters = getValues("activeFilters");
@@ -153,7 +154,8 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
         handleFilterClose();
     }
     const handleScholarshipTypeFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValue("scholarshipTypeFilter", event.target.value);
+        const scholarshiptypevalue = Number(event.target.value);
+        setValue("scholarshipTypeFilter", scholarshiptypevalue);
         const currentFilters = getValues("activeFilters");
         setValue("activeFilters", {
             ...currentFilters,
@@ -174,7 +176,8 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
         handleFilterClose();
     }
     const handleUserCareerFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValue("userCareerFilter", event.target.value);
+        const usercareervalue = Number(event.target.value)
+        setValue("userCareerFilter", usercareervalue);
         const currentFilters = getValues("activeFilters");
         setValue("activeFilters", {
             ...currentFilters,
@@ -189,7 +192,7 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
     const sortDirection = watch("sortDirection");
     const sortColumn = watch("sortColumn");
     const handleSort = (column: string) => {
-        const newDirection = sortColumn === column && sortDirection === 'asc' ? 'desc' : 'asc';
+        const newDirection = sortColumn === column && sortDirection === 'ASC' ? 'DESC' : 'ASC';
         setValue("sortColumn", column);
         setValue("sortDirection", newDirection);
     };
@@ -303,7 +306,7 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
                             color="warning"
                             fullWidth
                             value={normalsearch}
-                            onChange={handleSearchChange}
+                            onChange={handleSearchFilterChange}
                         />
                     )}
                     {showScholarshipTypeFilter && (
@@ -374,21 +377,21 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
                             <TableRow>
                                 <TableCell
                                     align="left"
-                                    onClick={() => handleSort('name')}
+                                    onClick={() => handleSort('u.name')}
                                     style={{ cursor: 'pointer' }}
                                     width="40%"
                                 >
-                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'name' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
+                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'u.name' ? (sortDirection === 'ASC' ? 'text-orange-500' : 'text-red-500') : ''}`}>
                                         Nombre
                                     </div>
                                 </TableCell>
                                 <TableCell 
                                     align="center"
-                                    onClick={() => handleSort('userstatus')}
+                                    onClick={() => handleSort('u.userstatus_id')}
                                     style={{ cursor: 'pointer' }}
                                     width="30%"
                                 >
-                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'userstatus' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
+                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'u.userstatus_id' ? (sortDirection === 'ASC' ? 'text-orange-500' : 'text-red-500') : ''}`}>
                                         Estado
                                     </div>
                                 </TableCell>
@@ -402,114 +405,138 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
                                 </TableCell>
                             </TableRow>
                         </TableBody>
-                        <TableBody>
-                            {data.map((row: any) => (
-                                <React.Fragment key={row.id}>
-                                    <TableRow 
-                                        onClick={() => toggleRowExpansion(row.id)}
-                                        className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-100' : ''}`}
-                                    >
-                                        <TableCell align="left" size="small">
-                                            <div className="text-gray-700 font-medium text-[15px] md:text-lg">
-                                                {row.name}
-                                            </div>
+                        {isLoading ? (
+                            <TableBody>
+                                {Array.from({ length: rowsPerPage }).map((_, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell align="left">
+                                            <Skeleton variant="text" width={150} />
                                         </TableCell>
-                                        <TableCell align="center" size="small">
-                                            <div className={`
-                                                md:max-w-[50%] flex justify-center items-center mx-auto text-center  text-white font-medium text-[15px] md:text-lg py-2 px-2 rounded-3xl
-                                                ${row.userstatus === 'Activo' ? 'bg-green-600' : ''}
-                                                ${row.userstatus === 'Inactivo' ? 'bg-red-500' : ''}
-                                                ${row.userstatus === 'Pendiente' ? 'bg-yellow-500' : ''}
-                                            `}>
-                                                {row.userstatus}
-                                            </div>
+                                        <TableCell align="center">
+                                            <Skeleton variant="text" width={100} />
                                         </TableCell>
-                                        <TableCell align="right" size="small">
-                                            <div className="flex flex-row justify-end gap-5 text-gray-700">
-                                                <IconButton color="inherit" onClick={() => handleOpenEditModal(row)}>
-                                                    <EditIcon />
-                                                </IconButton>
-                                                <IconButton color="error" onClick={() => handleOpenDeleteModal(row.id, row.name)}>
-                                                    <DeleteIcon />
-                                                </IconButton>
-                                            </div>
+                                        <TableCell align="right">
+                                            <Skeleton variant="text" width={50} />
                                         </TableCell>
                                     </TableRow>
-                                    {expandedRowId === row.id && (
-                                        <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-100">
-                                            <TableCell colSpan={3}>
-                                                <div className="flex flex-col w-full">
-                                                    <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Beca: </strong>{row.scholarshiptype}
+                                ))}
+                            </TableBody>
+                        ) : (
+                            <TableBody>
+                                {data && data.scholars && data.scholars.length > 0 ? (
+                                    data.scholars.map((row: any) => (
+                                        <React.Fragment key={row.id}>
+                                            <TableRow 
+                                                onClick={() => toggleRowExpansion(row.id)}
+                                                className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-100' : ''}`}
+                                            >
+                                                <TableCell align="left" size="small">
+                                                    <div className="text-gray-700 font-medium text-[15px] md:text-lg">
+                                                        {row.name}
                                                     </div>
-                                                    <div className="flex flex-col md:flex-row gap-4 mt-4">
-                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>DNI: </strong>{row.dni}
-                                                        </div>
-                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Legajo: </strong>{row.file}
-                                                        </div>
+                                                </TableCell>
+                                                <TableCell align="center" size="small">
+                                                    <div className={`
+                                                        md:max-w-[50%] flex justify-center items-center mx-auto text-center  text-white font-medium text-[15px] md:text-lg py-2 px-2 rounded-3xl
+                                                        ${row.userstatus === 'Activo' ? 'bg-green-600' : ''}
+                                                        ${row.userstatus === 'Inactivo' ? 'bg-red-500' : ''}
+                                                        ${row.userstatus === 'Pendiente' ? 'bg-yellow-500' : ''}
+                                                    `}>
+                                                        {row.userstatus}
                                                     </div>
-                                                    <div className="flex flex-col md:flex-row gap-4 mt-4">
-                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Carrera: </strong>{row.usercareer}
-                                                        </div>
-                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Año de Cursado: </strong>{row.careerlevel}
-                                                        </div>
+                                                </TableCell>
+                                                <TableCell align="right" size="small">
+                                                    <div className="flex flex-row justify-end gap-5 text-gray-700">
+                                                        <IconButton color="inherit" onClick={() => handleOpenEditModal(row)}>
+                                                            <EditIcon />
+                                                        </IconButton>
+                                                        <IconButton color="error" onClick={() => handleOpenDeleteModal(row.id, row.name)}>
+                                                            <DeleteIcon />
+                                                        </IconButton>
                                                     </div>
-                                                    <div className="flex flex-col md:flex-row gap-4 mt-4">
-                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Email: </strong>{row.email}
+                                                </TableCell>
+                                            </TableRow>
+                                            {expandedRowId === row.id && (
+                                                <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-100">
+                                                    <TableCell colSpan={3}>
+                                                        <div className="flex flex-col w-full">
+                                                            <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">
+                                                                <strong>Beca: </strong>{row.scholarshiptype}
+                                                            </div>
+                                                            <div className="flex flex-col md:flex-row gap-4 mt-4">
+                                                                <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                    <strong>DNI: </strong>{row.dni}
+                                                                </div>
+                                                                <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                    <strong>Legajo: </strong>{row.file}
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex flex-col md:flex-row gap-4 mt-4">
+                                                                <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                    <strong>Carrera: </strong>{row.usercareer}
+                                                                </div>
+                                                                <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                    <strong>Año de Cursado: </strong>{row.careerlevel}
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex flex-col md:flex-row gap-4 mt-4">
+                                                                <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                    <strong>Email: </strong>{row.email}
+                                                                </div>
+                                                                <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                    <strong>Telefono: </strong>{row.phone}
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex flex-col md:flex-row gap-4 mt-4">
+                                                                <div className="text-gray-700 font-medium md:text-[17px]">
+                                                                    <strong>Dirección: </strong>{row.address}
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex flex-col md:flex-row gap-4 mt-4">
+                                                                <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                    <strong>Fecha de Creación: </strong>
+                                                                    {new Date(row.created_at).toLocaleDateString('es-AR', {
+                                                                        year: 'numeric',
+                                                                        month: 'long',
+                                                                        day: 'numeric'
+                                                                    })}
+                                                                </div>
+                                                                <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                    <strong>Fecha de Inhabilitación: </strong>
+                                                                    {row.dropped_at ? 
+                                                                        new Date(row.dropped_at).toLocaleDateString('es-AR', {
+                                                                            year: 'numeric',
+                                                                            month: 'long',
+                                                                            day: 'numeric'
+                                                                        })
+                                                                        : ''}
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Telefono: </strong>{row.phone}
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex flex-col md:flex-row gap-4 mt-4">
-                                                        <div className="text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Dirección: </strong>{row.address}
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex flex-col md:flex-row gap-4 mt-4">
-                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Fecha de Creación: </strong>
-                                                            {new Date(row.created_at).toLocaleDateString('es-AR', {
-                                                                year: 'numeric',
-                                                                month: 'long',
-                                                                day: 'numeric'
-                                                            })}
-                                                        </div>
-                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Fecha de Inhabilitación: </strong>
-                                                            {row.dropped_at ? 
-                                                                new Date(row.dropped_at).toLocaleDateString('es-AR', {
-                                                                    year: 'numeric',
-                                                                    month: 'long',
-                                                                    day: 'numeric'
-                                                                })
-                                                                : ''}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    )}
-                                </React.Fragment>
-                            ))}
-                            {Array.from({ length: rowsPerPage - data.length }).map((_, index) => (
-                                <TableRow key={`empty-row-${index}`}>
-                                    <TableCell colSpan={3} />
-                                </TableRow>
-                            ))}
-                        </TableBody>
+                                                    </TableCell>
+                                                </TableRow>
+                                            )}
+                                        </React.Fragment>
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell colSpan={3} align="center" />
+                                    </TableRow>
+                                )}
+                                {Array.from({ length: rowsPerPage - (data?.scholars?.length || 0) }).map((_, index) => (
+                                    <TableRow key={`empty-row-${index}`}>
+                                        <TableCell colSpan={3} />
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        )}
                     </Table>
                 </TableContainer>
                 <div className="flex justify-end items-end grow overflow-x-hide">
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 15]}
                         component="div"
-                        count={Array.isArray(data) ? data.length : 0}
+                        count={data?.totalScholars || 0}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
@@ -539,4 +566,4 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
             />
         </main>
     );
-}
+};

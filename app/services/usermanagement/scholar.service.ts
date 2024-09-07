@@ -12,10 +12,10 @@ export async function fetchTableData(data: fetchScholarData) {
         url.searchParams.append('rowsPerPage', data.rowsPerPage.toString());
         url.searchParams.append('labid', data.laboratory_id.toString());
         console.log(url.toString())
-        if (data.scholarshiptype_id !== 0) {
+        if (data.scholarshiptype_id !== 0 && data.scholarshiptype_id !== undefined) {
             url.searchParams.append('scholarship', data.scholarshiptype_id.toString());
         }
-        if (data.usercareer_id !== 0) {
+        if (data.usercareer_id !== 0 && data.usercareer_id !== undefined) {
             url.searchParams.append('usercareer', data.usercareer_id.toString());
         }
         const response = await fetch(url.toString(), {
@@ -56,9 +56,9 @@ export async function createTableData(data: createScholarData) {
         return { success: true };
     } catch (error) {
         if (error instanceof Error) {
-            throw new Error(error.message);
+            console.error("Error en createTableData:", error.message);
         } else {
-            throw new Error("Error desconocido");
+            console.error("Error desconocido");
         }
     }
 };
@@ -83,9 +83,9 @@ export async function editTableData(data: editScholarData) {
         return { success: true };
     } catch (error) {
         if (error instanceof Error) {
-            throw new Error(error.message);
+            console.error("Error en editTableData:", error.message);
         } else {
-            throw new Error("Error desconocido");
+            console.error("Error desconocido");
         }
     }
 };
@@ -102,9 +102,9 @@ export async function deactivateTableData(id: number) {
         return { success: true };
     } catch (error) {
         if (error instanceof Error) {
-            throw new Error(error.message);
+            console.error("Error en deactivateTableData:", error.message);
         } else {
-            throw new Error("Error desconocido");
+            console.error("Error desconocido");
         }
     }
 };

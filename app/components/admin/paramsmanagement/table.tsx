@@ -18,6 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchTableData } from "@/app/services/paramsmanagement/abm.service";
 import { useForm } from "react-hook-form";
 import debounce from "lodash.debounce";
+import Skeleton from "@mui/material/Skeleton";
 
 
 interface ABMTableProps {
@@ -27,24 +28,22 @@ interface ABMTableProps {
 export default function ABMTable({ table }: ABMTableProps) {
     const { register, watch, setValue } = useForm({
         defaultValues: {
+            //pagination
             page: 0,
             rowsPerPage: 10,
+            //filters
             search: "",
+            //modals
             modalOpenCreate: false,
             modalOpenEdit: false,
+            //selected row
             selectedRowId: 0,
             selectedRowName: ""
         }
     });
-
+    //filters
+        //search
     const search = watch("search");
-    const page = watch("page");
-    const rowsPerPage = watch("rowsPerPage");
-    const modalOpenCreate = watch("modalOpenCreate");
-    const modalOpenEdit = watch("modalOpenEdit");
-    const selectedRowId = watch("selectedRowId");
-    const selectedRowName = watch("selectedRowName");
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const handleSearch = useCallback(debounce((searchTerm: string) => {
         setValue("search", searchTerm);
@@ -52,15 +51,9 @@ export default function ABMTable({ table }: ABMTableProps) {
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         handleSearch(event.target.value);
     };
-
-    const { data, isLoading, refetch } = useQuery({
-        queryKey: ['tableData', search],
-        queryFn: () => fetchTableData(search, table),
-        refetchOnWindowFocus: false
-    });
-    
-    //paginacion
-    const paginatedItems = Array.isArray(data) ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : [];
+    //pagination
+    const page = watch("page");
+    const rowsPerPage = watch("rowsPerPage");
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setValue("page", newPage);
     };
@@ -68,14 +61,25 @@ export default function ABMTable({ table }: ABMTableProps) {
         setValue("rowsPerPage", parseInt(event.target.value, 10));
         setValue("page", 0);
     };
+    //fetch
+    const { data, isLoading, refetch } = useQuery({
+        queryKey: ['tableData', search, page, rowsPerPage],
+        queryFn: () => fetchTableData({ search, table, page, rowsPerPage }),
+        refetchOnWindowFocus: false
+    });
     //modales
         //create
+    const modalOpenCreate = watch("modalOpenCreate");
     const handleOpenCreateModal = () => setValue("modalOpenCreate", true);
     const handleCloseCreateModal = () => {
         setValue("modalOpenCreate", false);
         refetch();
     };
+        //selected row
+    const selectedRowId = watch("selectedRowId");
+    const selectedRowName = watch("selectedRowName");
         //edit
+    const modalOpenEdit = watch("modalOpenEdit");
     const handleOpenEditModal = (id: number, name: string) => {
         setValue("selectedRowId", id);
         setValue("selectedRowName", name);
@@ -85,7 +89,6 @@ export default function ABMTable({ table }: ABMTableProps) {
         setValue("modalOpenEdit", false);
         refetch();
     }
-
     return (
         <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
             <div className="flex flex-row w-full mb-4">
@@ -131,38 +134,61 @@ export default function ABMTable({ table }: ABMTableProps) {
                                 </TableCell>
                             </TableRow>
                         </TableBody>
-                        <TableBody>
-                            {paginatedItems.map((row) => (
-                                <TableRow key={row.id}>
-                                    <TableCell align="center" size="small">
-                                        <div className="text-gray-700 font-medium text-lg">
-                                            {row.name}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell align="center" size="small">
-                                    </TableCell>
-                                    <TableCell align="center" size="small">
-                                        <div className="flex flex-row justify-center mr-5 items-center text-gray-700">
-                                            <IconButton color="inherit" onClick={() => handleOpenEditModal(row.id, row.name)}>
-                                                <EditIcon />
-                                            </IconButton>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                            {Array.from({ length: rowsPerPage - paginatedItems.length }).map((_, index) => (
-                                <TableRow key={`empty-row-${index}`}>
-                                    <TableCell colSpan={3} />
-                                </TableRow>
-                            ))}
-                        </TableBody>
+                        {isLoading ? (
+                            <TableBody>
+                                {Array.from({ length: rowsPerPage }).map((_, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell align="center">
+                                            <Skeleton variant="text" width={150} />
+                                        </TableCell>
+                                        <TableCell align="left">
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Skeleton variant="text" width={100} />
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        ) : (
+                            <TableBody>
+                                {data && data.items && data.items.length > 0 ? (
+                                    data.items.map((row: any) => (
+                                        <TableRow key={row.id}>
+                                            <TableCell align="center" size="small">
+                                                <div className="text-gray-700 font-medium text-lg">
+                                                    {row.name}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell align="center" size="small">
+                                            </TableCell>
+                                            <TableCell align="center" size="small">
+                                                <div className="flex flex-row justify-center mr-5 items-center text-gray-700">
+                                                    <IconButton color="inherit" onClick={() => handleOpenEditModal(row.id, row.name)}>
+                                                        <EditIcon />
+                                                    </IconButton>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell colSpan={2} align="center" />
+                                    </TableRow>
+                                )}
+                                {Array.from({ length: rowsPerPage - data.items.length }).map((_, index) => (
+                                    <TableRow key={`empty-row-${index}`}>
+                                        <TableCell colSpan={3} />
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        )}
                     </Table>
                 </TableContainer>
                 <div className="flex justify-end items-end grow overflow-x-hide">
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 15, 20]}
                         component="div"
-                        count={Array.isArray(data) ? data.length : 0}
+                        count={data?.totalItems || 0}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
@@ -184,4 +210,4 @@ export default function ABMTable({ table }: ABMTableProps) {
             />
         </main>
     );
-}
+};

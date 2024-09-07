@@ -60,14 +60,13 @@ export default function EditScholarModal({ open, handleClose, row, usercareers, 
         },
     });
     const [apiError, setApiError] = useState<APIErrors>({});
-
     const mutation = useMutation({
         mutationFn: (data: MutationData) => editTableData(data),
         onSuccess: (result) => {
-            if (result.success) {
+            if (result && result.success) {
                 handleClose();
                 reset();
-            } else {
+            } else if (result) {
                 setApiError(result.error);
             }
         },
@@ -75,7 +74,6 @@ export default function EditScholarModal({ open, handleClose, row, usercareers, 
             setApiError({ dni: error.dni, file: error.file });
         },
     });
-
     const onSubmit: SubmitHandler<FormData> = (data) => {
         mutation.mutate({ 
             name: data.name,
@@ -89,17 +87,14 @@ export default function EditScholarModal({ open, handleClose, row, usercareers, 
             id: row.id
         });
     };
-
     const handleExit = () => {
         handleClose();
         setApiError({});
         reset();
-    }
-
+    };
     const handleDialogClick = (event: React.MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
     };
-
     useEffect(() => {
         reset({
             name: row?.name,
@@ -112,7 +107,6 @@ export default function EditScholarModal({ open, handleClose, row, usercareers, 
             scholarshiptype_id: row?.scholarshiptype_id,
         });
     }, [row, reset]);
-
     return (
             <Dialog
                 open={open}
@@ -286,4 +280,4 @@ export default function EditScholarModal({ open, handleClose, row, usercareers, 
                 </div>
             </Dialog>
     );
-}
+};

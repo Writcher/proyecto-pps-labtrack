@@ -1,8 +1,15 @@
 "use server"
 
-export async function fetchTableData(searchTerm: string, table: string) {
+import { fetchABMData } from "@/app/lib/dtos/abm";
+
+export async function fetchTableData(data: fetchABMData) {
     try {
-        const response = await fetch(`${process.env.BASE_URL}/api/admin/paramsmanagement?name=${encodeURIComponent(searchTerm)}&table=${encodeURIComponent(table)}`, {
+        const url = new URL(`${process.env.BASE_URL}/api/admin/paramsmanagement`);
+        url.searchParams.append('name', data.search)
+        url.searchParams.append('table', data.table)
+        url.searchParams.append('page', data.page.toString());
+        url.searchParams.append('rowsPerPage', data.rowsPerPage.toString());
+        const response = await fetch(url.toString(), {
             method: 'GET',
         });
         if (!response.ok) {
@@ -18,7 +25,7 @@ export async function fetchTableData(searchTerm: string, table: string) {
         }
         return [];
     }
-}
+};
 
 export async function createTableData(data: { name: string; table: string }) {
     try {
@@ -30,13 +37,19 @@ export async function createTableData(data: { name: string; table: string }) {
             body: JSON.stringify(data),
         })
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json();
+            if (!!errorData.apiError) {
+                return { success: false, error: errorData.apiError };
+            } else {
+                return { success: false, error: `HTTP error! status: ${response.status}` };
+            }
         }
+        return { success: true };
     } catch (error) {
         if (error instanceof Error) {
-            throw new Error(error.message);
+            console.error("Error en createTableData:", error.message);
         } else {
-            throw new Error("Error desconocido");
+            console.error("Error desconocido");
         }
     }
 }
@@ -51,13 +64,19 @@ export async function editTableData(data: { name: string; table: string; id:numb
             body: JSON.stringify(data),
         })
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json();
+            if (!!errorData.apiError) {
+                return { success: false, error: errorData.apiError };
+            } else {
+                return { success: false, error: `HTTP error! status: ${response.status}` };
+            }
         }
+        return { success: true };
     } catch (error) {
         if (error instanceof Error) {
-            throw new Error(error.message);
+            console.error("Error en editTableData:", error.message);
         } else {
-            throw new Error("Error desconocido");
+            console.error("Error desconocido");
         }
     }
 }
