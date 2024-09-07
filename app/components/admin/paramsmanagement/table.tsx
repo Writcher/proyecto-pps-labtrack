@@ -139,12 +139,16 @@ export default function ABMTable({ table }: ABMTableProps) {
                                 {Array.from({ length: rowsPerPage }).map((_, index) => (
                                     <TableRow key={index}>
                                         <TableCell align="center">
-                                            <Skeleton variant="text" width={150} />
+                                            <div className="flex items-center justify-center">
+                                                <Skeleton variant="text" width={300} />
+                                            </div>
                                         </TableCell>
                                         <TableCell align="left">
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Skeleton variant="text" width={100} />
+                                            <div className="flex mr-5 items-center justify-center">
+                                                <Skeleton variant="text" width={100} />
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ))}

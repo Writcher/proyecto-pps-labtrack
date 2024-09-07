@@ -1,5 +1,5 @@
 import { db } from '@vercel/postgres';
-import { newUserQuery, User, fetchedAdmin } from '../dtos/user';
+import { newUserQuery, user, fetchedAdmin } from '../dtos/user';
 import { getTypeAdmin } from './usertype';
 
 const client = db;
@@ -14,7 +14,7 @@ export async function getUserByEmail(email: string) {
             return {
                 ...user,
                 id: user.id.toString(), // Convert ID to string
-            } as User;
+            } as user;
         } else {
             return null;
         }

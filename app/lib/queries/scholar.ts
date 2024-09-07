@@ -4,7 +4,32 @@ import { editScholarQuery, fetchedScholar, fetchScholarQuery, newScholarQuery } 
 
 const client = db;
 
-export async function getScholars(params: fetchScholarQuery) {
+export async function getScholars(labid: number) {
+    try {
+        const type = await getTypeScholar();
+        const text = `SELECT u.id, u.name, u.email, u.created_at, u.dropped_at, 
+                us.name AS userstatus, 
+                s.file, s.dni, s.address, s.phone, s.careerlevel, s.usercareer_id, s.scholarshiptype_id,
+                uc.name AS usercareer, 
+                st.name AS scholarshiptype
+            FROM "user" u
+            JOIN "userstatus" us ON u.userstatus_id = us.id
+            JOIN "scholar" s ON u.id = s.id
+            JOIN "usercareer" uc ON s.usercareer_id = uc.id
+            JOIN "scholarshiptype" st ON s.scholarshiptype_id = st.id
+            WHERE u.usertype_id = $1
+                AND u.laboratory_id = $2
+        `;
+        const values = [type, labid];
+        const result = await client.query(text, values);
+        return result.rows as fetchedScholar[];
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el becario");
+    }
+};
+
+export async function getScholarsTable(params: fetchScholarQuery) {
     try {
         const type = await getTypeScholar();
         const offset = (params.page) * params.rowsPerPage;

@@ -6,7 +6,7 @@ import { db } from "@vercel/postgres";
 import { getStatusPending } from "@/app/lib/queries/userstatus";
 import { getTypeScholar } from "@/app/lib/queries/usertype";
 import { editScholarQuery, fetchedScholar, fetchScholarQuery, newScholarQuery } from "@/app/lib/dtos/scholar";
-import { createScholar, editScholar, getScholars } from "@/app/lib/queries/scholar";
+import { createScholar, editScholar, getScholarsTable } from "@/app/lib/queries/scholar";
 
 interface APIErrors {
     dni?: string,
@@ -47,7 +47,7 @@ export const GET = async (request: Request) => {
             rowsPerPage: rowsPerPage,
         } as fetchScholarQuery;
         let data: { scholars: fetchedScholar[]; totalScholars: any; };
-        data = await getScholars(params);
+        data = await getScholarsTable(params);
         return new NextResponse(JSON.stringify(data), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } catch (error) {
         console.error("Error manejando GET:", error);

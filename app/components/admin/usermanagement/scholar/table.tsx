@@ -410,13 +410,19 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
                                 {Array.from({ length: rowsPerPage }).map((_, index) => (
                                     <TableRow key={index}>
                                         <TableCell align="left">
-                                            <Skeleton variant="text" width={150} />
+                                            <div className="flex items-center justify-start">
+                                                <Skeleton variant="text" width={300} />
+                                            </div>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Skeleton variant="text" width={100} />
+                                            <div className="flex items-center justify-center">
+                                                <Skeleton variant="text" width={200} />
+                                            </div>
                                         </TableCell>
                                         <TableCell align="right">
-                                            <Skeleton variant="text" width={50} />
+                                            <div className="flex items-center justify-end">
+                                                <Skeleton variant="text" width={100} />
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ))}
