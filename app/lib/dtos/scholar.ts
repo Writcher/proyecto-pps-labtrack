@@ -1,4 +1,63 @@
+import { scholarshipType } from "./scholarshiptype";
 import { newUserQuery, userSchema } from "./user";
+import { userCareer } from "./usercareer";
+
+export type scholarTableProps = {
+    usercareers: userCareer[];
+    scholarships: scholarshipType[];
+    laboratory_id: number;
+};
+
+export type scholarFormData = {
+    //filters
+    filterAnchor: any;
+    filterMenuOpen: boolean;
+    activeFilters: { [key: string ]: any }
+    showSearchForm: boolean;
+    search: string;
+    normalsearch: string;
+    showScholarshipTypeFilter: boolean;
+    scholarshipTypeFilter: number;
+    userCareerFilter: number;
+    showUserCareerFilter: boolean;    
+    //pagination
+    page: number;
+    rowsPerPage: number;
+    //modals
+    modalOpenCreate: boolean;
+    modalOpenDelete: boolean;
+    modalOpenEdit: boolean;
+    //selected row
+    selectedRowId: number;
+    selectedRowName: string;
+    selectedRow: null | fetchedScholar;
+    //expanded row
+    expandedRowId: null | number;
+    //sort by column
+    sortDirection: 'ASC' | 'DESC';
+    sortColumn: string;
+};
+
+export type createModalPorps = {
+    open: boolean;
+    handleClose: () => void;
+    usercareers: userCareer[];
+    scholarships: scholarshipType[];
+    laboratory_id: number;
+};
+
+export type createFormData = {
+    name: string;
+    file: string;
+    dni: string;
+    careerlevel: number;
+    usercareer_id: number;
+    scholarshiptype_id: number;
+    address: string;
+    phone: string;
+    email: string;
+    password: string;
+}; 
 
 export type createScholarData = {
     name: string;
@@ -12,7 +71,36 @@ export type createScholarData = {
     email: string;
     password: string;
     laboratory_id: number;
-}
+};
+
+export type newScholarQuery = newUserQuery & {
+    dni: string;
+    file: string;
+    phone?: string;
+    address?: string;
+    careerlevel: number;
+    usercareer_id: number;
+    scholarshiptype_id: number;
+};
+
+export type editModalProps = {
+    open: boolean;
+    handleClose: () => void;
+    usercareers: userCareer[];
+    scholarships: scholarshipType[];
+    row: fetchedScholar;
+};
+
+export type editFormData = {
+    name: string;
+    file: string;
+    dni: string;
+    careerlevel: number;
+    usercareer_id: number;
+    scholarshiptype_id: number;
+    address: string;
+    phone: string;
+};
 
 export type editScholarData = {
     name: string;
@@ -24,7 +112,19 @@ export type editScholarData = {
     address: string;
     phone: string;
     id: number;
-}
+};
+
+export type editScholarQuery = {
+    id: number;
+    name: string;
+    file: string;
+    dni: string;
+    address?: string;
+    phone?: string;
+    careerlevel: number;
+    scholarshiptype_id: number;
+    usercareer_id: number;
+};
 
 export type fetchScholarData = {
     search: string;
@@ -35,7 +135,7 @@ export type fetchScholarData = {
     sortDirection: "ASC" | "DESC";
     page: number;
     rowsPerPage: number;
-}
+};
 
 export type fetchScholarQuery = {
     search: string;
@@ -46,27 +146,7 @@ export type fetchScholarQuery = {
     sortDirection: "ASC" | "DESC";
     page: number;
     rowsPerPage: number;
-}
-
-export type Scholar = userSchema & {
-    dni: string;
-    file: string;
-    phone?: string;
-    address?: string;
-    careerlevel: number;
-    usercareer_id: number;
-    scholarshiptype_id: number;
-}
-
-export type newScholarQuery = newUserQuery & {
-    dni: string;
-    file: string;
-    phone?: string;
-    address?: string;
-    careerlevel: number;
-    usercareer_id: number;
-    scholarshiptype_id: number;
-}
+};
 
 export type fetchedScholar = {
     id: number;
@@ -84,16 +164,21 @@ export type fetchedScholar = {
     usercareer: string;
     scholarshiptype_id: number;
     scholarshiptype: string;
-}
+};
 
-export type editScholarQuery = {
+export type deleteModalProps = {
+    open: boolean;
+    handleClose: () => void;
     id: number;
     name: string;
-    file: string;
+};
+
+export type Scholar = userSchema & {
     dni: string;
-    address?: string;
+    file: string;
     phone?: string;
+    address?: string;
     careerlevel: number;
-    scholarshiptype_id: number;
     usercareer_id: number;
-}
+    scholarshiptype_id: number;
+};

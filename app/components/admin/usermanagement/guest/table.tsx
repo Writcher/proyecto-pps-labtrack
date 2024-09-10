@@ -19,32 +19,10 @@ import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import Skeleton from "@mui/material/Skeleton";
 import { fetchTableData } from "@/app/services/admin/usermanagement/guest.service";
+import { guestFormData, guestTableProps } from "@/app/lib/dtos/guest";
 
-interface AMBGuestTableProps {
-    laboratory_id: number;
-}
-
-interface FormData {
-    //filters
-    search: string;
-    //pagination
-    page: number;
-    rowsPerPage: number;
-    //modals
-    modalOpenCreate: boolean;
-    modalOpenDelete: boolean;
-    //selected row
-    selectedRowId: number;
-    selectedRowName: string;
-    //expanded row
-    expandedRowId: null | number;
-    //sort by column
-    sortDirection: 'ASC' | 'DESC';
-    sortColumn: string;
-}
-
-export default function ABMGuestTable({ laboratory_id }: AMBGuestTableProps ) {
-    const { register, watch, setValue, getValues } = useForm<FormData>({
+export default function ABMGuestTable({ laboratory_id }: guestTableProps ) {
+    const { watch, setValue } = useForm<guestFormData>({
         defaultValues: {
             //filters
             search: "",
@@ -308,5 +286,5 @@ export default function ABMGuestTable({ laboratory_id }: AMBGuestTableProps ) {
                 name={selectedRowName!}
             />
         </main>
-    )
-}
+    );
+};

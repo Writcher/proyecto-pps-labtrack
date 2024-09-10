@@ -9,15 +9,9 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { useMutation } from '@tanstack/react-query';
 import { deactivateTableData } from '@/app/services/admin/usermanagement/scholar.service';
 import { useForm } from 'react-hook-form';
+import { deleteModalProps } from '@/app/lib/dtos/scholar';
 
-interface DeleteScholarModalProps {
-    open: boolean;
-    handleClose: () => void;
-    id: number;
-    name: string;
-}
-
-export default function DeleteScholarModal({ open, handleClose, id, name }: DeleteScholarModalProps) {
+export default function DeleteScholarModal({ open, handleClose, id, name }: deleteModalProps) {
     const { handleSubmit } = useForm();
     const mutation = useMutation({
         mutationFn: () => deactivateTableData(id),

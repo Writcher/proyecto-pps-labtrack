@@ -19,14 +19,10 @@ import { fetchTableData } from "@/app/services/admin/paramsmanagement/abm.servic
 import { useForm } from "react-hook-form";
 import debounce from "lodash.debounce";
 import Skeleton from "@mui/material/Skeleton";
-
-
-interface ABMTableProps {
-    table: string;
-}
+import { ABMTableProps } from "@/app/lib/dtos/abm";
 
 export default function ABMTable({ table }: ABMTableProps) {
-    const { register, watch, setValue } = useForm({
+    const { watch, setValue } = useForm({
         defaultValues: {
             //pagination
             page: 0,

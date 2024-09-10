@@ -1,6 +1,6 @@
 "use client"
 
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -18,33 +18,17 @@ import localizedFormat from 'dayjs/plugin/localizedFormat';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { createTableData } from '@/app/services/admin/usermanagement/guest.service';
+import { createFormData, createGuestData, createModalProps } from '@/app/lib/dtos/guest';
 
 dayjs.locale('es');
 dayjs.extend(localizedFormat);
-
-interface CreateModalProps {
-    open: boolean;
-    handleClose: () => void;
-    laboratory_id: number;
-}
-
-interface FormData {
-    name: string;
-    email: string;
-    expires_at: Dayjs | null;
-    password: string;
-}
-
-type MutationData = FormData & {
-    laboratory_id: number;
-}
 
 interface APIError {
     email?:string,
 }
 
-export default function CreateGuestModal({ open, handleClose, laboratory_id }: CreateModalProps) {
-    const { watch, register, handleSubmit, reset, formState: { errors }, setValue, setError, clearErrors } = useForm<FormData>({
+export default function CreateGuestModal({ open, handleClose, laboratory_id }: createModalProps) {
+    const { watch, register, handleSubmit, reset, formState: { errors }, setValue, setError, clearErrors } = useForm<createFormData>({
         defaultValues: {
             name: '',
             email: '',
@@ -54,7 +38,7 @@ export default function CreateGuestModal({ open, handleClose, laboratory_id }: C
       });
     const [apiError, setApiError] = useState<APIError>({});
     const mutation = useMutation({
-        mutationFn: (data: MutationData) => createTableData(data),
+        mutationFn: (data: createGuestData) => createTableData(data),
         onSuccess: (result) => {
             if (result && result.success) {
                 handleClose();
@@ -67,7 +51,7 @@ export default function CreateGuestModal({ open, handleClose, laboratory_id }: C
             setApiError({ email: error.email });
         },
     });
-    const onSubmit: SubmitHandler<FormData> = (data) => {
+    const onSubmit: SubmitHandler<createFormData> = (data) => {
         mutation.mutate({ 
             name: data.name,
             email: data.email,
@@ -221,4 +205,4 @@ export default function CreateGuestModal({ open, handleClose, laboratory_id }: C
             </div>
         </Dialog>
     );
-}
+};

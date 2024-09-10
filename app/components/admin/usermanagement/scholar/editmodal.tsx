@@ -9,36 +9,11 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
-import { scholarshipType } from '@/app/lib/dtos/scholarshiptype';
-import { userCareer } from '@/app/lib/dtos/usercareer';
-import { fetchedScholar } from '@/app/lib/dtos/scholar';
 import { MenuItem } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { editTableData } from '@/app/services/admin/usermanagement/scholar.service';
-
-interface EditModalProps {
-    open: boolean;
-    handleClose: () => void;
-    usercareers: userCareer[];
-    scholarships: scholarshipType[];
-    row: fetchedScholar;
-}
-
-interface FormData {
-    name: string;
-    file: string;
-    dni: string;
-    careerlevel: number;
-    usercareer_id: number;
-    scholarshiptype_id: number;
-    address: string;
-    phone: string;
-}
-
-type MutationData = FormData & {
-    id: number;
-}
+import { editFormData, editModalProps, editScholarData } from '@/app/lib/dtos/scholar';
 
 interface APIErrors {
     dni?: string,
@@ -46,8 +21,8 @@ interface APIErrors {
     email?: string,
 }
 
-export default function EditScholarModal({ open, handleClose, row, usercareers, scholarships }: EditModalProps) {
-    const { watch, register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
+export default function EditScholarModal({ open, handleClose, row, usercareers, scholarships }: editModalProps) {
+    const { watch, register, handleSubmit, reset, formState: { errors } } = useForm<editFormData>({
         defaultValues: {
             name: row?.name,
             file: row?.file,
@@ -61,7 +36,7 @@ export default function EditScholarModal({ open, handleClose, row, usercareers, 
     });
     const [apiError, setApiError] = useState<APIErrors>({});
     const mutation = useMutation({
-        mutationFn: (data: MutationData) => editTableData(data),
+        mutationFn: (data: editScholarData) => editTableData(data),
         onSuccess: (result) => {
             if (result && result.success) {
                 handleClose();
@@ -74,7 +49,7 @@ export default function EditScholarModal({ open, handleClose, row, usercareers, 
             setApiError({ dni: error.dni, file: error.file });
         },
     });
-    const onSubmit: SubmitHandler<FormData> = (data) => {
+    const onSubmit: SubmitHandler<editFormData> = (data) => {
         mutation.mutate({ 
             name: data.name,
             file: data.file,

@@ -49,7 +49,7 @@ export default async function SideNav() {
           </p>
         </div>
         <form action={doLogout}>
-        <div className="flex items-center justify-center gap-2 text-white p-3 text-sm font-medium hover:bg-gradient-to-r hover:from-red-700 hover:to-orange-500 hidden md:block">
+          <div className="flex items-center justify-center gap-2 text-white p-3 text-sm font-medium hover:bg-gradient-to-r hover:from-red-700 hover:to-orange-500 hidden md:block">
             <Button variant="text" size="large" color="inherit" type="submit" disableElevation endIcon={<LogoutIcon />} fullWidth>
               CERRAR SESIÓN
             </Button>

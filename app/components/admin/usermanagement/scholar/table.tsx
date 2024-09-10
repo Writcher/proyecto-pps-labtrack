@@ -1,8 +1,6 @@
 "use client"
 
-import { scholarshipType } from "@/app/lib/dtos/scholarshiptype";
-import { userCareer } from "@/app/lib/dtos/usercareer";
-import { fetchedScholar } from "@/app/lib/dtos/scholar";
+import { scholarTableProps, fetchedScholar, fetchScholarData, scholarFormData } from "@/app/lib/dtos/scholar";
 import { fetchTableData } from "@/app/services/admin/usermanagement/scholar.service";
 import CreateScholarModal from "./createmodal";
 import EditScholarModal from "./editmodal";
@@ -30,44 +28,8 @@ import React, { useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
-interface AMBScholarTableProps {
-    usercareers: userCareer[];
-    scholarships: scholarshipType[];
-    laboratory_id: number;
-}
-
-interface FormData {
-    //filters
-    filterAnchor: any;
-    filterMenuOpen: boolean;
-    activeFilters: { [key: string ]: any }
-    showSearchForm: boolean;
-    search: string;
-    normalsearch: string;
-    showScholarshipTypeFilter: boolean;
-    scholarshipTypeFilter: number;
-    userCareerFilter: number;
-    showUserCareerFilter: boolean;    
-    //pagination
-    page: number;
-    rowsPerPage: number;
-    //modals
-    modalOpenCreate: boolean;
-    modalOpenDelete: boolean;
-    modalOpenEdit: boolean;
-    //selected row
-    selectedRowId: number;
-    selectedRowName: string;
-    selectedRow: null | fetchedScholar;
-    //expanded row
-    expandedRowId: null | number;
-    //sort by column
-    sortDirection: 'ASC' | 'DESC';
-    sortColumn: string;
-}
-
-export default function ABMScholarTableNEW({ usercareers, scholarships, laboratory_id }: AMBScholarTableProps ) {
-    const { register, watch, setValue, getValues } = useForm<FormData>({
+export default function ABMScholarTableNEW({ usercareers, scholarships, laboratory_id }: scholarTableProps ) {
+    const { watch, setValue, getValues } = useForm<scholarFormData>({
         defaultValues: {
             //filters
             filterAnchor: null,
@@ -207,9 +169,19 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
         setValue("page", 0);
     };
     //fetch
+    const params = {
+        search: search,
+        scholarshiptype_id: scholarshiptype_id,
+        usercareer_id: usercareer_id,
+        laboratory_id: laboratory_id,
+        sortColumn: sortColumn,
+        sortDirection: sortDirection,
+        page: page, 
+        rowsPerPage: rowsPerPage
+    } as fetchScholarData;
     const { data, isLoading, refetch } = useQuery({
         queryKey: ['tableData', search, usercareer_id , scholarshiptype_id, sortColumn, sortDirection, page, rowsPerPage ],
-        queryFn: () => fetchTableData({ search, laboratory_id, usercareer_id, scholarshiptype_id, sortColumn, sortDirection, page, rowsPerPage }),
+        queryFn: () => fetchTableData(params),
         refetchOnWindowFocus: false
     });
     //expanded row

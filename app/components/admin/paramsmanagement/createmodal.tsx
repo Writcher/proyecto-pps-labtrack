@@ -12,32 +12,17 @@ import SaveIcon from '@mui/icons-material/Save';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { createTableData } from '@/app/services/admin/paramsmanagement/abm.service';
-
-
-interface CreateModalProps {
-    open: boolean;
-    handleClose: () => void;
-    table: string;
-}
-
-interface FormData {
-    name: string;
-}
-
-interface MutationData {
-    name: string;
-    table: string;
-}
+import { createABMQuery, createFormData, createModalProps } from '@/app/lib/dtos/abm';
 
 interface APIError {
     name?: string
 }
 
-export default function CreateModal({ open, handleClose, table }: CreateModalProps) {
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>();
+export default function CreateModal({ open, handleClose, table }: createModalProps) {
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<createFormData>();
     const [apiError, setApiError] = useState<APIError>({});
     const mutation = useMutation({
-        mutationFn: (data: MutationData) => createTableData(data),
+        mutationFn: (data: createABMQuery) => createTableData(data),
         onSuccess: (result) => {
             if (result && result.success) {
                 handleClose();
@@ -50,7 +35,7 @@ export default function CreateModal({ open, handleClose, table }: CreateModalPro
             setApiError({ name: error.name });
         }
     });
-    const onSubmit: SubmitHandler<FormData> = (data) => {
+    const onSubmit: SubmitHandler<createFormData> = (data) => {
         mutation.mutate({ 
             name: data.name, 
             table 

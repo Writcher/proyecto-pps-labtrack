@@ -10,36 +10,10 @@ import TextField from "@mui/material/TextField";
 import MenuItem from '@mui/material/MenuItem';
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
-import { scholarshipType } from '@/app/lib/dtos/scholarshiptype';
-import { userCareer } from '@/app/lib/dtos/usercareer';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { createTableData } from '@/app/services/admin/usermanagement/scholar.service';
-
-interface CreateModalProps {
-    open: boolean;
-    handleClose: () => void;
-    usercareers: userCareer[];
-    scholarships: scholarshipType[];
-    laboratory_id: number;
-}
-
-interface FormData {
-    name: string;
-    file: string;
-    dni: string;
-    careerlevel: number;
-    usercareer_id: number;
-    scholarshiptype_id: number;
-    address: string;
-    phone: string;
-    email: string;
-    password: string;
-}
-
-type MutationData = FormData & {
-    laboratory_id: number;
-}
+import { createFormData, createModalPorps, createScholarData } from '@/app/lib/dtos/scholar';
 
 interface APIErrors {
     dni?: string,
@@ -47,8 +21,8 @@ interface APIErrors {
     email?: string,
 }
 
-export default function CreateScholarModal({ open, handleClose, usercareers, scholarships, laboratory_id }: CreateModalProps) {
-    const { watch, register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
+export default function CreateScholarModal({ open, handleClose, usercareers, scholarships, laboratory_id }: createModalPorps) {
+    const { watch, register, handleSubmit, reset, formState: { errors } } = useForm<createFormData>({
         defaultValues: {
             careerlevel: 0,
             usercareer_id: 0,
@@ -57,7 +31,7 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
       });
     const [apiError, setApiError] = useState<APIErrors>({});
     const mutation = useMutation({
-        mutationFn: (data: MutationData) => createTableData(data),
+        mutationFn: (data: createScholarData) => createTableData(data),
         onSuccess: (result) => {
             if (result && result.success) {
                 handleClose();
@@ -70,7 +44,7 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
             setApiError({ dni: error.dni, file: error.file, email: error.email });
         },
     });
-    const onSubmit: SubmitHandler<FormData> = (data) => {
+    const onSubmit: SubmitHandler<createFormData> = (data) => {
         mutation.mutate({ 
             name: data.name,
             file: data.file,

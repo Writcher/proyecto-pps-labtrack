@@ -53,7 +53,7 @@ export const GET = async (request: Request) => {
         console.error("Error manejando GET:", error);
         return new NextResponse("Error manejando GET", { status: 500 });
     }
-}
+};
 
 export const POST = async (request: Request) => {
     try {
@@ -131,7 +131,7 @@ export const POST = async (request: Request) => {
         console.error("Error manejando POST:", error);
         return NextResponse.json({ message: "Error procesando la solicitud" }, { status: 500 });
     }
-}
+};
 
 export const PUT = async (request: Request) => {
     try {
@@ -151,7 +151,7 @@ export const PUT = async (request: Request) => {
         }
         const client = db;
         const text1 = `
-            SELECT * FROM "scholar" WHERE file = $1 AND id != 2 LIMIT 1
+            SELECT * FROM "scholar" WHERE file = $1 AND id != $2 LIMIT 1
         `;
         const values1 = [file, id];
         const existingScholarFile = await client.query(text1, values1);
@@ -195,4 +195,4 @@ export const PUT = async (request: Request) => {
         console.error("Error manejando PUT:", error);
         return NextResponse.json({ message: "Error procesando la solicitud" }, { status: 500 });
     }
-}
+};

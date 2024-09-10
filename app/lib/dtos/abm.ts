@@ -1,9 +1,35 @@
+export type ABMTableProps = {
+    table: string;
+};
+
+export type createModalProps = {
+    open: boolean;
+    handleClose: () => void;
+    table: string;
+};
+
+export type createFormData = {
+    name: string;
+};
+
 export type createABMQuery = {
     name: string;
     table: string;
 };
 
 export type createABMItemQuery = {
+    name: string;
+};
+
+export type editModalProps = {
+    open: boolean;
+    handleClose: () => void;
+    table: string;
+    id: number;
+    name: string;
+};
+
+export type editFormData = {
     name: string;
 };
 

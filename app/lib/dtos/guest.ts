@@ -1,8 +1,52 @@
 import { Dayjs } from "dayjs";
 import { newUserQuery, userSchema } from "./user";
 
+export type guestTableProps = {
+    laboratory_id: number;
+};
+
+export type guestFormData = {
+    //filters
+    search: string;
+    //pagination
+    page: number;
+    rowsPerPage: number;
+    //modals
+    modalOpenCreate: boolean;
+    modalOpenDelete: boolean;
+    //selected row
+    selectedRowId: number;
+    selectedRowName: string;
+    //expanded row
+    expandedRowId: null | number;
+    //sort by column
+    sortDirection: 'ASC' | 'DESC';
+    sortColumn: string;
+};
+
 export type guest = userSchema & {
     expires_at: Date;
+};
+
+export type createModalProps = {
+    open: boolean;
+    handleClose: () => void;
+    laboratory_id: number;
+};
+
+export type createFormData = {
+    name: string;
+    email: string;
+    expires_at: Dayjs | null;
+    password: string;
+};
+
+export type createGuestData = {
+    name: string;
+    email: string;
+    password: string;
+    expires_at: Dayjs | null;
+    laboratory_id:number;
 };
 
 export type newGuestQuery = newUserQuery & {
@@ -35,12 +79,11 @@ export type fetchGuestQuery = {
     sortDirection: "ASC" | "DESC";
     page: number;
     rowsPerPage: number;
-}
+};
 
-export type createGuestData = {
+export type deleteModalProps = {
+    open: boolean;
+    handleClose: () => void;
+    id: number;
     name: string;
-    email: string;
-    password: string;
-    expires_at: Dayjs | null;
-    laboratory_id:number;
-}
+};

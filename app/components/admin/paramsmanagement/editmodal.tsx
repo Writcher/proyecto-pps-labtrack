@@ -12,38 +12,21 @@ import SaveIcon from '@mui/icons-material/Save';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { editTableData } from '@/app/services/admin/paramsmanagement/abm.service';
 import { useMutation } from '@tanstack/react-query';
-
-interface EditModalProps {
-    open: boolean;
-    handleClose: () => void;
-    table: string;
-    id: number;
-    name: string;
-}
-
-interface FormData {
-    name: string;
-}
-
-interface MutationData {
-    name: string;
-    id: number;
-    table: string;
-}
+import { editABMQuery, editFormData, editModalProps } from '@/app/lib/dtos/abm';
 
 interface APIError {
     name?: string
 }
 
-export default function EditModal({ open, handleClose, table, id, name }: EditModalProps) {
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
+export default function EditModal({ open, handleClose, table, id, name }: editModalProps) {
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<editFormData>({
         defaultValues: {
             name: name
         },
       });
     const [apiError, setApiError] = useState<APIError>({});
     const mutation = useMutation({
-        mutationFn: (data: MutationData) => editTableData(data),
+        mutationFn: (data: editABMQuery) => editTableData(data),
         onSuccess: (result) => {
             if (result && result.success) {
                 handleClose();
@@ -56,7 +39,7 @@ export default function EditModal({ open, handleClose, table, id, name }: EditMo
             setApiError({ name: error.name });
         },
     });
-    const onSubmit: SubmitHandler<FormData> = (data) => {
+    const onSubmit: SubmitHandler<editFormData> = (data) => {
         mutation.mutate({ 
             name: data.name, 
             id, table 

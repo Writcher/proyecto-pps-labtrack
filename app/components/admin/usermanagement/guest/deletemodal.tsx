@@ -1,6 +1,6 @@
 "use client"
 
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -12,19 +12,13 @@ import Alert from '@mui/material/Alert';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { deleteTableData } from '@/app/services/admin/usermanagement/guest.service';
-
-interface DeleteGuestModalProps {
-    open: boolean;
-    handleClose: () => void;
-    id: number;
-    name: string;
-}
+import { deleteModalProps } from '@/app/lib/dtos/guest';
 
 interface APIError {
     message?: string,
 }
 
-export default function DeleteGuestModal({ open, handleClose, id, name }: DeleteGuestModalProps) {
+export default function DeleteGuestModal({ open, handleClose, id, name }: deleteModalProps) {
     const { handleSubmit, reset } = useForm();
     const [apiError, setApiError] = useState<APIError>({});
     const mutation = useMutation({
@@ -100,4 +94,4 @@ export default function DeleteGuestModal({ open, handleClose, id, name }: Delete
                 </div>
             </Dialog>
     );
-}
+};
