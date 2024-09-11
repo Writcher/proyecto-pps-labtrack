@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getScholars } from "@/app/lib/queries/scholar";
+import { getChatScholars } from "@/app/lib/queries/scholar";
 import { getTypeAdmin, getTypeScholar } from "@/app/lib/queries/usertype";
 import { getAdmins } from "@/app/lib/queries/user";
 import { countUnreadMessages } from "@/app/lib/queries/messages";
@@ -20,7 +20,7 @@ export const GET = async (request: Request) => {
         const scholarType = await getTypeScholar();
         if (typeid === adminType) {
             try {
-                const scholars = await getScholars(labid);
+                const scholars = await getChatScholars(labid);
                 const scholarsWithUnreadCount = await Promise.all(scholars.map(async (scholar) => {
                     const unreadCount = await countUnreadMessages(scholar.id, currentid);
                     return { ...scholar, unreadCount };
@@ -29,7 +29,7 @@ export const GET = async (request: Request) => {
             } catch (error) {
                 console.error("Error recuperando becarios:", error);
                 return new NextResponse("Error recuperando becarios", { status: 500 });
-            }
+            };
         } else if (typeid === scholarType) {
             try {
                 const admins = await getAdmins(labid);
@@ -48,5 +48,5 @@ export const GET = async (request: Request) => {
     } catch (error) {
         console.error("Error manejando GET:", error);
         return new NextResponse("Error manejando GET", { status: 500 });
-    }
-}
+    };
+};

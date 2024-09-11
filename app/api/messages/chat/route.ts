@@ -18,13 +18,13 @@ export const GET = async (request: Request) => {
         } catch (error) {
             console.error("Error recuperando instancias:", error);
             return new NextResponse("Error recuperando becarios", { status: 500 });
-        }
+        };
         return new NextResponse(JSON.stringify(data), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } catch (error) {
         console.error("Error manejando GET:", error);
         return new NextResponse("Error manejando GET", { status: 500 });
-    }
-}
+    };
+};
 
 export const POST = async (request: Request) => {
     try {
@@ -50,5 +50,5 @@ export const POST = async (request: Request) => {
     } catch (error) {
         console.error("Error manejando POST:", error);
         return new NextResponse("Error al crear supply", { status: 500 });
-    }
-}
+    };
+};

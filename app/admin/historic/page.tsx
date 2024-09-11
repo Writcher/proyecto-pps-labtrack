@@ -6,7 +6,7 @@ import { getHistoricUserCareers } from "@/app/lib/queries/historicusercareer";
 import { redirect } from "next/navigation";
 import ABMHistoricTable from "@/app/components/admin/historic/table";
 
-export default async function Invitados() {
+export default async function Historico() {
     const session = await auth();
     if (!session?.user) redirect("/");
 

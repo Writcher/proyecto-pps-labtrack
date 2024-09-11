@@ -32,8 +32,3 @@ export type newUserQuery = {
     usertype_id: number;
     userstatus_id: number;
 }
-
-export type fetchedAdmin = {
-    id: number;
-    name: string;
-}

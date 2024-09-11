@@ -4,7 +4,7 @@ import { getSupplyTypes } from "@/app/lib/queries/supplytype";
 import ABMInventoryTable from "@/app/components/admin/inventory/table";
 import { redirect } from "next/navigation";
 
-export default async function Invitados() {
+export default async function Inventario() {
     const session = await auth();
     if (!session?.user) redirect("/");
 

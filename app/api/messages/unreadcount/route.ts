@@ -14,5 +14,5 @@ export const GET = async (request: Request) => {
     } catch (error) {
         console.error("Error recuperando conteo:", error);
         return new NextResponse("Error recuperando conteo", { status: 500 });
-    }
-}
+    };
+};

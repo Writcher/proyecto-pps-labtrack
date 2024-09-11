@@ -1,6 +1,7 @@
 import { db } from "@vercel/postgres";
 import { getTypeScholar } from "./usertype";
 import { editScholarQuery, fetchedScholar, fetchScholarQuery, newScholarQuery } from "../dtos/scholar";
+import { fetchedChatUser } from "../dtos/message";
 
 const client = db;
 
@@ -26,7 +27,25 @@ export async function getScholars(labid: number) {
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el becario");
-    }
+    };
+};
+
+export async function getChatScholars(labid: number) {
+    try {
+        const type = await getTypeScholar();
+        const text = `
+        SELECT u.id, u.name
+        FROM "user" u
+        WHERE u.usertype_id = $1
+            AND u.laboratory_id = $2
+        `;
+        const values = [type, labid];
+        const result = await client.query(text, values);
+        return result.rows as fetchedChatUser[];
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el becario");
+    };
 };
 
 export async function getScholarsTable(params: fetchScholarQuery) {
@@ -105,8 +124,8 @@ export async function getScholarsTable(params: fetchScholarQuery) {
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el becario");
-    }
-}
+    };
+};
 
 export async function createScholar(user: newScholarQuery)  {
     try {
@@ -134,7 +153,7 @@ export async function createScholar(user: newScholarQuery)  {
         const rollbacktext = `ROLLBACK`;
         await client.query(rollbacktext);
         throw new Error("No se pudo crear el becario");
-    }
+    };
 };
 
 export async function editScholar(user: editScholarQuery) {
@@ -169,5 +188,5 @@ export async function editScholar(user: editScholarQuery) {
         const rollbacktext = `ROLLBACK`;
         await client.query(rollbacktext);
         throw new Error("No se pudo editar el becario");
-    }
+    };
 };

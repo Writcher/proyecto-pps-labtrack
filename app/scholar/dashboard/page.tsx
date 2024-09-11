@@ -1,7 +1,7 @@
 import { auth } from "@/app/lib/auth";
 import { redirect } from "next/navigation";
 
-export default async function Home() {
+export default async function ScholarHome() {
     const session = await auth();
     if (!session?.user) redirect("/");
 

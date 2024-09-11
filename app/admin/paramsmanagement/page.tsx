@@ -6,7 +6,6 @@ import { redirect } from "next/navigation";
 export default async function ABMinicio() {
     const session = await auth();
     if (!session?.user) redirect("/");
-    
     return (
         <main className="flex flex-col w-full">
             <div className="flex flex-col items-center justify-center mb-4 md:gap-12">

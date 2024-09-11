@@ -12,10 +12,10 @@ export const PUT = async (request: Request) => {
         } catch(error) {
             console.error("Error manejando PUT:", error);
             return new NextResponse("Error al editar usuario", { status: 500 });
-        } 
+        }; 
         return NextResponse.json({ status: 200 });
     } catch(error) {
         console.error("Error manejando PUT:", error);
         return new NextResponse("Error al editar mensaje", { status: 500 });
-    }
-}
+    };
+};
