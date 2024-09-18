@@ -254,7 +254,7 @@ export default function ABMGuestTable({ laboratory_id }: guestTableProps ) {
                                         <TableCell colSpan={3} align="center" />
                                     </TableRow>
                                 )}
-                                {Array.from({ length: rowsPerPage - (data?.scholars?.length || 0) }).map((_, index) => (
+                                {Array.from({ length: rowsPerPage - (data?.guests?.length || 0) }).map((_, index) => (
                                     <TableRow key={`empty-row-${index}`}>
                                         <TableCell colSpan={3} />
                                     </TableRow>

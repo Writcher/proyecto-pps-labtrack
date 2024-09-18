@@ -36,7 +36,7 @@ export async function fetchChatUsers(data: fetchChatUsersData) {
             console.error("Tipo de usuario no reconocido")
         };
     } catch (error) {
-            console.error("Error en fetchChatUsers:", error);
+        console.error("Error en fetchChatUsers:", error);
     };
 };
 

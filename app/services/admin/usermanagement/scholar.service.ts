@@ -32,7 +32,6 @@ export async function fetchTableData(data: fetchScholarData) {
         return response;
     } catch (error) {
         console.error("Error en fetchTableData(Scholar):", error);
-        return { success: false };
     };
 };
 

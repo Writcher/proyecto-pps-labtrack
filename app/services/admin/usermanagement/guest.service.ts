@@ -27,7 +27,6 @@ export async function fetchTableData(data: fetchGuestData) {
         return response;
     } catch (error) {
         console.error("Error en fetchTableData(Guest):", error);
-        return { success: false };
     };
 };
 
