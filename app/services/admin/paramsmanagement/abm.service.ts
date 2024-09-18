@@ -1,81 +1,77 @@
 "use server"
 
-import { fetchABMData } from "@/app/lib/dtos/abm";
+import { checkInstanceExistance, createInstance, editInstance, getInstances } from "@/app/lib/abm";
+import { createABMQuery, editABMQuery, fetchABMData, fetchABMQuery, fetchedABMItem } from "@/app/lib/dtos/abm";
+
+interface APIError {
+    name?: string;
+}
 
 export async function fetchTableData(data: fetchABMData) {
     try {
-        const url = new URL(`${process.env.BASE_URL}/api/admin/paramsmanagement`);
-        url.searchParams.append('name', data.search)
-        url.searchParams.append('table', data.table)
-        url.searchParams.append('page', data.page.toString());
-        url.searchParams.append('rowsPerPage', data.rowsPerPage.toString());
-        const response = await fetch(url.toString(), {
-            method: 'GET',
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        };
-        const fetcheddata = await response.json();
-        return fetcheddata;
+        const params = {
+            name: data.search,
+            page: data.page,
+            rowsPerPage: data.rowsPerPage,
+            table: data.table
+        } as fetchABMQuery;
+        let response: { items: fetchedABMItem[]; totalItems: any; };
+        response = await getInstances(params);
+        return response;
     } catch (error) {
-        if (error instanceof Error) {
-            console.error("Error en fetchTableData:", error.message);
-        } else {
-            console.error("Error desconocido");
-        };
+        console.error("Error en fetchTableData(ABM):", error);
     };
 };
 
 export async function createTableData(data: { name: string; table: string }) {
     try {
-        const response = await fetch(`${process.env.BASE_URL}/api/admin/paramsmanagement`, {
-            method: 'POST',
-            headers: {
-                "Content-type": "application/json"
-            },
-            body: JSON.stringify(data),
-        });
-        if (!response.ok) {
-            const errorData = await response.json();
-            if (!!errorData.apiError) {
-                return { success: false, error: errorData.apiError };
-            } else {
-                return { success: false, error: `HTTP error! status: ${response.status}` };
-            };
+        if (typeof data.name !== 'string' || typeof data.table !== 'string') {
+            return { success: false, error: "Parámetros no válidos" };
         };
-        return { success: true };
+        const existingNameInstance = await checkInstanceExistance({ table: data.table, name: data.name });
+        if (existingNameInstance.rows.length > 0) {
+            return { success: false, error: { name: "Instancia ya existe" } as APIError };
+        };
+        const query = {
+            name: data.name,
+            table: data.table
+        } as createABMQuery;
+        try {
+            await createInstance(query);
+            return { success: true };
+        } catch (error) {
+            console.error("Error al crear instancia:", error);
+            return { success: false, error: "Error al crear instancia" };
+        };
     } catch (error) {
-        if (error instanceof Error) {
-            console.error("Error en createTableData:", error.message);
-        } else {
-            console.error("Error desconocido");
-        };
+        console.error("Error en createTableData(ABM):", error);
+        return { success: false, error: "Error procesando la solicitud" };
     };
 };
 
 export async function editTableData(data: { name: string; table: string; id:number }) {
     try {
-        const response = await fetch(`${process.env.BASE_URL}/api/admin/paramsmanagement`, {
-            method: 'PUT',
-            headers: {
-                "Content-type": "application/json"
-            },
-            body: JSON.stringify(data),
-        });
-        if (!response.ok) {
-            const errorData = await response.json();
-            if (!!errorData.apiError) {
-                return { success: false, error: errorData.apiError };
-            } else {
-                return { success: false, error: `HTTP error! status: ${response.status}` };
-            };
+        if (typeof data.id !== 'number' || typeof data.name !== 'string' || typeof data.table !== 'string') {
+            return { success: false, error: "Parámetros no válidos" };
         };
-        return { success: true };
+        const existingNameInstance = await checkInstanceExistance({ table: data.table, name: data.name });
+        if (existingNameInstance.rows.length > 0) {
+            return { success: false, error: { name: "Instancia ya existe" } as APIError };
+        };
+        const query = {
+            name: data.name,
+            table: data.table,
+            id: data.id
+        } as editABMQuery;
+        try {
+            await editInstance(query);
+            return { success: true };
+        } catch (error) {
+            console.error("Error al editar instancia:", error);
+            return { success: false, error: "Error al editar instancia" };
+        };
     } catch (error) {
-        if (error instanceof Error) {
-            console.error("Error en editTableData:", error.message);
-        } else {
-            console.error("Error desconocido");
-        };
+        console.error("Error en editTableData(ABM):", error);
+        return { success: false, error: "Error procesando la solicitud" };
     };
 };
