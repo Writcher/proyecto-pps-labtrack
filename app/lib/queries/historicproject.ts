@@ -109,17 +109,20 @@ export async function getHistoricProjects(
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener los proyectos históricos");
-    }
-}
+    };
+};
 
 export async function createHistoricProject(historicProject: newHistoricProjectQuery) {
     try {
-        await client.sql`BEGIN`;
-        const response = await client.sql`
+        const textbegin = `BEGIN`;
+        await client.query(textbegin);
+        const text1 = `
         INSERT INTO "historicproject" (name, description, year, laboratory_id, historicprojectstatus_id, historicprojecttype_id)
-        VALUES (${historicProject.name}, ${historicProject.description}, ${historicProject.year}, ${historicProject.laboratory_id}, ${historicProject.projectstatus_id}, ${historicProject.projecttype_id})
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING id
         ;`;
+        const values1 = [historicProject.name, historicProject.description, historicProject.year, historicProject.laboratory_id, historicProject.projectstatus_id, historicProject.projecttype_id];
+        const response = await client.query(text1, values1);
         const projectid = response.rows[0].id;
         for (const scholar of historicProject.scholars) {
             const emailValue = scholar.email !== undefined && scholar.email !== '' ? scholar.email : null;
@@ -127,22 +130,28 @@ export async function createHistoricProject(historicProject: newHistoricProjectQ
             const fileValue = scholar.file !== undefined && scholar.file !== '' ? scholar.file : null;
             const phoneValue = scholar.phone !== undefined && scholar.phone !== '' ? scholar.phone : null;
             const careerlevelValue = scholar.careerlevel !== undefined ? scholar.careerlevel : null;
-            const response = await client.sql`
+            const text2 = `
             INSERT INTO "historicscholar" (name, email, dni, file, phone, careerlevel, historicusercareer_id, historicscholarshiptype_id)
-            VALUES (${scholar.name}, ${emailValue}, ${dniValue}, ${fileValue}, ${phoneValue}, ${careerlevelValue}, ${scholar.historicusercareer_id}, ${scholar.historicscholarshiptype_id})
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING id
             ;`;
+            const values2 = [scholar.name, emailValue, dniValue, fileValue, phoneValue, careerlevelValue, scholar.historicusercareer_id, scholar.historicscholarshiptype_id];
+            const response = await client.query(text2, values2);
             const scholarid = response.rows[0].id;
-            await client.sql`
+            const text3 = `
             INSERT INTO "historicprojectscholar" (historicproject_id, historicscholar_id)
-            VALUES (${projectid}, ${scholarid})
+            VALUES ($1, $2)
             `;
+            const values3 = [projectid, scholarid];
+            await client.query(text3, values3)
         }
-        await client.sql`COMMIT`;
+        const textcommit = `COMMIT`;
+        await client.query(textcommit);
         return { success: true, message: "Instancia creada correctamente" };
     } catch(error) {
         console.error("Error de Base de Datos:", error);
-        await client.sql`ROLLBACK`;
+        const textrollback = `ROLLBACK`;
+        await client.query(textrollback);
         throw new Error("No se pudo crear el historico");
-    }
-}
+    };
+};

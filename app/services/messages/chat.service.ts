@@ -49,6 +49,27 @@ export async function fetchChatMessages(data: fetchMessagesData) {
     };
 };
 
+export async function fetchUnreadCount(id: number) {
+    try {
+        const url = new URL (`${process.env.BASE_URL}/api/messages/unreadcount`);
+        url.searchParams.append('id', id.toString());
+        const response = await fetch(url.toString(), {
+          method: 'GET',
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const fetchedData = await response.json();
+        return fetchedData;
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        } else {
+          console.error("Error desconocido, la cagaste");
+        }
+    };
+};
+
 export async function setMessagesAsRead(data: readMessagesData) {
     try {
         const response = await fetch(`${process.env.BASE_URL}/api/messages/read`, {

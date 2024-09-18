@@ -11,10 +11,11 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import dayjs from 'dayjs';
 import Badge from "@mui/material/Badge";
-import { fetchChatMessages, fetchChatUsers, sendMessage, setMessagesAsRead } from "@/app/services/messages/adminchat.service";
+import { fetchChatMessages, fetchChatUsers, sendMessage, setMessagesAsRead } from "@/app/services/messages/chat.service";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Skeleton from "@mui/material/Skeleton";
+import '@/app/components/globals.css'
 
 export default function ChatScholar({ laboratory_id, current_id, usertype_id }: chatMenuProps) {
     const { register, watch, setValue, handleSubmit, formState: { errors } } = useForm<chatFormData>({
@@ -26,22 +27,24 @@ export default function ChatScholar({ laboratory_id, current_id, usertype_id }: 
         }
     });
     const current_id_number = Number(current_id);
-    //fetch tab scholars
+    //fetch tab users
     const admins = watch("users")
     const params = {
         laboratory_id: laboratory_id,
         usertype_id: usertype_id,
         current_id: current_id_number,
     } as fetchChatUsersData;
-    const { data: scholarsQuery, isLoading } = useQuery({
-        queryKey: ['getChatScholars'],
+    const { data: usersQuery, isLoading } = useQuery({
+        queryKey: ['getChatUsers'],
         queryFn: () => fetchChatUsers(params),
+        refetchInterval: 5000,
     });
+    console.log(usersQuery)
     useEffect(() => {
-        if (scholarsQuery) {
-            setValue("users", scholarsQuery);
+        if (usersQuery) {
+            setValue("users", usersQuery);
         }
-    }, [scholarsQuery, setValue]);
+    }, [usersQuery, setValue]);
     //tab change
     const tabValue = watch("tabValue");
     const readmessages = useMutation({
@@ -63,7 +66,7 @@ export default function ChatScholar({ laboratory_id, current_id, usertype_id }: 
     const { data: messagesQuery, refetch } = useQuery({
         queryKey: ['getChatMessages', tabValue],
         queryFn: () => fetchChatMessages(params2),
-        refetchInterval: 50000,
+        refetchInterval: 5000,
     });
     useEffect(() => {
         if (messagesQuery) {
@@ -86,8 +89,8 @@ export default function ChatScholar({ laboratory_id, current_id, usertype_id }: 
         });
     };
     return (
-        <main className="flex flex-col h-screen w-full overflow-hidden">
-            <div className="flex h-16 md:h-20 bg-gray-700 border-b-4 border-orange-500 md:border-transparent text-white items-center">
+        <main className="flex flex-col h-screen w-full">
+            <div className="flex h-[8%] bg-gray-700 border-b-4 border-orange-500 md:border-transparent text-white items-center">
                 <Tabs
                     value={tabValue}
                     onChange={handleTabChange} 
@@ -108,7 +111,7 @@ export default function ChatScholar({ laboratory_id, current_id, usertype_id }: 
                         admins.map(admin => (
                             <Tab 
                                 key={admin.id} 
-                                label={<Badge badgeContent={admin.unreadcount} 
+                                label={<Badge badgeContent={admin.unreadCount} 
                                 color="warning">{admin.name}</Badge>} 
                                 value={admin.id}
                             />
@@ -118,23 +121,22 @@ export default function ChatScholar({ laboratory_id, current_id, usertype_id }: 
             </div>
             {admins.map(admincontent => (
                 tabValue === admincontent.id && (
-                    <>
-                        <div key={admincontent.id} className="flex flex-col h-full m-6 md:m-10 gap-6 items-center overflow-y-auto">
-                            <div className="flex flex-col w-full min-h-[85%] md:w-5/6 overflow-y-auto rounded border border-gray-400 justify-end">
-                                {messages.map((msg, index) => (
-                                    <div key={index} className={`flex w-full ${msg.sender_id === current_id_number ? 'pr-4 justify-end' : 'pl-4 justify-start'} mb-4`}>
-                                        <div className={`relative flex-col p-2 rounded-lg max-w-[50%] ${msg.sender_id === current_id_number ? 'bg-gray-600 text-white' : 'bg-orange-500 text-white'}`}>
-                                            <p>{msg.content}</p>
-                                            <span className="text-xs text-gray-300">
-                                                {dayjs(msg.timestamp).format('DD/MM/YYYY HH:mm')}
-                                            </span>
-                                            <div className={`absolute ${msg.sender_id === current_id_number ? 'border-t-8 border-b-8 border-t-transparent border-b-transparent border-l-8 border-l-gray-600 left-full top-10': 'border-t-8 border-b-8 border-t-transparent border-b-transparent border-r-8 border-r-orange-500 right-full top-10'}`} />
-                                        </div>
+                    <div key={admincontent.id} className="flex flex-col h-[92%] p-6 gap-6 items-center">
+                        <div className="flex-grow flex-col w-full md:w-5/6 h-[92%] overflow-y-auto custom-scrollbar rounded border border-gray-400 justify-end">
+                            {messages.map((msg, index) => (
+                                <div key={index} className={`flex flex-row w-full ${msg.sender_id === current_id_number ? 'pr-4 justify-end' : 'pl-4 justify-start'} mt-4 mb-4`}>
+                                    <div className={`relative flex flex-col gap-2 p-2 rounded-t-lg max-w-[50%] ${msg.sender_id === current_id_number ? 'bg-gray-600 rounded-bl-lg text-white' : 'bg-orange-500 rounded-br-lg text-white'}`}>
+                                        <p>{msg.content}</p>
+                                        <span className="text-xs text-gray-300">
+                                            {dayjs(msg.timestamp).format('DD/MM/YYYY HH:mm')}
+                                        </span>
+                                        <div className={`absolute ${msg.sender_id === current_id_number ? 'border-t-8 border-b-10 border-t-transparent border-b-transparent border-l-8 border-l-gray-600 left-full bottom-[0px]': 'border-t-8 border-b-10 border-t-transparent border-b-transparent border-r-8 border-r-orange-500 right-full bottom-[0px]'}`} />
                                     </div>
-                                ))}
-                            </div>
-                            <form className="flex w-full md:w-5/6" onSubmit={handleSubmit(onSubmit)}>
-                            <TextField
+                                </div>
+                            ))}
+                        </div>
+                        <form className="flex w-full md:w-5/6" onSubmit={handleSubmit(onSubmit)}>
+                                <TextField
                                     label="Mensaje"
                                     id="message"
                                     type="text"
@@ -156,11 +158,16 @@ export default function ChatScholar({ laboratory_id, current_id, usertype_id }: 
                                         endAdornment: (
                                             <InputAdornment position="end"><IconButton color="success" type="submit"><KeyboardArrowRightIcon /></IconButton></InputAdornment>
                                         ),
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" && !e.shiftKey) {
+                                            e.preventDefault();
+                                            handleSubmit(onSubmit)();
+                                        }
                                     }} 
                                 />
-                            </form>
-                        </div>
-                    </>
+                        </form>
+                    </div>
                 )
             ))}
         </main>

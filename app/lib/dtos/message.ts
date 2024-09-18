@@ -34,7 +34,7 @@ export type fetchedChatUser = {
 export type fetchedChatUserWithCount = {
     id: number;
     name: string;
-    unreadcount: number;
+    unreadCount: number;
 };
 
 export type readMessagesData = {
