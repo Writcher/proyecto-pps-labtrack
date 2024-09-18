@@ -19,7 +19,7 @@ interface APIErrors {
     dni?: string,
     file?: string,
     email?: string,
-}
+};
 
 export default function CreateScholarModal({ open, handleClose, usercareers, scholarships, laboratory_id }: createModalPorps) {
     const { watch, register, handleSubmit, reset, formState: { errors } } = useForm<createFormData>({
@@ -280,7 +280,7 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
                     </div>
                     <div className='flex flex-row m-3 block md:hidden'>
                         <div className='flex flex-row justify-center gap-1'>
-                            <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                            <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
                             <Button variant="contained"  color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
                         </div>
                     </div>

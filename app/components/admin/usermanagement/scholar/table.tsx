@@ -27,9 +27,9 @@ import debounce from "lodash.debounce";
 import React, { useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import '@/app/components/globals.css'
+import '@/app/components/globals.css';
 
-export default function ABMScholarTableNEW({ usercareers, scholarships, laboratory_id }: scholarTableProps ) {
+export default function ABMScholarTable({ usercareers, scholarships, laboratory_id }: scholarTableProps ) {
     const { watch, setValue, getValues } = useForm<scholarFormData>({
         defaultValues: {
             //filters
@@ -66,10 +66,10 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
     const activeFilters = watch("activeFilters") as { [key: string ]: any };
     const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setValue("filterAnchor", event.currentTarget);
-    }
+    };
     const handleFilterClose = () => {
         setValue("filterAnchor", null);
-    }
+    };
     const handleClearFilters = () => {
             //reset values
         setValue("search", "");
@@ -83,7 +83,7 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
             //reset active filters and close
         setValue("activeFilters", {});
         handleFilterClose();
-    }
+    };
         //search
     const search = watch("search") as string;
     const normalsearch = watch("normalsearch") as string;
@@ -93,7 +93,7 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
         setValue("showScholarshipTypeFilter", false);
         setValue("showUserCareerFilter", false);
         handleFilterClose();
-    }
+    };
     const handleSearchFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue("normalsearch", event.target.value);
         handleSearch(event.target.value);
@@ -115,7 +115,7 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
         setValue("showSearchForm", false);
         setValue("showUserCareerFilter", false);
         handleFilterClose();
-    }
+    };
     const handleScholarshipTypeFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const scholarshiptypevalue = Number(event.target.value);
         setValue("scholarshipTypeFilter", scholarshiptypevalue);
@@ -124,7 +124,7 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
             ...currentFilters,
             scholarship: event.target.value,
         });
-    }
+    };
     const getScholarshipNameById = (id: number) => {
         const scholarship = scholarships.find(sch => sch.id === id);
         return scholarship ? scholarship.name : 'Desconocida';
@@ -137,7 +137,7 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
         setValue("showScholarshipTypeFilter", false);
         setValue("showSearchForm", false);
         handleFilterClose();
-    }
+    };
     const handleUserCareerFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const usercareervalue = Number(event.target.value)
         setValue("userCareerFilter", usercareervalue);
@@ -146,7 +146,7 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
             ...currentFilters,
             career: event.target.value,
         });
-    }
+    };
     const getCareerNameById = (id: number) => {
         const career = usercareers.find(sch => sch.id === id);
         return career ? career.name : 'Desconocida';
@@ -189,7 +189,7 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
     const expandedRowId = watch("expandedRowId");
     const toggleRowExpansion = (id: number) => {
         setValue("expandedRowId", expandedRowId === id ? null : id);
-    }
+    };
     //modales
         //create
     const modalOpenCreate = watch("modalOpenCreate");
@@ -208,21 +208,21 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
         setValue("selectedRowId", id);
         setValue("selectedRowName", name);
         setValue("modalOpenDelete", true);
-    }
+    };
     const handleCloseDeleteModal = () => {
         setValue("modalOpenDelete", false);
         refetch();
-    }
+    };
         //edit
     const modalOpenEdit = watch("modalOpenEdit");
     const handleOpenEditModal = (row: fetchedScholar) => {
         setValue("selectedRow", row);
         setValue("modalOpenEdit", true);
-    }
+    };
     const handleCloseEditModal = () => {
         setValue("modalOpenEdit", false);
         refetch();
-    }
+    };
     return (
         <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
             <div className="flex flex-row w-full mb-4">

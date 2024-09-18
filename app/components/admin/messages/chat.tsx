@@ -14,7 +14,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { fetchChatMessages, fetchChatUsers, sendMessage, setMessagesAsRead } from "@/app/services/messages/chat.service";
 import Skeleton from "@mui/material/Skeleton";
-import '@/app/components/globals.css'
+import '@/app/components/globals.css';
 
 export default function ChatAdmin({ laboratory_id, current_id, usertype_id }: chatMenuProps) {
     const { register, watch, setValue, handleSubmit, formState: { errors } } = useForm<chatFormData>({

@@ -19,7 +19,7 @@ interface APIErrors {
     dni?: string,
     file?: string,
     email?: string,
-}
+};
 
 export default function EditScholarModal({ open, handleClose, row, usercareers, scholarships }: editModalProps) {
     const { watch, register, handleSubmit, reset, formState: { errors } } = useForm<editFormData>({

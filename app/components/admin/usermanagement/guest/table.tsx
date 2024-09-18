@@ -20,7 +20,7 @@ import { useQuery } from "@tanstack/react-query";
 import Skeleton from "@mui/material/Skeleton";
 import { fetchTableData } from "@/app/services/admin/usermanagement/guest.service";
 import { guestFormData, guestTableProps } from "@/app/lib/dtos/guest";
-import '@/app/components/globals.css'
+import '@/app/components/globals.css';
 
 export default function ABMGuestTable({ laboratory_id }: guestTableProps ) {
     const { watch, setValue } = useForm<guestFormData>({

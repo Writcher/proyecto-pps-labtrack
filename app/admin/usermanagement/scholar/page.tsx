@@ -1,10 +1,10 @@
 import Button from "@mui/material/Button";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import ABMScholarTable from "@/app/components/admin/usermanagement/scholar/table";
 import { getUserCareers } from "@/app/lib/queries/usercareer";
 import { getScholarshipTypes } from "@/app/lib/queries/scholarshiptype";
 import { auth } from "@/app/lib/auth";
 import { redirect } from "next/navigation";
+import ScholarQuery from "@/app/components/admin/usermanagement/scholar/scholarQuery";
 
 export default async function Becarios() {
     const session = await auth();
@@ -24,7 +24,7 @@ export default async function Becarios() {
                 </p>
             </div>
             <div className="flex flex-col h-[80%] mt-10 md:px-10 items-center justify-center">
-                <ABMScholarTable 
+                <ScholarQuery 
                     usercareers={usercareers}
                     scholarships={scholarships}
                     laboratory_id={laboratory_id}

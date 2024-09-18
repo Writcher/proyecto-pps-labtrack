@@ -16,14 +16,14 @@ import { editABMQuery, editFormData, editModalProps } from '@/app/lib/dtos/abm';
 
 interface APIError {
     name?: string
-}
+};
 
 export default function EditModal({ open, handleClose, table, id, name }: editModalProps) {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<editFormData>({
         defaultValues: {
             name: name
         },
-      });
+    });
     const [apiError, setApiError] = useState<APIError>({});
     const mutation = useMutation({
         mutationFn: (data: editABMQuery) => editTableData(data),

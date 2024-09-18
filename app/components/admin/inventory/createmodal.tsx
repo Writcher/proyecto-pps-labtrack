@@ -1,6 +1,6 @@
 "use client"
 
-import React, { FormEvent, useEffect, useState } from 'react';
+import React from 'react';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -10,94 +10,50 @@ import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
 import { MenuItem } from '@mui/material';
-import { supplyStatus } from '@/app/lib/dtos/supplystatus';
-import { supplyType } from '@/app/lib/dtos/supplytype';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { createFormData, createModalProps, newSupplyData } from '@/app/lib/dtos/supply';
+import { useMutation } from '@tanstack/react-query';
+import { createTableData } from '@/app/services/inventory/inventory.service';
 
-interface CreateModalProps {
-    open: boolean;
-    handleClose: () => void;
-    supplytypes: supplyType[];
-    supplystatuses: supplyStatus[];
-    laboratory_id: number;
-}
-
-export default function CreateSupplyModal({ open, handleClose, supplytypes, supplystatuses, laboratory_id }: CreateModalProps) {
-    const [error, setError] = useState("");
-
-    // Resetea el error cuando el modal se cierra
-    useEffect(() => {
-        if (!open) {
-            setError("");
+export default function CreateSupplyModal({ open, handleClose, supplytypes, supplystatuses, laboratory_id }: createModalProps) {
+    const { register, handleSubmit, reset, formState: { errors }, watch } = useForm<createFormData>({
+        defaultValues: {
+            year: 0,
+            supplytype_id: 0,
+            supplystatus_id: 0,
         }
-    }, [open]);
-
-    const [supplyStatus, setSupplyStatus] = useState<number | ''>('');
-    const handleSupplyStatusChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setSupplyStatus(event.target.value as number);
+    });
+    const mutation = useMutation({
+        mutationFn: (data: newSupplyData) => createTableData(data),
+        onSuccess: (result) => {
+            if (result && result.success) {
+                handleClose();
+                reset();
+            };
+        },
+    });
+    const onSubmit: SubmitHandler<createFormData> = (data) => {
+        mutation.mutate({ 
+            name: data.name,
+            description: data.description,
+            year: data.year,
+            supplystatus_id: data.supplystatus_id,
+            supplytype_id: data.supplytype_id,
+            laboratory_id: laboratory_id,
+        });
     };
-
-    const [supplyType, setSupplyType] = useState<number | ''>('');
-    const handleSupplyTypeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setSupplyType(event.target.value as number);
-    };
-
+    //year select values
     const añoInicio = 2008;
     const añoFinal = new Date().getFullYear();
     const años = Array.from({ length: añoFinal - añoInicio + 1 }, (_, index) => añoInicio + index)
-    const [year, setYear] = useState<number | ''>('');
-    const handleYearChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setYear(event.target.value as number);
+    //
+    const handleExit = () => {
+        handleClose();
+        reset();
     };
-
-    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        try {
-            const formData = new FormData(event.currentTarget);
-            const name = formData.get("name") as string;
-            const description = formData.get("description") as string;
-            const yearstring = formData.get("year")
-            const supplytypestring = formData.get("supplytype"); 
-            const supplystatusstring = formData.get("supplystatus");
-
-            const supplytype_id = supplytypestring ? parseInt(supplytypestring as string, 10) : undefined;
-            const supplystatus_id = supplystatusstring ? parseInt(supplystatusstring as string, 10) : undefined;
-            const year = yearstring ? parseInt(yearstring as string, 10) : undefined;
-
-            const response = await fetch("/api/admin/inventory", {
-                method: 'POST',
-                headers: {
-                    "content-type": "application/json"
-                },
-                body: JSON.stringify({
-                    name,
-                    description,
-                    year,
-                    supplystatus_id,
-                    supplytype_id,
-                    laboratory_id
-                })
-            });
-
-            if (response.ok) {
-                handleClose();
-            } else {
-                const result = await response.json();
-                setError(result.error || "Error desconocido");
-            }
-        } catch (error) {
-            if (error instanceof Error) {
-                setError(error.message);
-            } else {
-                setError("Error desconocido");
-            }
-        }
-    };
-
-    // Evita que se cierre si se clickea el background
     const handleDialogClick = (event: React.MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
     };
-
     return (
         <Dialog 
             open={open} 
@@ -110,7 +66,7 @@ export default function CreateSupplyModal({ open, handleClose, supplytypes, supp
             fullWidth
             PaperProps={{ 
                 component: 'form',
-                onSubmit: handleSubmit,
+                onSubmit: handleSubmit(onSubmit),
                 onClick: handleDialogClick,
                 style: { width: '600px', maxWidth: 'none' }
             }} 
@@ -125,19 +81,42 @@ export default function CreateSupplyModal({ open, handleClose, supplytypes, supp
                     <div className='flex flex-col w-full items-center justify-center pt-4 gap-4'>
                         <div className='md:flex md:gap-4 w-full'>                    
                             <div className='flex w-full mb-4 md:mb-0 md:w-4/6'>
-                                <TextField id="name" name="name" label="Nombre" helperText="Ingrese Nombre" type="text" variant="outlined" color="warning" fullWidth required/>
+                                <TextField 
+                                    id="name" 
+                                    label="Nombre" 
+                                    type="text" 
+                                    variant="outlined" 
+                                    color="warning" 
+                                    fullWidth
+                                    {...register("name", { required: "Este campo es requerido" })}
+                                    error={!!errors.name}
+                                    helperText={errors.name ? errors.name.message : "Ingrese Nombre y Apellido"}
+                                />
                             </div>                    
                             <div className='flex w-full md:w-2/6'>
-                                <TextField id="year" name="year" label="Año" helperText="Seleccione el Año" type="text" variant="outlined" color="warning" select fullWidth required value={year} onChange={handleYearChange} SelectProps={{
-                                    MenuProps: {
-                                        PaperProps: {
-                                            style: {
-                                                maxHeight: 200,
-                                                overflowY: 'auto',
+                                <TextField 
+                                    id="year"  
+                                    label="Año" 
+                                    type="text" 
+                                    variant="outlined" 
+                                    color="warning" 
+                                    select 
+                                    fullWidth 
+                                    value={watch("year")}
+                                    {...register("year", { required: "Este campo es requerido", validate: value => value !== 0 || "Este campo es requerido" })}
+                                    error={!!errors.year}
+                                    helperText={errors.year ? errors.year.message : "Seleccionar Año"}
+                                    SelectProps={{
+                                        MenuProps: {
+                                            PaperProps: {
+                                                style: {
+                                                    maxHeight: 200,
+                                                    overflowY: 'auto',
+                                                },
                                             },
                                         },
-                                    },
-                                }}>
+                                    }}
+                                >
                                 {años.map((año) => (
                                     <MenuItem key={año} value={año}>
                                         {año}
@@ -147,18 +126,55 @@ export default function CreateSupplyModal({ open, handleClose, supplytypes, supp
                             </div>
                         </div>
                         <div className='flex w-full'>
-                            <TextField id="description" name="description" label="Descripción" helperText="Ingrese Descripción" type="text" variant="outlined" color="warning" multiline rows={6} inputProps={{ maxLength: 255 }} fullWidth required/>
+                            <TextField 
+                                id="description" 
+                                label="Descripción" 
+                                type="text" 
+                                variant="outlined" 
+                                color="warning" 
+                                multiline 
+                                rows={6} 
+                                inputProps={{ maxLength: 255 }} 
+                                fullWidth
+                                {...register("description", { required: "Este campo es requerido" })}
+                                error={!!errors.description}
+                                helperText={errors.description ? errors.description.message : "Ingrese Descripción"}
+                            />
                         </div>
                         <div className='md:flex md:gap-4 w-full'>
                             <div className='flex w-full mb-4 md:mb-0 md:w-3/6'>
-                                <TextField id="supplytype" name="supplytype" label="Tipo" helperText="Selecciona el Tipo de Insumo" type="text" variant="outlined" color="warning" select fullWidth required value={supplyType} onChange={handleSupplyTypeChange}>
+                                <TextField 
+                                    id="supplytype_id" 
+                                    label="Tipo" 
+                                    type="text"
+                                    variant="outlined" 
+                                    color="warning" 
+                                    select 
+                                    fullWidth 
+                                    value={watch("supplytype_id")} 
+                                    {...register("supplytype_id", { required: "Este campo es requerido", validate: value => value !== 0 || "Este campo es requerido" })}
+                                    error={!!errors.supplytype_id}
+                                    helperText={errors.supplytype_id ? errors.supplytype_id.message : "Selecciona el Tipo de Insumo"}
+                                >
                                     {supplytypes.map(type => (
                                         <MenuItem key={type.id} value={type.id}>{type.name}</MenuItem>
                                     ))}
                                 </TextField>
                             </div>
                             <div className='flex w-full mb-4 md:mb-0 md:w-3/6'>
-                                <TextField id="supplystatus" name="supplystatus" label="Estado" helperText="Selecciona el Estado del Insumo" type="text" variant="outlined" color="warning" select fullWidth required value={supplyStatus} onChange={handleSupplyStatusChange}> 
+                                <TextField 
+                                    id="supplystatus_id" 
+                                    label="Estado" 
+                                    type="text" 
+                                    variant="outlined" 
+                                    color="warning" 
+                                    select 
+                                    fullWidth 
+                                    value={watch("supplystatus_id")} 
+                                    {...register("supplystatus_id", { required: "Este campo es requerido", validate: value => value !== 0 || "Este campo es requerido" })}
+                                    error={!!errors.supplystatus_id}
+                                    helperText={errors.supplystatus_id ? errors.supplystatus_id.message : "Selecciona el Estado de Insumo"}
+                                > 
                                     {supplystatuses.map(status => (
                                         <MenuItem key={status.id} value={status.id}>{status.name}</MenuItem>
                                     ))}
@@ -170,13 +186,13 @@ export default function CreateSupplyModal({ open, handleClose, supplytypes, supp
                 <DialogActions>
                     <div className='flex flex-row m-4 hidden md:block'>
                         <div className='flex flex-row gap-4'>
-                            <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                            <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
                             <Button variant="contained" size="large" color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
                         </div>
                     </div>
                     <div className='flex flex-row m-3 block md:hidden'>
                         <div className='flex flex-row justify-center gap-1'>
-                            <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                            <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
                             <Button variant="contained"  color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
                         </div>
                     </div>
@@ -184,4 +200,4 @@ export default function CreateSupplyModal({ open, handleClose, supplytypes, supp
             </div>
         </Dialog>
     );
-}
+};

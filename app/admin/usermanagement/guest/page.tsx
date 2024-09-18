@@ -2,7 +2,7 @@ import Button from "@mui/material/Button";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { auth } from "@/app/lib/auth";
 import { redirect } from "next/navigation";
-import ABMGuestTable from "@/app/components/admin/usermanagement/guest/table";
+import GuestQuery from "@/app/components/admin/usermanagement/guest/guestQuery";
 
 export default async function Invitados() {
     const session = await auth();
@@ -21,7 +21,7 @@ export default async function Invitados() {
                 </p>
             </div>
             <div className="flex flex-col h-[80%] mt-10 md:px-10 items-center justify-center">
-                <ABMGuestTable  
+                <GuestQuery
                     laboratory_id={laboratory_id}
                 />
             </div>

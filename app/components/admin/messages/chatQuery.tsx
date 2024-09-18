@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ChatAdmin from "./chat";
@@ -11,4 +11,4 @@ export default function ChatQuery({ laboratory_id, current_id, usertype_id }: ch
       <ChatAdmin laboratory_id={laboratory_id} current_id={current_id} usertype_id={usertype_id}/>
     </QueryClientProvider>
   );
-}
+};

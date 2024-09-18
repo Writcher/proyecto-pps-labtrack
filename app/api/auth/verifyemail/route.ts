@@ -29,5 +29,5 @@ export async function GET(request: Request) {
     } catch (error) {
         console.error("Error manejando GET:", error);
         return new NextResponse("Error manejando GET", { status: 500 });
-    }   
+    }; 
 };

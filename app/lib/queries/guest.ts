@@ -20,7 +20,7 @@ export async function getGuests(labid: number) {
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el invitado");
-    }
+    };
 };
 
 export async function getGuestsTable(params: fetchGuestQuery) {
@@ -30,11 +30,11 @@ export async function getGuestsTable(params: fetchGuestQuery) {
         const validColumns = ['u.name', 'u.userstatus_id'];
         if (!validColumns.includes(params.sortColumn)) {
             throw new Error('Columna invalida');
-        }
+        };
         const validDirections = ['ASC', 'DESC'];
         if (!validDirections.includes(params.sortDirection.toUpperCase())) {
             throw new Error('Dirección de ordenación invalida');
-        }
+        };
         const column = params.sortColumn;
         const direction = params.sortDirection.toUpperCase();
         const search = `%${params.search}%`;
@@ -53,17 +53,17 @@ export async function getGuestsTable(params: fetchGuestQuery) {
             filtertext += `AND unaccent(u.name) ILIKE unaccent($${values.length + 1}) 
             `;
             values.push(search);
-        }
+        };
         text += filtertext;
         let ordertext = '';
         if (column === "u.name") {
             ordertext = "ORDER BY u.name ";
         } else if (column === "u.userstatus_id") {
             ordertext = "ORDER BY u.userstatus_id ";
-        }
+        };
         if (direction === "DESC" || direction === "ASC") {
             ordertext += direction;
-        }
+        };
         text += ordertext + `
             LIMIT $3 OFFSET $4
         `;
@@ -75,7 +75,7 @@ export async function getGuestsTable(params: fetchGuestQuery) {
             AND u.laboratory_id = $2
         `;
         const values2 = [type, params.laboratory_id];
-        const countresult = await client.query(text2, values2)
+        const countresult = await client.query(text2, values2);
         return {
             guests: result.rows as fetchedGuest[],
             totalGuests: countresult.rows[0].total,
@@ -83,7 +83,7 @@ export async function getGuestsTable(params: fetchGuestQuery) {
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el becario");
-    }
+    };
 };
 
 export async function getGuestExpirationDate(id: number) {
@@ -100,7 +100,7 @@ export async function getGuestExpirationDate(id: number) {
     } catch(error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo encontrar el invitado");
-    }
+    };
 };
 
 export async function createGuest(user: newGuestQuery)  {
@@ -131,7 +131,7 @@ export async function createGuest(user: newGuestQuery)  {
         const rollbacktext = `ROLLBACK`;
         await client.query(rollbacktext);
         throw new Error("No se pudo crear el invitado");
-    }
+    };
 };
 
 export async function dropGuest(id: number) {
@@ -158,7 +158,7 @@ export async function dropGuest(id: number) {
         const rollbacktext = `ROLLBACK`;
         await client.query(rollbacktext);
         throw new Error("No se pudo eliminar el invitado");
-    }
+    };
 };
 
 export async function getGuestStatus(id: number) {
@@ -178,5 +178,5 @@ export async function getGuestStatus(id: number) {
     } catch(error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el status");
-    }
+    };
 };

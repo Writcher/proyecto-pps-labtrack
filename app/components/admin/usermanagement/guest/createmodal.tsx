@@ -25,7 +25,7 @@ dayjs.extend(localizedFormat);
 
 interface APIError {
     email?:string,
-}
+};
 
 export default function CreateGuestModal({ open, handleClose, laboratory_id }: createModalProps) {
     const { watch, register, handleSubmit, reset, formState: { errors }, setValue, setError, clearErrors } = useForm<createFormData>({

@@ -16,7 +16,7 @@ import { createABMQuery, createFormData, createModalProps } from '@/app/lib/dtos
 
 interface APIError {
     name?: string
-}
+};
 
 export default function CreateModal({ open, handleClose, table }: createModalProps) {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<createFormData>();

@@ -20,7 +20,7 @@ import { useForm } from "react-hook-form";
 import debounce from "lodash.debounce";
 import Skeleton from "@mui/material/Skeleton";
 import { ABMTableProps } from "@/app/lib/dtos/abm";
-import '@/app/components/globals.css'
+import '@/app/components/globals.css';
 
 export default function ABMTable({ table }: ABMTableProps) {
     const { watch, setValue } = useForm({

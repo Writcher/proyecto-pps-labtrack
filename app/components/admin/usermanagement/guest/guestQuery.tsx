@@ -1,17 +1,17 @@
 "use client"
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import ABMTable from "./table";
+import ABMGuestTable from "./table";
 
 interface QueryClientProps {
-    table: string;
+    laboratory_id: number;
 };
 
-export default function ABMQuery({ table }: QueryClientProps) {
+export default function GuestQuery({ laboratory_id }: QueryClientProps) {
   const queryClient = new QueryClient();
   return (
     <QueryClientProvider client={queryClient}>
-      <ABMTable  table={table}/>
+      <ABMGuestTable  laboratory_id={laboratory_id}/>
     </QueryClientProvider>
   );
 };

@@ -16,7 +16,7 @@ import { deleteModalProps } from '@/app/lib/dtos/guest';
 
 interface APIError {
     message?: string,
-}
+};
 
 export default function DeleteGuestModal({ open, handleClose, id, name }: deleteModalProps) {
     const { handleSubmit, reset } = useForm();
