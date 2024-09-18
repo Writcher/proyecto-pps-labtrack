@@ -81,11 +81,12 @@ export default function ABMTable({ table }: ABMTableProps) {
         setValue("selectedRowId", id);
         setValue("selectedRowName", name);
         setValue("modalOpenEdit", true);
-    }
+    };
     const handleCloseEditModal = () => {
         setValue("modalOpenEdit", false);
         refetch();
-    }
+    };
+    console.log("fetched data:",data);
     return (
         <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
             <div className="flex flex-row w-full mb-4">

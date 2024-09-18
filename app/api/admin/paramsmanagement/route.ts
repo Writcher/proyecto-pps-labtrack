@@ -104,6 +104,7 @@ export const GET = async (request: Request) => {
         } as fetchABMQuery;
         let data: { items: fetchedABMItem[]; totalItems: any; };
         data = await getInstances(params)
+        console.log("api response:", data)
         return new NextResponse(JSON.stringify(data), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } catch (error) {
         console.error("Error manejando GET:", error);
