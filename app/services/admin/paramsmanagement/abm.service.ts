@@ -23,7 +23,6 @@ export async function fetchTableData(data: fetchABMData) {
         } else {
             console.error("Error desconocido");
         }
-        return [];
     }
 };
 
@@ -52,7 +51,7 @@ export async function createTableData(data: { name: string; table: string }) {
             console.error("Error desconocido");
         }
     }
-}
+};
 
 export async function editTableData(data: { name: string; table: string; id:number }) {
     try {
@@ -79,4 +78,4 @@ export async function editTableData(data: { name: string; table: string; id:numb
             console.error("Error desconocido");
         }
     }
-}
+};
