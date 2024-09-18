@@ -1,4 +1,4 @@
-"use server"
+
 
 import { fetchABMData } from "@/app/lib/dtos/abm";
 
