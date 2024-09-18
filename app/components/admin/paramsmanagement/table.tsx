@@ -20,6 +20,7 @@ import { useForm } from "react-hook-form";
 import debounce from "lodash.debounce";
 import Skeleton from "@mui/material/Skeleton";
 import { ABMTableProps } from "@/app/lib/dtos/abm";
+import '@/app/components/globals.css'
 
 export default function ABMTable({ table }: ABMTableProps) {
     const { watch, setValue } = useForm({
@@ -111,7 +112,7 @@ export default function ABMTable({ table }: ABMTableProps) {
                     AÑADIR
                 </Button>
             </div>
-            <div className="flex flex-col overflow-y-auto h-full">
+            <div className="flex flex-col custom-scrollbar overflow-y-auto h-full">
                 <TableContainer>
                     <Table stickyHeader>
                         <TableBody>
@@ -172,7 +173,7 @@ export default function ABMTable({ table }: ABMTableProps) {
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={2} align="center" />
+                                        <TableCell colSpan={3} align="center" />
                                     </TableRow>
                                 )}
                                 {Array.from({ length: rowsPerPage - data.items.length }).map((_, index) => (

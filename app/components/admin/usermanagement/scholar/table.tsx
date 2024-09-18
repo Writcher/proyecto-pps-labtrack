@@ -27,6 +27,7 @@ import debounce from "lodash.debounce";
 import React, { useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+import '@/app/components/globals.css'
 
 export default function ABMScholarTableNEW({ usercareers, scholarships, laboratory_id }: scholarTableProps ) {
     const { watch, setValue, getValues } = useForm<scholarFormData>({
@@ -342,7 +343,7 @@ export default function ABMScholarTableNEW({ usercareers, scholarships, laborato
                     )
                 ))}
             </div>
-            <div className="flex flex-col overflow-y-auto h-full">
+            <div className="flex flex-col custom-scrollbar overflow-y-auto h-full">
                 <TableContainer>
                     <Table stickyHeader>
                         <TableBody>

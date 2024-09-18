@@ -13,4 +13,4 @@ export default function ABMQuery({ table }: QueryClientProps) {
       <ABMTable  table={table}/>
     </QueryClientProvider>
   );
-}
+};
