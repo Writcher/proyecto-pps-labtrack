@@ -131,9 +131,9 @@ export default function ABMTable({ table }: ABMTableProps) {
                                 </TableCell>
                             </TableRow>
                         </TableBody>
-                        {isLoading ? (
-                            <TableBody>
-                                {Array.from({ length: rowsPerPage }).map((_, index) => (
+                        <TableBody>
+                            {isLoading ? (
+                                Array.from({ length: rowsPerPage }).map((_, index) => (
                                     <TableRow key={index}>
                                         <TableCell align="center" size="small" width="40%">
                                             <div className="flex items-center justify-center">
@@ -148,41 +148,43 @@ export default function ABMTable({ table }: ABMTableProps) {
                                             </div>
                                         </TableCell>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        ) : (
-                            <TableBody>
-                                {data && data.items && data.items.length > 0 ? (
-                                    data.items.map((row: any) => (
-                                        <TableRow key={row.id}>
-                                            <TableCell align="center" size="small" width="40%">
-                                                <div className="text-gray-700 font-medium text-lg">
-                                                    {row.name}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell align="center" size="small" width="20%">
-                                            </TableCell>
-                                            <TableCell align="center" size="small" width="40%">
-                                                <div className="flex flex-row justify-center mr-5 items-center text-gray-700">
-                                                    <IconButton color="inherit" onClick={() => handleOpenEditModal(row.id, row.name)}>
-                                                        <EditIcon />
-                                                    </IconButton>
-                                                </div>
-                                            </TableCell>
+                                ))
+                            ) : (
+                                <>
+                                    {data?.items?.length > 0 ? (
+                                        data.items.map((row: any) => (
+                                            <TableRow key={row.id}>
+                                                <TableCell align="center" size="small" width="40%">
+                                                    <div className="text-gray-700 font-medium text-lg">
+                                                        {row.name}
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell align="center" size="small" width="20%">
+                                                </TableCell>
+                                                <TableCell align="center" size="small" width="40%">
+                                                    <div className="flex flex-row justify-center mr-5 items-center text-gray-700">
+                                                        <IconButton color="inherit" onClick={() => handleOpenEditModal(row.id, row.name)}>
+                                                            <EditIcon />
+                                                        </IconButton>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={3} align="center" />
                                         </TableRow>
-                                    ))
-                                ) : (
-                                    <TableRow>
-                                        <TableCell colSpan={3} align="center" />
-                                    </TableRow>
-                                )}
-                                {Array.from({ length: rowsPerPage - data.items.length }).map((_, index) => (
-                                    <TableRow key={`empty-row-${index}`}>
-                                        <TableCell colSpan={3} />
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        )}
+                                    )}
+                                    {data?.items?.length < rowsPerPage && (
+                                        Array.from({ length: rowsPerPage - data.items.length }).map((_, index) => (
+                                            <TableRow key={`empty-row-${index}`}>
+                                                <TableCell colSpan={3} />
+                                            </TableRow>
+                                        ))
+                                    )}
+                                </>
+                            )}
+                        </TableBody>
                     </Table>
                 </TableContainer>
                 <div className="flex justify-end items-end grow overflow-x-hide">
