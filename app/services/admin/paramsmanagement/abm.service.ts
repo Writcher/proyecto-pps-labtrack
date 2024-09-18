@@ -1,10 +1,10 @@
-
+"use server"
 
 import { fetchABMData } from "@/app/lib/dtos/abm";
 
 export async function fetchTableData(data: fetchABMData) {
     try {
-        const url = new URL(`${process.env.BASE_URL}/api/admin/paramsmanagement`);
+        const url = new URL(`/api/admin/paramsmanagement`);
         url.searchParams.append('name', data.search)
         url.searchParams.append('table', data.table)
         url.searchParams.append('page', data.page.toString());
@@ -28,7 +28,7 @@ export async function fetchTableData(data: fetchABMData) {
 
 export async function createTableData(data: { name: string; table: string }) {
     try {
-        const response = await fetch(`${process.env.BASE_URL}/api/admin/paramsmanagement`, {
+        const response = await fetch(`/api/admin/paramsmanagement`, {
             method: 'POST',
             headers: {
                 "Content-type": "application/json"
@@ -55,7 +55,7 @@ export async function createTableData(data: { name: string; table: string }) {
 
 export async function editTableData(data: { name: string; table: string; id:number }) {
     try {
-        const response = await fetch(`${process.env.BASE_URL}/api/admin/paramsmanagement`, {
+        const response = await fetch(`/api/admin/paramsmanagement`, {
             method: 'PUT',
             headers: {
                 "Content-type": "application/json"
