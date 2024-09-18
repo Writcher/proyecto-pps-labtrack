@@ -42,8 +42,10 @@ export default function EditScholarModal({ open, handleClose, row, usercareers, 
                 handleClose();
                 reset();
             } else if (result) {
-                setApiError(result.error);
-            }
+                if (result.apiError) {
+                    setApiError(result.apiError);
+                };
+            };
         },
         onError: (error: APIErrors) => {
             setApiError({ dni: error.dni, file: error.file });

@@ -45,7 +45,7 @@ export type createGuestData = {
     name: string;
     email: string;
     password: string;
-    expires_at: Dayjs | null;
+    expires_at: any;
     laboratory_id:number;
 };
 

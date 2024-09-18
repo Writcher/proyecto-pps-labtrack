@@ -28,12 +28,13 @@ export default function DeleteGuestModal({ open, handleClose, id, name }: delete
                 handleClose();
                 reset();
             } else if (result) {
-                setApiError(result.error);
-            }
+                if (result.apiError) {
+                    setApiError(result.apiError);
+                };
+            };
         },
         onError: (error: APIError) => {
             setApiError({ message: error.message });
-
         },
     });
     const onSubmit = () => {

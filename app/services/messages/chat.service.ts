@@ -1,115 +1,96 @@
 "use server"
 
-import { fetchChatUsersData, fetchMessagesData, newMessageQuery, readMessagesData } from "@/app/lib/dtos/message";
+import { fetchChatUsersData, fetchedMessages, fetchMessagesData, newMessageQuery, readMessagesData } from "@/app/lib/dtos/message";
+import { countAllUnreadMessages, countUnreadMessages, createMessage, getMessages, readMessage } from "@/app/lib/queries/messages";
+import { getChatScholars } from "@/app/lib/queries/scholar";
+import { getAdmins } from "@/app/lib/queries/user";
+import { getTypeAdmin, getTypeScholar } from "@/app/lib/queries/usertype";
 
 export async function fetchChatUsers(data: fetchChatUsersData) {
     try {
-        const url = new URL(`${process.env.BASE_URL}/api/messages`);
-        url.searchParams.append('labid', data.laboratory_id.toString());
-        url.searchParams.append('typeid', data.usertype_id.toString());
-        url.searchParams.append('currentid', data.current_id.toString());
-        const response = await fetch(url.toString(), {
-            method: 'GET',
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const fetchedData = await response.json();
-        return fetchedData;
-    } catch (error) {
-        if (error instanceof Error) {
-            console.error("Error en fetchChatData:", error.message);
+        const adminType = await getTypeAdmin();
+        const scholarType = await getTypeScholar();
+        if (data.usertype_id === adminType) {
+            try {
+                const scholars = await getChatScholars(data.laboratory_id);
+                const scholarsWithUnreadCount = await Promise.all(scholars.map(async (scholar) => {
+                    const unreadCount = await countUnreadMessages(scholar.id, data.current_id);
+                    return { ...scholar, unreadCount };
+                }));
+                return scholarsWithUnreadCount;
+            } catch (error) {
+                console.error("Error en fetchChatUsers:", error);
+            };
+        } else if (data.usertype_id === scholarType) {
+            try {
+                const admins = await getAdmins(data.laboratory_id);
+                const adminsWithUnreadCount = await Promise.all(admins.map(async (admin) => {
+                    const unreadCount = await countUnreadMessages(admin.id, data.current_id);
+                    return { ...admin, unreadCount };
+                }));
+                return adminsWithUnreadCount;
+            } catch (error) {
+                console.error("Error en fetchChatUsers:", error);
+            };
         } else {
-            console.error("Error desconocido");
-        }
-        return [];
+            console.error("Tipo de usuario no reconocido")
+        };
+    } catch (error) {
+            console.error("Error en fetchChatUsers:", error);
     };
 };
 
 export async function fetchChatMessages(data: fetchMessagesData) {
     try {
-        const url = new URL(`${process.env.BASE_URL}/api/messages/chat`);
-        url.searchParams.append('senderid', data.sender_id.toString());
-        url.searchParams.append('receiverid', data.receiver_id.toString());
-        const response = await fetch(url.toString(), {
-            method: 'GET',
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const fetchedData = await response.json();
-        return fetchedData;
+        let response: fetchedMessages[];
+        response = await getMessages(data.sender_id, data.receiver_id);
+        return response;
     } catch (error) {
-        if (error instanceof Error) {
-            console.error("Error en fetchChatMessages:", error.message);
-        } else {
-            console.error("Error desconocido");
-        }
-        return [];
+        console.error("Error en fetchChatUsers:", error);
     };
 };
 
 export async function fetchUnreadCount(id: number) {
     try {
-        const url = new URL (`${process.env.BASE_URL}/api/messages/unreadcount`);
-        url.searchParams.append('id', id.toString());
-        const response = await fetch(url.toString(), {
-          method: 'GET',
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const fetchedData = await response.json();
-        return fetchedData;
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error(error.message);
-        } else {
-          console.error("Error desconocido, la cagaste");
-        }
-    };
+        let response: number;
+        response = await countAllUnreadMessages(id);
+        return response;
+    } catch (error) {
+        console.error("Error en fetchChatUsers:", error);
+    }
 };
 
 export async function setMessagesAsRead(data: readMessagesData) {
     try {
-        const response = await fetch(`${process.env.BASE_URL}/api/messages/read`, {
-            method: 'PUT',
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data)
-        });
-        if (!response.ok) {
-            throw new Error("Error al actualizar los mensajes como leídos");
-        }
-        return { success: true };
+        try {
+            await readMessage(data.sender_id, data.receiver_id);
+            return { success: true };
+        } catch(error) {
+            console.error("Error editando mensaje:", error);
+            return { success: false };
+        }; 
     } catch (error) {
-        if (error instanceof Error) {
-            console.error("Error en setMessagesAsRead:", error.message);
-        } else {
-            console.error("Error desconocido");
-        }
+        console.error("Error en setMessagesAsRead:", error);
+        return { success: false }
     };
 };
 
 export async function sendMessage(data: newMessageQuery) {
-    try {  
-        const response = await fetch(`${process.env.BASE_URL}/api/messages/chat`, {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data)
-        });
-        if (!response.ok) {
-            throw new Error("Error al enviar el mensaje");
-        }
-        return { success: true };
+    try { 
+        const message = {
+            content: data.content,
+            receiver_id: data.receiver_id,
+            sender_id: data.sender_id
+        } as newMessageQuery;
+        try {
+            await createMessage(message);
+            return { success: true };
+        } catch(error) {
+            console.error("Error al crear mensaje:", error);
+            return { success: false };
+        };
     } catch (error) {
-        if (error instanceof Error) {
-            console.error("Error en sendMessage:", error.message);
-        } else {
-            console.error("Error desconocido");
-        }
+        console.error("Error en sendMessage:", error);
+        return { success: false };
     };
 };

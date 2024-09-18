@@ -80,31 +80,31 @@ export async function getScholarsTable(params: fetchScholarQuery) {
         `;
         let values = [...baseValues];
         let filtertext = '';
-        if (params.usercareer_id !== undefined) {
+        if (params.usercareer_id !== 0) {
             filtertext += `AND s.usercareer_id = $${values.length + 1} 
             `;
             values.push(params.usercareer_id);
-        }
-        if (params.scholarshiptype_id !== undefined) {
+        };
+        if (params.scholarshiptype_id !== 0) {
             filtertext += `AND s.scholarshiptype_id = $${values.length + 1} 
             `;
             values.push(params.scholarshiptype_id);
-        }
+        };
         if (params.search !== "") {
             filtertext += `AND unaccent(u.name) ILIKE unaccent($${values.length + 1}) 
             `;
             values.push(search);
-        }
+        };
         text += filtertext;
         let ordertext = '';
         if (column === "u.name") {
             ordertext = "ORDER BY u.name ";
         } else if (column === "u.userstatus_id") {
             ordertext = "ORDER BY u.userstatus_id ";
-        }
+        };
         if (direction === "DESC" || direction === "ASC") {
             ordertext += direction;
-        }
+        };
         text += ordertext + `
             LIMIT $3 OFFSET $4
         `;
@@ -116,7 +116,7 @@ export async function getScholarsTable(params: fetchScholarQuery) {
             AND u.laboratory_id = $2
         `;
         const values2 = [type, params.laboratory_id];
-        const countresult = await client.query(text2, values2)
+        const countresult = await client.query(text2, values2);
         return {
             scholars: result.rows as fetchedScholar[],
             totalScholars: countresult.rows[0].total,

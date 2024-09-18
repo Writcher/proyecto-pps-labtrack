@@ -44,8 +44,10 @@ export default function CreateGuestModal({ open, handleClose, laboratory_id }: c
                 handleClose();
                 reset();
             } else if (result) {
-                setApiError(result.error);
-            }
+                if (result.apiError) {
+                    setApiError(result.apiError);
+                };
+            };
         },
         onError: (error: APIError) => {
             setApiError({ email: error.email });

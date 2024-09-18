@@ -1,82 +1,96 @@
 "use server"
 
-import { createGuestData, fetchGuestData } from "@/app/lib/dtos/guest"
+import { createGuestData, fetchedGuest, fetchGuestData, fetchGuestQuery, newGuestQuery } from "@/app/lib/dtos/guest";
+import { createGuest, dropGuest, getGuestsTable, getGuestStatus } from "@/app/lib/queries/guest";
+import { getStatusExpired, getStatusPending } from "@/app/lib/queries/userstatus";
+import { getTypeGuest } from "@/app/lib/queries/usertype";
+import { db } from "@vercel/postgres";
+import bcrypt from 'bcryptjs';
+
+interface APIError {
+    email?: string;
+    message?: string;
+};
 
 export async function fetchTableData(data: fetchGuestData) {
     try {
-        const url = new URL(`${process.env.BASE_URL}/api/admin/usermanagement/guest`);
-        url.searchParams.append('name', data.search);
-        url.searchParams.append('sortcolumn', data.sortColumn);
-        url.searchParams.append('sortdirection', data.sortDirection);
-        url.searchParams.append('page', data.page.toString());
-        url.searchParams.append('rowsPerPage', data.rowsPerPage.toString());
-        url.searchParams.append('labid', data.laboratory_id.toString());
-        const response = await fetch(url.toString(), {
-            method: 'GET',
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const fetchedData = await response.json();
-        return fetchedData;
+        const params = {
+            search: data.search,
+            laboratory_id: data.laboratory_id,
+            sortColumn: data.sortColumn,
+            sortDirection: data.sortDirection,
+            page: data.page,
+            rowsPerPage: data.rowsPerPage,
+        } as fetchGuestQuery;
+        let response: { guests: fetchedGuest[]; totalGuests: any; };
+        response = await getGuestsTable(params);
+        return response;
     } catch (error) {
-        if (error instanceof Error) {
-            console.error("Error en fetchTableData:", error.message);
-        } else {
-            console.error("Error desconocido");
-        }
-        return [];
-    }
+        console.error("Error en fetchTableData(Guest):", error);
+        return { success: false };
+    };
 };
 
 export async function createTableData(data: createGuestData) {
     try {
-        const response = await fetch(`${process.env.BASE_URL}/api/admin/usermanagement/guest`, {
-            method: 'POST',
-            headers: {
-                "content-type": "application/json"
-            },
-            body: JSON.stringify(data)
-        });
-        if (!response.ok) {
-            const errorData = await response.json();
-            if (!!errorData.apiError) {
-                return { success: false, error: errorData.apiError };
-            } else {
-                return { success: false, error: `HTTP error! status: ${response.status}` };
-            }
-        }
-        return { success: true };
+        const hashedPassword = await bcrypt.hash(data.password, 5);
+        const userstatus = await getStatusPending() as number;
+        const usertype = await getTypeGuest() as number;
+        const client = db;
+        const text1 = `
+            SELECT * FROM "user" WHERE email = $1 LIMIT 1
+        `;    
+        const values1 = [data.email];
+        const existingUserEmail = await client.query(text1, values1);
+        const apiError: APIError = {};
+        if (existingUserEmail.rows.length > 0) {
+            apiError.email = "Email en uso";
+        };
+        if (Object.keys(apiError).length > 0) {
+            return { success: false, apiError: apiError };
+        };
+        const user = {
+            name: data.name,
+            email: data.email,
+            expires_at: data.expires_at,
+            password: hashedPassword,
+            laboratory_id: data.laboratory_id,
+            usertype_id: usertype,
+            userstatus_id: userstatus,
+        } as newGuestQuery;
+        try {
+            await createGuest(user);
+            return { success: true };
+        } catch(error) {
+            console.error("Error al crear Invitado:", error);
+            return { success: false };
+        };
     } catch (error) {
-        if (error instanceof Error) {
-            console.error("Error en createTableData:", error.message);
-        } else {
-            console.error("Error desconocido");
-        }
-    }  
+        console.error("Error en createTableData(Guest):", error);
+        return { success: false };
+    };
 };
 
 export async function deleteTableData(id: number) {
     try {
-        const url = new URL(`${process.env.BASE_URL}/api/admin/usermanagement/guest`);
-        url.searchParams.append('id', id.toString());
-        const response = await fetch(url.toString(), {
-            method: 'DELETE',
-        });
-        if (!response.ok) {
-            const errorData = await response.json();
-            if (!!errorData.apiError) {
-                return { success: false, error: errorData.apiError };
-            } else {
-                return { success: false, error: `HTTP error! status: ${response.status}` };
-            }
+        const isExpired = await getStatusExpired();
+        const guestStatus = await getGuestStatus(id);
+        const apiError: APIError = {};
+        if (isExpired !== guestStatus) {
+            apiError.message = "El invitado no ha expirado";
         }
-        return { success: true };
+        if (Object.keys(apiError).length > 0) {
+            return { success: false, apiError: apiError };
+        }
+        try {
+            await dropGuest(id);
+            return { success: true };
+        } catch(error) {
+            console.error("Error al eliminar Invitado:", error);
+            return { success: false };
+        };
     } catch (error) {
-        if (error instanceof Error) {
-            console.error("Error en createTableData:", error.message);
-        } else {
-            console.error("Error desconocido");
-        }
-    }   
+        console.error("Error en deleteTableData(Guest):", error);
+        return { success: false };
+    };
 };

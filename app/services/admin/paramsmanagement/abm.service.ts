@@ -5,7 +5,7 @@ import { createABMQuery, editABMQuery, fetchABMData, fetchABMQuery, fetchedABMIt
 
 interface APIError {
     name?: string;
-}
+};
 
 export async function fetchTableData(data: fetchABMData) {
     try {
@@ -25,9 +25,6 @@ export async function fetchTableData(data: fetchABMData) {
 
 export async function createTableData(data: { name: string; table: string }) {
     try {
-        if (typeof data.name !== 'string' || typeof data.table !== 'string') {
-            return { success: false, error: "Parámetros no válidos" };
-        };
         const existingNameInstance = await checkInstanceExistance({ table: data.table, name: data.name });
         const apiError: APIError = {};
         if (existingNameInstance.rows.length > 0) {
@@ -35,7 +32,7 @@ export async function createTableData(data: { name: string; table: string }) {
         };
         if (Object.keys(apiError).length > 0) {
             return { success: false, apiError: apiError };
-        }
+        };
         const query = {
             name: data.name,
             table: data.table
@@ -44,20 +41,17 @@ export async function createTableData(data: { name: string; table: string }) {
             await createInstance(query);
             return { success: true };
         } catch (error) {
-            console.error("Error al crear instancia:", error);
-            return { success: false, error: "Error al crear instancia" };
+            console.error("Error al crear Instancia:", error);
+            return { success: false };
         };
     } catch (error) {
         console.error("Error en createTableData(ABM):", error);
-        return { success: false, error: "Error procesando la solicitud" };
+        return { success: false };
     };
 };
 
 export async function editTableData(data: { name: string; table: string; id:number }) {
     try {
-        if (typeof data.id !== 'number' || typeof data.name !== 'string' || typeof data.table !== 'string') {
-            return { success: false, error: "Parámetros no válidos" };
-        };
         const existingNameInstance = await checkInstanceExistance({ table: data.table, name: data.name });
         const apiError: APIError = {};
         if (existingNameInstance.rows.length > 0) {
@@ -65,7 +59,7 @@ export async function editTableData(data: { name: string; table: string; id:numb
         };
         if (Object.keys(apiError).length > 0) {
             return { success: false, apiError: apiError };
-        }
+        };
         const query = {
             name: data.name,
             table: data.table,
@@ -76,10 +70,10 @@ export async function editTableData(data: { name: string; table: string; id:numb
             return { success: true };
         } catch (error) {
             console.error("Error al editar instancia:", error);
-            return { success: false, error: "Error al editar instancia" };
+            return { success: false };
         };
     } catch (error) {
         console.error("Error en editTableData(ABM):", error);
-        return { success: false, error: "Error procesando la solicitud" };
+        return { success: false };
     };
 };

@@ -37,8 +37,10 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
                 handleClose();
                 reset();
             } else if (result) {
-                setApiError(result.error);
-            }
+                if (result.apiError) {
+                    setApiError(result.apiError);
+                };
+            };
         },
         onError: (error: APIErrors) => {
             setApiError({ dni: error.dni, file: error.file, email: error.email });
