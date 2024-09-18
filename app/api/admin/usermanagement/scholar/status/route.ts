@@ -1,5 +1,3 @@
-"use server"
-
 import { userChangeStatus } from "@/app/lib/queries/user";
 import { getStatusDeactivated } from "@/app/lib/queries/userstatus";
 import { NextResponse } from "next/server";

@@ -1,5 +1,3 @@
-"use server"
-
 import { fetchedGuest, fetchGuestQuery, newGuestQuery } from "@/app/lib/dtos/guest";
 import { createGuest, dropGuest, getGuestsTable, getGuestStatus } from "@/app/lib/queries/guest";
 import { getStatusExpired, getStatusPending } from "@/app/lib/queries/userstatus";

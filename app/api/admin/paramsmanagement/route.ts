@@ -1,5 +1,3 @@
-"use server"
-
 import { NextResponse } from "next/server";
 import { checkInstanceExistance, createInstance, editInstance, getInstances } from "@/app/lib/abm";
 import { createABMQuery, editABMQuery, fetchABMQuery, fetchedABMItem } from "@/app/lib/dtos/abm";
