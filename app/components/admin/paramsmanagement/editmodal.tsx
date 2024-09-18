@@ -32,8 +32,10 @@ export default function EditModal({ open, handleClose, table, id, name }: editMo
                 handleClose();
                 reset();
             } else if (result) {
-                setApiError(result.error);
-            }
+                if (result.apiError) {
+                    setApiError(result.apiError);
+                };
+            };
         },
         onError: (error: APIError) => {
             setApiError({ name: error.name });

@@ -29,9 +29,13 @@ export async function createTableData(data: { name: string; table: string }) {
             return { success: false, error: "Parámetros no válidos" };
         };
         const existingNameInstance = await checkInstanceExistance({ table: data.table, name: data.name });
+        const apiError: APIError = {};
         if (existingNameInstance.rows.length > 0) {
-            return { success: false, error: { name: "Instancia ya existe" } as APIError };
+            apiError.name = "Instancia ya existe";
         };
+        if (Object.keys(apiError).length > 0) {
+            return { success: false, apiError: apiError };
+        }
         const query = {
             name: data.name,
             table: data.table
@@ -55,9 +59,13 @@ export async function editTableData(data: { name: string; table: string; id:numb
             return { success: false, error: "Parámetros no válidos" };
         };
         const existingNameInstance = await checkInstanceExistance({ table: data.table, name: data.name });
+        const apiError: APIError = {};
         if (existingNameInstance.rows.length > 0) {
-            return { success: false, error: { name: "Instancia ya existe" } as APIError };
+            apiError.name = "Instancia ya existe";
         };
+        if (Object.keys(apiError).length > 0) {
+            return { success: false, apiError: apiError };
+        }
         const query = {
             name: data.name,
             table: data.table,
