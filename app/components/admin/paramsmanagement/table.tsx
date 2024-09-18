@@ -64,11 +64,6 @@ export default function ABMTable({ table }: ABMTableProps) {
         queryFn: () => fetchTableData({ search, table, page, rowsPerPage }),
         refetchOnWindowFocus: false
     });
-    useEffect(() => {
-        if (data) {
-            console.log(data)
-        }
-    }, [data])
     //modales
         //create
     const modalOpenCreate = watch("modalOpenCreate");
