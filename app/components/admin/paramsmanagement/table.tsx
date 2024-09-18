@@ -19,13 +19,8 @@ import { fetchTableData } from "@/app/services/admin/paramsmanagement/abm.servic
 import { useForm } from "react-hook-form";
 import debounce from "lodash.debounce";
 import Skeleton from "@mui/material/Skeleton";
-import { ABMTableProps, fetchABMData } from "@/app/lib/dtos/abm";
+import { ABMTableProps } from "@/app/lib/dtos/abm";
 import '@/app/components/globals.css'
-
-async function fetchDataFromServer(data: fetchABMData) {
-    const result = await fetchTableData(data);
-    return result;
-};
 
 export default function ABMTable({ table }: ABMTableProps) {
     const { watch, setValue } = useForm({
@@ -66,7 +61,7 @@ export default function ABMTable({ table }: ABMTableProps) {
     //fetch
     const { data, isLoading, refetch } = useQuery({
         queryKey: ['tableData', search, page, rowsPerPage],
-        queryFn: () => fetchDataFromServer({ search, table, page, rowsPerPage }),
+        queryFn: () => fetchTableData({ search, table, page, rowsPerPage }),
         refetchOnWindowFocus: false
     });
     //modales
