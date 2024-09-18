@@ -9,7 +9,6 @@ export async function fetchTableData(data: fetchABMData) {
         url.searchParams.append('table', data.table)
         url.searchParams.append('page', data.page.toString());
         url.searchParams.append('rowsPerPage', data.rowsPerPage.toString());
-        console.log("api call url", url);
         const response = await fetch(url.toString(), {
             method: 'GET',
         });

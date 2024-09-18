@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
 import TableRow from "@mui/material/TableRow";
@@ -64,6 +64,11 @@ export default function ABMTable({ table }: ABMTableProps) {
         queryFn: () => fetchTableData({ search, table, page, rowsPerPage }),
         refetchOnWindowFocus: false
     });
+    useEffect(() => {
+        if (data) {
+            console.log(data)
+        }
+    }, [data])
     //modales
         //create
     const modalOpenCreate = watch("modalOpenCreate");
@@ -86,7 +91,6 @@ export default function ABMTable({ table }: ABMTableProps) {
         setValue("modalOpenEdit", false);
         refetch();
     };
-    console.log("fetched data:",data);
     return (
         <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
             <div className="flex flex-row w-full mb-4">
