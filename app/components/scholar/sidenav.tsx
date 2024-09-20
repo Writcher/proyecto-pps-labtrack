@@ -7,9 +7,9 @@ import Button from "@mui/material/Button";
 import LogoutIcon from '@mui/icons-material/Logout';
 import IconButton from "@mui/material/IconButton";
 import { getLabById } from "@/app/lib/queries/laboratory";
-import { doLogout } from "@/app/actions";
 import { getTypeScholar } from "@/app/lib/queries/usertype";
 import SideNavQuery from "./sidenavQuery";
+import { doLogout } from "@/app/services/login/login.service";
 
 export default async function SideNav() {
   const session = await auth();

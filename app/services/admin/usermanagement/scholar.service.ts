@@ -28,7 +28,6 @@ export async function fetchTableData(data: fetchScholarData) {
         } as fetchScholarQuery;
         let response: { scholars: fetchedScholar[]; totalScholars: any; };
         response = await getScholarsTable(params);
-        console.log(response)
         return response;
     } catch (error) {
         console.error("Error en fetchTableData(Scholar):", error);

@@ -3,8 +3,8 @@ import { getTypeAdmin } from '../lib/queries/usertype';
 import { auth } from '../lib/auth';
 import { redirect } from 'next/navigation';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { doLogout } from '../actions';
 import Button from '@mui/material/Button';
+import { doLogout } from '../services/login/login.service';
 
  
 export default async function Layout({ children }: { children: React.ReactNode }) {

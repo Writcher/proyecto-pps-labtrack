@@ -1,3 +1,5 @@
+import { laboratory } from "./laboratory";
+
 export type user = {
     id: string;
     name: string;
@@ -9,7 +11,7 @@ export type user = {
     usertype_id: number;
     userstatus_id: number;
     emailVerified: Date | null;
-}
+};
 
 export type userSchema = {
     id: number;
@@ -22,7 +24,7 @@ export type userSchema = {
     usertype_id: number;
     userstatus_id: number;
     emailVerified: Date | null;
-}
+};
 
 export type newUserQuery = {
     name: string;
@@ -31,4 +33,35 @@ export type newUserQuery = {
     laboratory_id: number;
     usertype_id: number;
     userstatus_id: number;
-}
+};
+
+export type registerFormProps = {
+    laboratories: laboratory[];
+};
+
+export type registerFormData = {
+    laboratory_id: number;
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    modalOpenCreate: boolean;
+};
+
+export type createAdminData = {
+    laboratory_id: number;
+    name: string;
+    email: string;
+    password: string;
+}; 
+
+export type loginFormProps = {
+    admin: number;
+    guest: number;
+    scholar: number;
+};
+
+export type loginFormData = {
+    email: string;
+    password: string;
+};
