@@ -97,7 +97,7 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
                         <div className='flex w-full'>
                         <TextField
                             id="name"
-                            label="Nombre y Apellido"
+                            label="Nombre y Apellido *"
                             type="text"
                             variant="outlined"
                             color="warning"
@@ -111,7 +111,7 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
                             <div className='flex w-full mb-4 md:mb-0 md:w-4/6'>
                                 <TextField
                                     id="dni"
-                                    label="DNI"
+                                    label="DNI *"
                                     type="text"
                                     variant="outlined"
                                     color="warning"
@@ -124,7 +124,7 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
                             <div className='flex w-full md:w-2/6'>
                                 <TextField
                                     id="file"
-                                    label="Legajo"
+                                    label="Legajo *"
                                     type="text"
                                     variant="outlined"
                                     color="warning"
@@ -139,7 +139,7 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
                             <div className='flex w-full mb-4 md:mb-0 md:w-4/6'>
                                 <TextField
                                     id="usercareer_id"
-                                    label="Carrera"
+                                    label="Carrera *"
                                     type="text"
                                     variant="outlined"
                                     color="warning"
@@ -159,7 +159,7 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
                             <div className='flex w-full md:w-2/6'>
                                 <TextField
                                     id="careerlevel"
-                                    label="Año"
+                                    label="Año *"
                                     type="text"
                                     variant="outlined"
                                     color="warning"
@@ -183,7 +183,7 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
                         <div className='flex w-full'>
                             <TextField
                                 id="scholarshiptype_id"
-                                label="Beca"
+                                label="Beca *"
                                 type="text"
                                 variant="outlined"
                                 color="warning"
@@ -203,7 +203,7 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
                         <div className='flex w-full'>
                         <TextField
                             id="address"
-                            label="Dirección"
+                            label="Dirección *"
                             type="text"
                             variant="outlined"
                             color="warning"
@@ -216,7 +216,7 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
                         <div className='flex w-full'>
                             <TextField
                                 id="phone"
-                                label="Teléfono"
+                                label="Teléfono *"
                                 type="text"
                                 variant="outlined"
                                 color="warning"
@@ -229,7 +229,7 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
                         <div className='flex w-full'>
                             <TextField
                                 id="email"
-                                label="Email"
+                                label="Email *"
                                 type="text"
                                 variant="outlined"
                                 color="warning"
@@ -249,7 +249,7 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
                         <div className='flex w-full'>
                             <TextField
                                 id="password"
-                                label="Contraseña"
+                                label="Contraseña *"
                                 type="password"
                                 variant="outlined"
                                 color="warning"

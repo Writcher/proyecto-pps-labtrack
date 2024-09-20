@@ -83,7 +83,7 @@ export default function CreateSupplyModal({ open, handleClose, supplytypes, supp
                             <div className='flex w-full mb-4 md:mb-0 md:w-4/6'>
                                 <TextField 
                                     id="name" 
-                                    label="Nombre" 
+                                    label="Nombre *" 
                                     type="text" 
                                     variant="outlined" 
                                     color="warning" 
@@ -96,7 +96,7 @@ export default function CreateSupplyModal({ open, handleClose, supplytypes, supp
                             <div className='flex w-full md:w-2/6'>
                                 <TextField 
                                     id="year"  
-                                    label="Año" 
+                                    label="Año *" 
                                     type="text" 
                                     variant="outlined" 
                                     color="warning" 
@@ -128,7 +128,7 @@ export default function CreateSupplyModal({ open, handleClose, supplytypes, supp
                         <div className='flex w-full'>
                             <TextField 
                                 id="description" 
-                                label="Descripción" 
+                                label="Descripción *" 
                                 type="text" 
                                 variant="outlined" 
                                 color="warning" 
@@ -145,7 +145,7 @@ export default function CreateSupplyModal({ open, handleClose, supplytypes, supp
                             <div className='flex w-full mb-4 md:mb-0 md:w-3/6'>
                                 <TextField 
                                     id="supplytype_id" 
-                                    label="Tipo" 
+                                    label="Tipo *" 
                                     type="text"
                                     variant="outlined" 
                                     color="warning" 
@@ -164,7 +164,7 @@ export default function CreateSupplyModal({ open, handleClose, supplytypes, supp
                             <div className='flex w-full mb-4 md:mb-0 md:w-3/6'>
                                 <TextField 
                                     id="supplystatus_id" 
-                                    label="Estado" 
+                                    label="Estado *" 
                                     type="text" 
                                     variant="outlined" 
                                     color="warning" 

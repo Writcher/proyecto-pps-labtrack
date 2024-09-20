@@ -98,7 +98,7 @@ export default function CreateModal({ open, handleClose, table }: createModalPro
                     <div className='flex flex-col w-full items-center justify-center pt-4 gap-4'>
                         <TextField
                             id="name"
-                            label="Nombre"
+                            label="Nombre *"
                             type="text"
                             variant="outlined"
                             color="warning"

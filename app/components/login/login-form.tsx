@@ -12,7 +12,7 @@ interface LoginFormProps {
     admin: number;
     guest: number;
     scholar: number;
-}
+};
 
 export default function LoginForm({ admin, guest, scholar }: LoginFormProps ) {
     const [error, setError] = useState("");
@@ -48,7 +48,7 @@ export default function LoginForm({ admin, guest, scholar }: LoginFormProps ) {
                 setError("Error desconocido, la cagaste");
             }
         }
-    }
+    };
     
     return (
         <div className="flex flex-col w-64 md:w-2/5 gap-12">
@@ -66,5 +66,5 @@ export default function LoginForm({ admin, guest, scholar }: LoginFormProps ) {
             </form>
             {error && <Alert severity="error">{error}</Alert>}
         </div>
-    )
-}
+    );
+};

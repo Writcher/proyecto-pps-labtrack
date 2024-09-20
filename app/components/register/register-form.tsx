@@ -12,7 +12,7 @@ import Alert from '@mui/material/Alert';
 
 interface RegisterFormProps {
     laboratories: laboratory[];
-}
+};
 
 export default function RegisterForm({ laboratories }: RegisterFormProps) {
     const [error, setError] = useState("");
@@ -100,5 +100,5 @@ export default function RegisterForm({ laboratories }: RegisterFormProps) {
             </form>
             {error && <Alert severity="error">{error}</Alert>}
         </div>
-    )
-}
+    );
+};

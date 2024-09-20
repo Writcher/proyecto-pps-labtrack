@@ -1,22 +1,25 @@
 import { db } from '@vercel/postgres';
-import { fetchedHistoricProject, newHistoricProjectQuery } from '../dtos/historicproject';
+import { fetchedHistoricProject, fetchHistoricProjectData, newHistoricProjectQuery } from '../dtos/historicproject';
 
 const client = db;
 
-export async function getHistoricProjects(
-    labid: number,
-    filters: {
-        projectname?: string;
-        scholarship?: number;
-        userCareer?: number;
-        scholarname?: string;
-        projectStatus?: number;
-        projectType?: number;
-        year?: number;
-    }
-) {
+export async function getHistoricProjects(params: fetchHistoricProjectData) {
     try {
-        let query = `
+        const offset = (params.page) * params.rowsPerPage;
+        const validColumns = ['hp.name', 'hp.year', 'hp.historicprojecttype_id', 'hp.historicprojectstatus_id'];
+        if (!validColumns.includes(params.sortColumn)) {
+            throw new Error('Columna invalida');
+        }
+        const validDirections = ['ASC', 'DESC'];
+        if (!validDirections.includes(params.sortDirection.toUpperCase())) {
+            throw new Error('Dirección de ordenación invalida');
+        }
+        const column = params.sortColumn;
+        const direction = params.sortDirection.toUpperCase();
+        const projectsearch = `%${params.projectSearch}%`;
+        const scholarsearch = `%${params.scholarSearch}%`;
+        const baseValues = [params.laboratory_id, params.rowsPerPage, offset];
+        let text = `
             SELECT 
                 hp.id, 
                 hp.name, 
@@ -52,60 +55,95 @@ export async function getHistoricProjects(
             LEFT JOIN "historicscholarshiptype" hst ON hst.id = hs.historicscholarshiptype_id
             WHERE hp.laboratory_id = $1
         `;
-        const params: any[] = [labid];
-        let paramIndex = 2;
-        if (filters.projectname !== undefined) {
-            query += ` AND hp.name ILIKE unaccent($${paramIndex++})`;
-            params.push(`%${filters.projectname}%`);
-        }
-        if (filters.scholarship !== undefined) {
-            query += ` AND EXISTS (
+        const values: any = [...baseValues];
+        let filtertext = '';
+        if (params.projectSearch !== "") {
+            filtertext += `AND unaccent(hp.name) ILIKE unaccent($${values.length + 1}) 
+            `;
+            values.push(projectsearch);
+        };
+        if (params.historicprojecttype_id !== 0) {
+            filtertext += `AND hp.historicprojecttype_id = $${values.length +1}
+            `;
+            values.push(params.historicprojecttype_id);
+        };
+        if (params.historicprojectstatus_id !== 0) {
+            filtertext += `AND hp.historicprojectstatus_id = $${values.length +1}
+            `;
+            values.push(params.historicprojectstatus_id);
+        };
+        if (params.year !== 0) {
+            filtertext += `AND hp.year = $${values.length +1}
+            `;
+            values.push(params.year);
+        };
+        if (params.scholarSearch !== "") {
+            filtertext += `AND EXISTS (
                 SELECT 1
                 FROM "historicprojectscholar" hpsc2
                 JOIN "historicscholar" hs2 ON hs2.id = hpsc2.historicscholar_id
                 WHERE hpsc2.historicproject_id = hp.id
-                AND hs2.historicscholarshiptype_id = $${paramIndex++}
-            )`;
-            params.push(filters.scholarship);
-        }
-        if (filters.userCareer !== undefined) {
-            query += ` AND EXISTS (
+                AND unaccent(hs2.name) ILIKE unaccent($${values.length + 1})
+            )
+            `;
+            values.push(scholarsearch)
+        };
+        if (params.historicscholarshiptype_id !== 0) {
+            filtertext += `AND EXISTS (
                 SELECT 1
                 FROM "historicprojectscholar" hpsc2
                 JOIN "historicscholar" hs2 ON hs2.id = hpsc2.historicscholar_id
                 WHERE hpsc2.historicproject_id = hp.id
-                AND hs2.historicusercareer_id = $${paramIndex++}
-            )`;
-            params.push(filters.userCareer);
-        }
-        if (filters.scholarname !== undefined) {
-            query += ` AND EXISTS (
+                AND hs2.historicscholarshiptype_id = $${values.length +1}
+            )
+            `;
+            values.push(params.historicscholarshiptype_id);
+        };
+        if (params.historicusercareer_id !== 0) {
+            filtertext += `AND EXISTS (
                 SELECT 1
                 FROM "historicprojectscholar" hpsc2
                 JOIN "historicscholar" hs2 ON hs2.id = hpsc2.historicscholar_id
                 WHERE hpsc2.historicproject_id = hp.id
-                AND hs2.name ILIKE unaccent($${paramIndex++})
-            )`;
-            params.push(`%${filters.scholarname}%`);
-        }
-        if (filters.projectStatus !== undefined) {
-            query += ` AND hp.historicprojectstatus_id = $${paramIndex++}`;
-            params.push(filters.projectStatus);
-        }
-        if (filters.projectType !== undefined) {
-            query += ` AND hp.historicprojecttype_id = $${paramIndex++}`;
-            params.push(filters.projectType);
-        }
-        if (filters.year !== undefined) {
-            query += ` AND hp.year = $${paramIndex++}`;
-            params.push(filters.year);
-        }
-        query += `
+                AND hs2.historicusercareer_id = $${values.length +1}
+            )
+            `;
+            values.push(params.historicusercareer_id);
+        };
+        text += filtertext;
+        const grouptext = `
             GROUP BY 
-                hp.id, hpt.name, hps.name;
+                hp.id, hpt.name, hps.name
         `;
-        const resultproject = await client.query(query, params);
-        return resultproject.rows as fetchedHistoricProject[];
+        text += grouptext;
+        let ordertext = '';
+        if (column === "hp.name") {
+            ordertext = "ORDER BY hp.name ";
+        } else if (column === "hp.year") {
+            ordertext = "ORDER BY hp.year ";
+        } else if (column === "hp.historicprojecttype_id") {
+            ordertext = "ORDER BY hp.historicprojecttype_id ";
+        } else if (column === "hp.historicprojectstatus_id") {
+            ordertext = "ORDER BY hp.historicprojectstatus_id ";
+        };
+        if (direction === "DESC" || direction === "ASC") {
+            ordertext += direction;
+        };
+        text += ordertext + `
+            LIMIT $2 OFFSET $3
+        `;
+        const result = await client.query(text, values);
+        const text2 = `
+        SELECT COUNT(*) AS total
+        FROM "historicproject" hp
+        WHERE hp.laboratory_id = $1
+        `;
+        const values2 = [params.laboratory_id];
+        const countresult = await client.query(text2, values2);
+        return {
+            projects: result.rows as fetchedHistoricProject[],
+            totalProjects: countresult.rows[0].total,
+        };
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener los proyectos históricos");

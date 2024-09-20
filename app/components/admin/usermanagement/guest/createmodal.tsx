@@ -101,7 +101,7 @@ export default function CreateGuestModal({ open, handleClose, laboratory_id }: c
                         <div className='flex w-full'>
                             <TextField
                                 id="name"
-                                label="Nombre y Apellido"
+                                label="Nombre y Apellido *"
                                 type="text"
                                 variant="outlined"
                                 color="warning"
@@ -114,7 +114,7 @@ export default function CreateGuestModal({ open, handleClose, laboratory_id }: c
                         <div className='flex w-full'>
                             <TextField
                                 id="email"
-                                label="Email"
+                                label="Email *"
                                 type="text"
                                 variant="outlined"
                                 color="warning"
@@ -134,7 +134,7 @@ export default function CreateGuestModal({ open, handleClose, laboratory_id }: c
                         <div className='flex w-full'>
                             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
                             <DatePicker
-                                label="Fecha de Vencimiento"
+                                label="Fecha de Vencimiento *"
                                 value={watch('expires_at')}
                                 onChange={(newValue) => {
                                     if (!newValue) {
@@ -168,7 +168,7 @@ export default function CreateGuestModal({ open, handleClose, laboratory_id }: c
                         <div className='flex w-full'>
                             <TextField
                                 id="password"
-                                label="Contraseña"
+                                label="Contraseña *"
                                 type="password"
                                 variant="outlined"
                                 color="warning"

@@ -4,7 +4,7 @@ import { getHistoricProjectTypes } from "@/app/lib/queries/historicprojecttype";
 import { getHistoricScholarshipTypes } from "@/app/lib/queries/historicscholarshiptype";
 import { getHistoricUserCareers } from "@/app/lib/queries/historicusercareer";
 import { redirect } from "next/navigation";
-import ABMHistoricTable from "@/app/components/admin/historic/table";
+import HistoricQuery from "@/app/components/admin/historic/historicQuery";
 
 export default async function Historico() {
     const session = await auth();
@@ -24,7 +24,7 @@ export default async function Historico() {
                 </p>
             </div>
             <div className="flex flex-col min-h-[80%] max-h-[80%] mt-10 md:px-10 items-center justify-center">
-                <ABMHistoricTable 
+                <HistoricQuery
                     laboratory_id={laboratory_id}
                     historicusercareers={historicussercareers}
                     historicscholarships={historicscholarships}

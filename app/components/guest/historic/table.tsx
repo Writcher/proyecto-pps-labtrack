@@ -1,7 +1,6 @@
 "use client"
 
-import React, { useCallback, useEffect, useState } from "react";
-import { FormEvent } from "react";
+import React, { useCallback } from "react";
 import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
 import TableRow from "@mui/material/TableRow";
@@ -12,318 +11,316 @@ import TextField from "@mui/material/TextField";
 import AddIcon from '@mui/icons-material/Add';
 import TablePagination from '@mui/material/TablePagination';
 import debounce from "lodash.debounce";
-import { fetchedHistoricProject } from "@/app/lib/dtos/historicproject";
-import { projectStatus } from '@/app/lib/dtos/projectstatus';
-import { projectType } from '@/app/lib/dtos/projecttype';
-import { scholarshipType } from '@/app/lib/dtos/scholarshiptype';
-import { userCareer } from '@/app/lib/dtos/usercareer';
+import { fetchHistoricProjectData, historicFormData, historicTableProps } from "@/app/lib/dtos/historicproject";
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
-import { Divider, ButtonGroup } from "@mui/material";
+import { Divider, ButtonGroup, Skeleton } from "@mui/material";
+import { useForm } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
+import { fetchTableData } from "@/app/services/historic/historic.service";
+import '@/app/components/globals.css';
 
-
-interface AMBScholarTableProps {
-    historicusercareers: userCareer[];
-    historicscholarships: scholarshipType[];
-    historicprojecttypes: projectType[];
-    historicprojectstatus: projectStatus[];
-    laboratory_id: number;
-}
-
-export default function HistoricTable({ historicusercareers, historicscholarships, historicprojecttypes, historicprojectstatus, laboratory_id }: AMBScholarTableProps ) {
-//filtros
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const menuOpen = Boolean(anchorEl);
-    const [showYearFilter, setShowYearFilter] = useState(true);
-    const [showProjectSearchForm, setShowProjectSearchForm] = useState(false);
-    const [showProjectStatusFilter, setShowProjectStatusFilter] = useState(false);
-    const [showProjectTypeFilter, setShowProjectTypeFilter] = useState(false);
-    const [showScholarSearchForm, setShowScholarSearchForm] = useState(false);
-    const [showScholarshipFilter, setShowScholarshipFilter] = useState(false);
-    const [showCarrerFilter, setShowCareerFilter] = useState(false);
-    const [activeFilters, setActiveFilters] = useState<{ [key: string]: any }>({});
-
+export default function HistoricTable({ historicusercareers, historicscholarships, historicprojecttypes, historicprojectstatus, laboratory_id }: historicTableProps ) {
+    const { watch, setValue, getValues } = useForm<historicFormData>({
+        defaultValues: {
+            //filters
+            filterAnchor: null,
+            activeFilters: {},
+            projectSearch: "",
+            normalProjectSearch: "",
+            showProjectSearchForm: true,
+            projectTypeFilter: 0,
+            showProjectTypeFilter: false,
+            projectStatusFilter: 0,
+            showProjectStatusFilter: false,
+            yearFilter: 0,
+            showYearFilter: false,
+            scholarSearch: "",
+            normalScholarSearch: "",
+            showScholarSearchForm: false,
+            scholarshipTypeFilter: 0,
+            showScholarshipTypeFilter: false,
+            userCareerFilter: 0,
+            showUserCareerFilter: false,
+            //pagination
+            page: 0,
+            rowsPerPage: 10,
+            //expanded row
+            expandedRowId: null,
+            //sort by column
+            sortDirection: "ASC",
+            sortColumn: "hp.name"
+        }
+    });
+    //filters
+    const filterAnchor = watch("filterAnchor") as any;
+    const filterMenuOpen = Boolean(filterAnchor);
+    const activeFilters = watch("activeFilters") as { [key: string ]: any };
     const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
+        setValue("filterAnchor", event.currentTarget);
     };
     const handleFilterClose = () => {
-        setAnchorEl(null);
+        setValue("filterAnchor", null);
     };
-    const handleYearFilterSelect = () => {
-        setShowYearFilter(true);
-        setShowScholarSearchForm(false);
-        setShowProjectSearchForm(false);
-        setShowProjectTypeFilter(false);
-        setShowProjectStatusFilter(false);
-        setShowCareerFilter(false);
-        setShowScholarshipFilter(false);
+    const handleClearFilters = () => {
+            //reset values
+        setValue("projectSearch", "");
+        setValue("normalProjectSearch", "");
+        setValue("projectStatusFilter", 0);
+        setValue("projectTypeFilter", 0);
+        setValue("yearFilter", 0);
+        setValue("scholarSearch", "");
+        setValue("normalScholarSearch", "");
+        setValue("scholarshipTypeFilter", 0);
+        setValue("userCareerFilter", 0);
+            //reset default filter show
+        setValue("showProjectSearchForm", true);
+        setValue("showProjectStatusFilter", false);
+        setValue("showProjectTypeFilter", false);
+        setValue("showYearFilter", false);
+        setValue("showScholarSearchForm", false);
+        setValue("showScholarshipTypeFilter", false);
+        setValue("showUserCareerFilter", false);
+            //reset active filters and close
+        setValue("activeFilters", {});
         handleFilterClose();
     };
+        //project search
+    const projectSearch = watch("projectSearch") as string;
+    const normalProjectSearch = watch("normalProjectSearch") as string;
+    const showProjectSearchForm = watch("showProjectSearchForm") as boolean;
     const handleProjectSearchFilterSelect = () => {
-        setShowProjectSearchForm(true);
-        setShowYearFilter(false);
-        setShowScholarSearchForm(false);
-        setShowProjectTypeFilter(false);
-        setShowProjectStatusFilter(false);
-        setShowCareerFilter(false);
-        setShowScholarshipFilter(false);
+        setValue("showProjectSearchForm", true);
+        setValue("showProjectStatusFilter", false);
+        setValue("showProjectTypeFilter", false);
+        setValue("showYearFilter", false);
+        setValue("showScholarSearchForm", false);
+        setValue("showScholarshipTypeFilter", false);
+        setValue("showUserCareerFilter", false);
         handleFilterClose();
     };
-    const handleProjectStatusFilterSelect = () => {
-        setShowProjectStatusFilter(true);
-        setShowYearFilter(false);
-        setShowScholarSearchForm(false);
-        setShowProjectTypeFilter(false);
-        setShowProjectSearchForm(false);
-        setShowCareerFilter(false);
-        setShowScholarshipFilter(false);
-        handleFilterClose();
+    const handleProjectSearchFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValue("normalProjectSearch", event.target.value);
+        handleProjectSearch(event.target.value);
+        const currentFilters = getValues("activeFilters");
+        setValue("activeFilters", {
+            ...currentFilters,
+            projectsearch: event.target.value,
+        });
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const handleProjectSearch = useCallback(debounce((searchTerm: string) => {
+        setValue("projectSearch", searchTerm);
+    }, 500), []);
+        //projecttype filter
+    const historicprojecttype_id = watch("projectTypeFilter") as number;
+    const showProjectTypeFilter = watch("showProjectTypeFilter") as boolean;
     const handleProjectTypeFilterSelect = () => {
-        setShowProjectTypeFilter(true);
-        setShowYearFilter(false);
-        setShowScholarSearchForm(false);
-        setShowProjectStatusFilter(false);
-        setShowProjectSearchForm(false);
-        setShowCareerFilter(false);
-        setShowScholarshipFilter(false);
+        setValue("showProjectSearchForm", false);
+        setValue("showProjectStatusFilter", false);
+        setValue("showProjectTypeFilter", true);
+        setValue("showYearFilter", false);
+        setValue("showScholarSearchForm", false);
+        setValue("showScholarshipTypeFilter", false);
+        setValue("showUserCareerFilter", false);;
         handleFilterClose();
     };
-    const handleScholarSearchFilterSelect = () => {
-        setShowScholarSearchForm(true);
-        setShowProjectTypeFilter(false);
-        setShowYearFilter(false);
-        setShowProjectStatusFilter(false);
-        setShowProjectSearchForm(false);
-        setShowCareerFilter(false);
-        setShowScholarshipFilter(false);
-        handleFilterClose();
-    };
-    const handleScholarshipFilterSelect = () => {
-        setShowScholarshipFilter(true);
-        setShowYearFilter(false);
-        setShowScholarSearchForm(false);
-        setShowProjectTypeFilter(false);
-        setShowProjectStatusFilter(false);
-        setShowCareerFilter(false);
-        setShowProjectSearchForm(false);
-        handleFilterClose();
-    };
-    const handleCareerFilterSelect = () => {
-        setShowCareerFilter(true);
-        setShowScholarSearchForm(false);
-        setShowYearFilter(false);
-        setShowProjectTypeFilter(false);
-        setShowProjectStatusFilter(false);
-        setShowScholarshipFilter(false);
-        setShowProjectSearchForm(false);
-        handleFilterClose();
-    };
-    //filtro año
-    const añoInicio = 2008;
-    const añoFinal = new Date().getFullYear() - 1;
-    const años = Array.from({ length: añoFinal - añoInicio + 1 }, (_, index) => añoInicio + index);
-    const [yearFilter, setYearFilter] = useState<number | ''>('');
-    const handleYearFilterChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        const yearfilterValue = event.target.value as number;
-        setYearFilter(yearfilterValue);
-        setActiveFilters((prevFilters) => ({
-            ...prevFilters,
-            year: yearfilterValue,
-        }));
-    };
-    //filtro busqueda por proyecto
-    const [projectsearch, setProjectSearch] = useState("");
-    const handleProjectSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const projectsearchValue = e.target.value;
-        setProjectSearch(projectsearchValue);
-        setActiveFilters((prevFilters) => ({
-            ...prevFilters,
-            projectsearch: projectsearchValue,
-        }));
-    };
-    //filtro estado proyecto
-    const [projectStatusFilter, setProjectStatusFilter] = useState<number | ''>('');
-    const handleProjectStatusFilterChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        const projectstatusfilterValue = event.target.value as number;
-        setProjectStatusFilter(projectstatusfilterValue);
-        setActiveFilters((prevFilters) => ({
-            ...prevFilters,
-            projectstatus: projectstatusfilterValue,
-        }));
-    };
-    const getHistoricProjectStatusNameById = (id: number) => {
-        const projectstatus = historicprojectstatus.find(sch => sch.id === id);
-        return projectstatus ? projectstatus.name : 'Desconocida';
-    };
-    //filtro tipo de proyecto
-    const [projectTypeFilter, setProjectTypeFilter] = useState<number | ''>('');
-    const handleProjectTypeFilterChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        const projecttypefilterValue = event.target.value as number;
-        setProjectTypeFilter(projecttypefilterValue);
-        setActiveFilters((prevFilters) => ({
-            ...prevFilters,
-            projecttype: projecttypefilterValue,
-        }));
+    const handleProjectTypeFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const projecttypevalue = Number(event.target.value);
+        setValue("projectTypeFilter", projecttypevalue);
+        const currentFilters = getValues("activeFilters");
+        setValue("activeFilters", {
+            ...currentFilters,
+            projecttype: event.target.value,
+        });
     };
     const getHistoricProjectTypeNameById = (id: number) => {
         const projecttype = historicprojecttypes.find(sch => sch.id === id);
         return projecttype ? projecttype.name : 'Desconocida';
     };
-    //filtro busqueda por proyecto
-    const [scholarsearch, setScholarSearch] = useState("");
-    const handleScholarSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const scholarsearchValue = e.target.value;
-        setScholarSearch(scholarsearchValue);
-        setActiveFilters((prevFilters) => ({
-            ...prevFilters,
-            scholarsearch: scholarsearchValue,
-        }));
+        //projecttype filter
+    const historicprojectstatus_id = watch("projectStatusFilter") as number;
+    const showProjectStatusFilter = watch("showProjectStatusFilter") as boolean;
+    const handleProjectStatusFilterSelect = () => {
+        setValue("showProjectSearchForm", false);
+        setValue("showProjectStatusFilter", true);
+        setValue("showProjectTypeFilter", false);
+        setValue("showYearFilter", false);
+        setValue("showScholarSearchForm", false);
+        setValue("showScholarshipTypeFilter", false);
+        setValue("showUserCareerFilter", false);;
+        handleFilterClose();
     };
-    //filtro beca
-    const [scholarshipFilter, setScholarshipFilter] = useState<number | ''>('');
-    const handleScholarshipFilterChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        const scholarshipfilterValue = event.target.value as number;
-        setScholarshipFilter(scholarshipfilterValue);
-        setActiveFilters((prevFilters) => ({
-            ...prevFilters,
-            scholarship: scholarshipfilterValue,
-        }));
+    const handleProjectStatusFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const projectstatusvalue = Number(event.target.value);
+        setValue("projectStatusFilter", projectstatusvalue);
+        const currentFilters = getValues("activeFilters");
+        setValue("activeFilters", {
+            ...currentFilters,
+            projectstatus: event.target.value,
+        });
+    };
+    const getHistoricProjectStatusNameById = (id: number) => {
+        const projectstatus = historicprojectstatus.find(sch => sch.id === id);
+        return projectstatus ? projectstatus.name : 'Desconocida';
+    };
+        //year filter
+    const añoInicio = 2008;
+    const añoFinal = new Date().getFullYear() - 1;
+    const años = Array.from({ length: añoFinal - añoInicio + 1 }, (_, index) => añoInicio + index);
+    const yearFilter = watch("yearFilter") as number;
+    const showYearFilter = watch("showYearFilter") as boolean;
+    const handleYearFilterSelect = () => {
+        setValue("showProjectSearchForm", false);
+        setValue("showProjectStatusFilter", false);
+        setValue("showProjectTypeFilter", false);
+        setValue("showYearFilter", true);
+        setValue("showScholarSearchForm", false);
+        setValue("showScholarshipTypeFilter", false);
+        setValue("showUserCareerFilter", false);
+        handleFilterClose();
+    };
+    const handleYearFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const yearvalue = Number(event.target.value);
+        setValue("yearFilter", yearvalue);
+        const currentFilters = getValues("activeFilters");
+        setValue("activeFilters", {
+            ...currentFilters,
+            year: event.target.value,
+        });
+    };
+        //scholar search
+    const scholarSearch = watch("scholarSearch") as string;
+    const normalScholarSearch = watch("normalScholarSearch") as string;
+    const showScholarSearchForm = watch("showScholarSearchForm") as boolean;
+    const handleScholarSearchFilterSelect = () => {
+        setValue("showProjectSearchForm", false);
+        setValue("showProjectStatusFilter", false);
+        setValue("showProjectTypeFilter", false);
+        setValue("showYearFilter", false);
+        setValue("showScholarSearchForm", true);
+        setValue("showScholarshipTypeFilter", false);
+        setValue("showUserCareerFilter", false);
+        handleFilterClose();
+    };
+    const handleScholarSearchFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValue("normalScholarSearch", event.target.value);
+        handleScholarSearch(event.target.value);
+        const currentFilters = getValues("activeFilters");
+        setValue("activeFilters", {
+            ...currentFilters,
+            scholarsearch: event.target.value,
+        });
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const handleScholarSearch = useCallback(debounce((searchTerm: string) => {
+        setValue("scholarSearch", searchTerm);
+    }, 500), []);
+        //scholarshiptype filter
+    const historicscholarshiptype_id = watch("scholarshipTypeFilter") as number;
+    const showScholarshipTypeFilter = watch("showScholarshipTypeFilter") as boolean;
+    const handleScholarshipTypeFilterSelect = () => {
+        setValue("showProjectSearchForm", false);
+        setValue("showProjectStatusFilter", false);
+        setValue("showProjectTypeFilter", false);
+        setValue("showYearFilter", false);
+        setValue("showScholarSearchForm", false);
+        setValue("showScholarshipTypeFilter", true);
+        setValue("showUserCareerFilter", false);;
+        handleFilterClose();
+    };
+    const handleScholarshipTypeFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const scholarshiptypevalue = Number(event.target.value);
+        setValue("scholarshipTypeFilter", scholarshiptypevalue);
+        const currentFilters = getValues("activeFilters");
+        setValue("activeFilters", {
+            ...currentFilters,
+            scholarship: event.target.value,
+        });
     };
     const getHistoricScholarshipNameById = (id: number) => {
         const scholarship = historicscholarships.find(sch => sch.id === id);
         return scholarship ? scholarship.name : 'Desconocida';
     };
-    //filtro carrera
-    const [userCareerFilter, setUserCareerFilter] = useState<number | ''>('');
-    const handleUserCareerFilterChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        const careerfilterValue = event.target.value as number;
-        setUserCareerFilter(careerfilterValue);
-        setActiveFilters((prevFilters) => ({
-            ...prevFilters,
-            career: careerfilterValue,
-        }));
+        //usercareer filter
+    const historicusercareer_id = watch("userCareerFilter") as number;
+    const showUserCareerFilter = watch("showUserCareerFilter") as boolean;
+    const handleUserCareerFilterSelect = () => {
+        setValue("showProjectSearchForm", false);
+        setValue("showProjectStatusFilter", false);
+        setValue("showProjectTypeFilter", false);
+        setValue("showYearFilter", false);
+        setValue("showScholarSearchForm", false);
+        setValue("showScholarshipTypeFilter", false);
+        setValue("showUserCareerFilter", true);
+        handleFilterClose();
     };
-    const getHistoricCareerNameById = (id: number) => {
+    const handleUserCareerFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const usercareervalue = Number(event.target.value)
+        setValue("userCareerFilter", usercareervalue);
+        const currentFilters = getValues("activeFilters");
+        setValue("activeFilters", {
+            ...currentFilters,
+            career: event.target.value,
+        });
+    };
+    const getHistoricUserCareerNameById = (id: number) => {
         const career = historicusercareers.find(sch => sch.id === id);
         return career ? career.name : 'Desconocida';
     };
-    //limpiar filtros
-    const handleClearFilters = () => {
-        setProjectSearch("");
-        setScholarSearch("");
-        setScholarshipFilter('');
-        setUserCareerFilter('');
-        setProjectStatusFilter('');
-        setProjectTypeFilter('');
-        setYearFilter('');
-        setShowYearFilter(true);
-        setShowProjectSearchForm(false);
-        setShowProjectTypeFilter(false);
-        setShowScholarSearchForm(false);
-        setShowProjectStatusFilter(false);
-        setShowCareerFilter(false);
-        setShowScholarshipFilter(false);
-        setActiveFilters({});
-        handleFilterClose();
+    //sort by column
+    const sortDirection = watch("sortDirection");
+    const sortColumn = watch("sortColumn");
+    const handleSort = (column: string) => {
+        const newDirection = sortColumn === column && sortDirection === 'ASC' ? 'DESC' : 'ASC';
+        setValue("sortColumn", column);
+        setValue("sortDirection", newDirection);
     };
-//fetch data
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-    };
-    const [data, setData] = useState<fetchedHistoricProject[]>([]);
-    async function fetchData(projectsearch: string, scholarshipFilter: number | '', userCareerFilter: number | '', scholarsearch: string, projectStatusFilter: number | '', projectTypeFilter: number | '', yearFilter: number | '') {
-        try {
-            const url = new URL(`/api/historic`, window.location.origin);
-            url.searchParams.append('labid', laboratory_id.toString());
-            if (projectsearch !== "") {
-                url.searchParams.append('projectname', projectsearch);
-            }
-            if (scholarshipFilter !== '') {
-                url.searchParams.append('scholarship', scholarshipFilter.toString());
-            }
-            if (userCareerFilter !== '') {
-                url.searchParams.append('usercareer', userCareerFilter.toString());
-            }
-            if (scholarsearch !== "") {
-                url.searchParams.append('scholarname', scholarsearch);
-            }
-            if (projectStatusFilter !== '') {
-                url.searchParams.append('projectstatus', projectStatusFilter.toString());
-            }
-            if (projectTypeFilter !== '') {
-                url.searchParams.append('projecttype', projectTypeFilter.toString());
-            }
-            if (yearFilter !== '') {
-                url.searchParams.append('year', yearFilter.toString());
-            }
-
-            const response = await fetch(url.toString(), {
-                method: 'GET',
-            });
-            const fetchedData = await response.json();
-            setData(fetchedData);
-        } catch (error) {
-            if (error instanceof Error) {
-                console.error(error.message);
-            } else {
-                console.error("Error desconocido, la cagaste");
-            }
-        }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const debouncedFetchData = useCallback(
-        debounce((projectsearch: string, scholarshipFilter: number | '', userCareerFilter: number | '', scholarsearch: string, projectStatusFilter: number | '', projectTypeFilter: number | '', yearFilter: number | '') => fetchData(projectsearch, scholarshipFilter, userCareerFilter, scholarsearch, projectStatusFilter, projectTypeFilter, yearFilter), 300),
-        []
-    );
-    useEffect(() => {
-        debouncedFetchData(projectsearch, scholarshipFilter, userCareerFilter, scholarsearch, projectStatusFilter, projectTypeFilter, yearFilter);
-    }, [projectsearch, debouncedFetchData, scholarshipFilter, userCareerFilter, scholarsearch, projectStatusFilter, projectTypeFilter, yearFilter]);
-
-//paginacion
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const paginatedItems = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+    //pagination
+    const page = watch("page");
+    const rowsPerPage = watch("rowsPerPage")
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-        setPage(newPage);
+        setValue("page", newPage);
     };
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };  
-
-//expandir fila
-    const [expandedRowId, setExpandedRowId] = useState<number | null>(null);
+        setValue("rowsPerPage", parseInt(event.target.value, 10));
+        setValue("page", 0);
+    };
+    //fetch
+    const params = {
+        projectSearch: projectSearch,
+        historicprojectstatus_id: historicprojectstatus_id,
+        historicprojecttype_id: historicprojecttype_id,
+        year: yearFilter,
+        scholarSearch: scholarSearch,
+        historicusercareer_id: historicusercareer_id,
+        historicscholarshiptype_id: historicscholarshiptype_id,
+        laboratory_id: laboratory_id,
+        sortColumn: sortColumn,
+        sortDirection: sortDirection,
+        page: page,
+        rowsPerPage: rowsPerPage,
+    } as fetchHistoricProjectData;
+    const { data, isLoading, refetch } = useQuery({
+        queryKey: ['tableData', projectSearch, historicprojectstatus_id, historicprojecttype_id, yearFilter, scholarSearch, historicusercareer_id, historicscholarshiptype_id, sortColumn, sortDirection, page, rowsPerPage],
+        queryFn: () => fetchTableData(params),
+        refetchOnWindowFocus: false
+    });
+    //expanded row
+    const expandedRowId = watch("expandedRowId");
     const toggleRowExpansion = (id: number) => {
-        setExpandedRowId(expandedRowId === id ? null : id);
+        setValue("expandedRowId", expandedRowId === id ? null : id);
     };
-    
-//ordenar por columna
-    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-    const [sortColumn, setSortColumn] = useState<string>('id');
-    const sortData = (data: fetchedHistoricProject[]) => {
-        return data.slice().sort((a, b) => {
-            const aValue = a[sortColumn as keyof fetchedHistoricProject] ?? '';
-            const bValue = b[sortColumn as keyof fetchedHistoricProject] ?? '';
-    
-            if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
-            if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
-            return 0;
-        });
+    //modals
+        //create
+    const modalOpenCreate = watch("modalOpenCreate");
+    const handleOpenCreateModal = () => setValue("modalOpenCreate", true);
+    const handleCloseCreateModal = () => {
+        setValue("modalOpenCreate", false);
+        refetch();
     };
-    useEffect(() => {
-        const sortedData = sortData(data);
-        setData(sortedData);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [sortColumn, sortDirection]);
-    const handleSort = (column: string) => {
-        const newDirection = sortColumn === column && sortDirection === 'asc' ? 'desc' : 'asc';
-        setSortColumn(column);
-        setSortDirection(newDirection);
-    };
-
     return (
         <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
             <div className="flex flex-col justify-center md:flex-row w-full md:h-14 gap-4 md:gap-2 text-gray-700">
@@ -348,12 +345,10 @@ export default function HistoricTable({ historicusercareers, historicscholarship
                         </Button>
                     </ButtonGroup>
                     <div className="flex grow"/>
-                    <div className="flex block md:hidden">
-                    </div>
                 </div>
                 <Menu
-                    anchorEl={anchorEl}
-                    open={menuOpen}
+                    anchorEl={filterAnchor}
+                    open={filterMenuOpen}
                     onClose={handleFilterClose}
                 >
                     <MenuItem onClick={handleYearFilterSelect}>Filtrar por Año</MenuItem>
@@ -361,10 +356,10 @@ export default function HistoricTable({ historicusercareers, historicscholarship
                     <MenuItem onClick={handleProjectStatusFilterSelect}>Filtrar por Estado de Proyecto</MenuItem>
                     <MenuItem onClick={handleProjectTypeFilterSelect}>Filtrar por Tipo de Proyecto</MenuItem>
                     <MenuItem onClick={handleScholarSearchFilterSelect}>Buscar por Nombre de Becario</MenuItem>
-                    <MenuItem onClick={handleScholarshipFilterSelect}>Filtrar por Beca</MenuItem>
-                    <MenuItem onClick={handleCareerFilterSelect}>Filtrar por Carrera</MenuItem>
+                    <MenuItem onClick={handleScholarshipTypeFilterSelect}>Filtrar por Beca</MenuItem>
+                    <MenuItem onClick={handleUserCareerFilterSelect}>Filtrar por Carrera</MenuItem>
                 </Menu>
-                <form className="flex items-center justify-start md:w-2/6" onSubmit={handleSubmit}>
+                <form className="flex items-center justify-start md:w-2/6">
                     {showProjectSearchForm && (
                         <TextField 
                             id="projectsearch"
@@ -374,8 +369,8 @@ export default function HistoricTable({ historicusercareers, historicscholarship
                             variant="outlined"
                             color="warning"
                             fullWidth
-                            value={projectsearch}
-                            onChange={handleProjectSearchChange}
+                            value={normalProjectSearch}
+                            onChange={handleProjectSearchFilterChange}
                         />
                     )}
                     {showScholarSearchForm && (
@@ -387,11 +382,11 @@ export default function HistoricTable({ historicusercareers, historicscholarship
                             variant="outlined"
                             color="warning"
                             fullWidth
-                            value={scholarsearch}
-                            onChange={handleScholarSearchChange}
+                            value={normalScholarSearch}
+                            onChange={handleScholarSearchFilterChange}
                         />
                     )}
-                    {showScholarshipFilter && (
+                    {showScholarshipTypeFilter && (
                         <TextField 
                             id="scholarship" 
                             name="scholarship" 
@@ -401,15 +396,15 @@ export default function HistoricTable({ historicusercareers, historicscholarship
                             color="warning"
                             select 
                             fullWidth 
-                            value={scholarshipFilter} 
-                            onChange={handleScholarshipFilterChange}
+                            value={historicscholarshiptype_id} 
+                            onChange={handleScholarshipTypeFilterChange}
                         > 
                             {historicscholarships.map(scholarshipprop => (
                                 <MenuItem key={scholarshipprop.id} value={scholarshipprop.id}>{scholarshipprop.name}</MenuItem>
                             ))}
                         </TextField>
                     )}
-                    {showCarrerFilter && (
+                    {showUserCareerFilter && (
                         <TextField 
                             id="career" 
                             name="career" 
@@ -419,7 +414,7 @@ export default function HistoricTable({ historicusercareers, historicscholarship
                             color="warning"
                             select 
                             fullWidth
-                            value={userCareerFilter} 
+                            value={historicusercareer_id} 
                             onChange={handleUserCareerFilterChange}
                         >
                             {historicusercareers.map(usercareerprop => (
@@ -437,7 +432,7 @@ export default function HistoricTable({ historicusercareers, historicscholarship
                         color="warning"
                         select 
                         fullWidth
-                        value={projectStatusFilter} 
+                        value={historicprojectstatus_id} 
                         onChange={handleProjectStatusFilterChange}
                     >
                         {historicprojectstatus.map(projectstatusprop => (
@@ -455,7 +450,7 @@ export default function HistoricTable({ historicusercareers, historicscholarship
                         color="warning"
                         select 
                         fullWidth
-                        value={projectTypeFilter} 
+                        value={historicprojecttype_id} 
                         onChange={handleProjectTypeFilterChange}
                     >
                         {historicprojecttypes.map(projecttypeprop => (
@@ -485,8 +480,6 @@ export default function HistoricTable({ historicusercareers, historicscholarship
                     )}
                 </form>
                 <div className="flex grow" />
-                <div className="md:flex hidden md:block">
-                </div>
             </div>
             <div className="flex flex-col gap-2 md:flex-row md:flex-wrap">
                 {Object.entries(activeFilters).map(([key, value]) => (
@@ -495,7 +488,7 @@ export default function HistoricTable({ historicusercareers, historicscholarship
                             {key === "projectsearch" && `Nombre de Proyecto: ${value}`}
                             {key === "scholarsearch" && `Nombre de Becario: ${value}`}
                             {key === "scholarship" && `Beca: ${getHistoricScholarshipNameById(value as number)}`}
-                            {key === "career" && `Carrera: ${getHistoricCareerNameById(value as number)}`}
+                            {key === "career" && `Carrera: ${getHistoricUserCareerNameById(value as number)}`}
                             {key === "projectstatus" && `Estado de Proyecto: ${getHistoricProjectStatusNameById(value as number)}`}
                             {key === "projecttype" && `Tipo de Proyecto: ${getHistoricProjectTypeNameById(value as number)}`}
                             {key === "year" && `Año: ${value}`}
@@ -503,142 +496,182 @@ export default function HistoricTable({ historicusercareers, historicscholarship
                     )
                 ))}
             </div>
-            <div className="flex flex-col overflow-y-auto h-full">
+            <div className="flex flex-col custom-scrollbar overflow-y-auto h-full">
                 <TableContainer>
                     <Table stickyHeader>
                         <TableBody>
                             <TableRow>
                                 <TableCell align="left"
-                                    onClick={() => handleSort('name')}
+                                    onClick={() => handleSort('hp.name')}
                                     style={{ cursor: 'pointer' }}
                                     width="40%"
                                 >
-                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'name' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
+                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'hp.name' ? (sortDirection === 'ASC' ? 'text-orange-500' : 'text-red-500') : ''}`}>
                                         Nombre
                                     </div>
                                 </TableCell>
                                 <TableCell align="center"
-                                    onClick={() => handleSort('projecttype')}
+                                    onClick={() => handleSort('hp.historicprojecttype_id')}
                                     style={{ cursor: 'pointer' }}
                                     width="20%"
                                 >
-                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'name' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
+                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'hp.historicprojecttype_id' ? (sortDirection === 'ASC' ? 'text-orange-500' : 'text-red-500') : ''}`}>
                                         Tipo
                                     </div>
                                 </TableCell>
                                 <TableCell align="center"
-                                    onClick={() => handleSort('projectstatus')}
+                                    onClick={() => handleSort('hp.historicprojectstatus_id')}
                                     style={{ cursor: 'pointer' }}
                                     width="20%"
                                 >
-                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'userstatus' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
+                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'hp.historicprojectstatus_id' ? (sortDirection === 'ASC' ? 'text-orange-500' : 'text-red-500') : ''}`}>
                                         Estado
                                     </div>
                                 </TableCell>
                                 <TableCell align="right"
-                                    onClick={() => handleSort('year')}
+                                    onClick={() => handleSort('hp.year')}
                                     style={{ cursor: 'pointer' }}
                                     width="20%"
                                 >
-                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'name' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
+                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'hp.year' ? (sortDirection === 'ASC' ? 'text-orange-500' : 'text-red-500') : ''}`}>
                                         Año
                                     </div>
                                 </TableCell>
                             </TableRow>
                         </TableBody>
-                        <TableBody>
-                            {paginatedItems.map((row) => (
-                                <React.Fragment key={row.id}>
-                                    <TableRow 
-                                        onClick={() => toggleRowExpansion(row.id)}
-                                        className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-100' : ''}`}
-                                    >
-                                        <TableCell align="left" size="small">
-                                            <div className="text-gray-700 font-medium text-[15px] md:text-lg">
-                                                {row.name}
+                        {isLoading ? (
+                            <TableBody>
+                                {Array.from({ length: rowsPerPage }).map((_, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell align="left" size="small" width="40%">
+                                            <div className="flex items-center justify-start">
+                                                <Skeleton variant="text" width={300} />
                                             </div>
                                         </TableCell>
-                                        <TableCell align="center" size="small">
-                                            <div className="text-gray-700 font-medium text-[15px] md:text-lg">
-                                                {row.historicprojecttypename}
+                                        <TableCell align="center" size="small" width="20%">
+                                            <div className="flex items-center justify-center">
+                                                <Skeleton variant="text" width={200} />
                                             </div>
                                         </TableCell>
-                                        <TableCell align="center" size="small">
-                                            <div className="text-gray-700 font-medium text-[15px] md:text-lg">
-                                                {row.historicprojectstatusname}
+                                        <TableCell align="center" size="small" width="20%">
+                                            <div className="flex items-center justify-center">
+                                                <Skeleton variant="text" width={200} />
                                             </div>
                                         </TableCell>
-                                        <TableCell align="right" size="small">
-                                            <div className="text-gray-700 font-medium text-[15px] md:text-lg">
-                                                {row.year}
+                                        <TableCell align="right" size="small" width="20%">
+                                            <div className="flex items-center justify-end">
+                                            <Skeleton variant="text" width={100} />
                                             </div>
                                         </TableCell>
                                     </TableRow>
-                                    {expandedRowId === row.id && (
-                                        <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-100">
-                                            <TableCell colSpan={4}>
-                                                <div className="flex flex-col w-full">
-                                                    <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">
-                                                        <strong>Descripción: </strong>{row.description}
+                                ))}
+                            </TableBody>
+                        ) : (
+                            <TableBody>
+                                {data && data.projects && data.projects.length > 0 ? (
+                                    data.projects.map((row: any) => (
+                                        <React.Fragment key={row.id}>
+                                            <TableRow 
+                                                onClick={() => toggleRowExpansion(row.id)}
+                                                className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-100' : ''}`}
+                                            >
+                                                <TableCell align="left" size="small">
+                                                    <div className="text-gray-700 font-medium text-[15px] md:text-lg">
+                                                        {row.name}
                                                     </div>
-                                                    {Array.isArray(row.historicscholars) && row.historicscholars.length > 0 ? (
-                                                        row.historicscholars.map((scholar) => (
-                                                            <React.Fragment key={scholar.id}>
-                                                                <Divider className="w-full mt-4"></Divider>
-                                                                <div className="flex gap-1 text-gray-700 font-medium md:text-[17px] mt-4">
-                                                                    <strong>Beca: </strong>{scholar.historicscholarshiptypename}
+                                                </TableCell>
+                                                <TableCell align="center" size="small">
+                                                    <div className="text-gray-700 font-medium text-[15px] md:text-lg">
+                                                        {row.historicprojecttypename}
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell align="center" size="small">
+                                                    <div className="text-gray-700 font-medium text-[15px] md:text-lg">
+                                                        {row.historicprojectstatusname}
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell align="right" size="small">
+                                                    <div className="text-gray-700 font-medium text-[15px] md:text-lg">
+                                                        {row.year}
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                            {expandedRowId === row.id && (
+                                                <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-100">
+                                                    <TableCell colSpan={4}>
+                                                        <div className="flex flex-col w-full">
+                                                            <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">
+                                                                <strong>Descripción: </strong>{row.description}
+                                                            </div>
+                                                            {Array.isArray(row.historicscholars) && row.historicscholars.length > 0 ? (
+                                                                row.historicscholars.map((scholar: any) => (
+                                                                    <React.Fragment key={scholar.id}>
+                                                                        <Divider className="w-full mt-4"></Divider>
+                                                                        <div className="flex gap-1 text-gray-700 font-medium md:text-[17px] mt-4">
+                                                                            <strong>Beca: </strong>{scholar.historicscholarshiptypename}
+                                                                        </div>
+                                                                        <div className="flex gap-1 text-gray-700 font-medium md:text-[17px] mt-4">
+                                                                            <strong>Becario: </strong>{scholar.name}
+                                                                        </div>
+                                                                        <div className="flex flex-col md:flex-row gap-4 mt-4">
+                                                                            <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                                <strong>DNI: </strong>{scholar.dni}
+                                                                            </div>
+                                                                            <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                                <strong>Legajo: </strong>{scholar.file}
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="flex flex-col md:flex-row gap-4 mt-4">
+                                                                            <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                                <strong>Carrera: </strong>{scholar.historicusercareername}
+                                                                            </div>
+                                                                            <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                                <strong>Año de Cursado: </strong>{scholar.careerlevel}
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="flex flex-col md:flex-row gap-4 mt-4">
+                                                                            <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                                <strong>Email: </strong>{scholar.email}
+                                                                            </div>
+                                                                            <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                                <strong>Telefono: </strong>{scholar.phone}
+                                                                            </div>
+                                                                        </div>
+                                                                    </React.Fragment>
+                                                                ))
+                                                            ) : (
+                                                                <div>
+                                                                    <Divider className="w-full mt-4"></Divider>
+                                                                    <div className="flex gap-1 text-gray-700 font-medium md:text-[17px] mt-4">
+                                                                        No hay becarios asociados al proyecto.
+                                                                    </div>
                                                                 </div>
-                                                                <div className="flex gap-1 text-gray-700 font-medium md:text-[17px] mt-4">
-                                                                    <strong>Becario: </strong>{scholar.name}
-                                                                </div>
-                                                                <div className="flex flex-col md:flex-row gap-4 mt-4">
-                                                                    <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                                        <strong>DNI: </strong>{scholar.dni}
-                                                                    </div>
-                                                                    <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                                        <strong>Legajo: </strong>{scholar.file}
-                                                                    </div>
-                                                                </div>
-                                                                <div className="flex flex-col md:flex-row gap-4 mt-4">
-                                                                    <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                                        <strong>Carrera: </strong>{scholar.historicusercareername}
-                                                                    </div>
-                                                                    <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                                        <strong>Año de Cursado: </strong>{scholar.careerlevel}
-                                                                    </div>
-                                                                </div>
-                                                                <div className="flex flex-col md:flex-row gap-4 mt-4">
-                                                                    <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                                        <strong>Email: </strong>{scholar.email}
-                                                                    </div>
-                                                                    <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                                        <strong>Telefono: </strong>{scholar.phone}
-                                                                    </div>
-                                                                </div>
-                                                            </React.Fragment>
-                                                        ))
-                                                    ) : (
-                                                        <div>No hay becarios disponibles.</div>
-                                                    )}
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    )}
-                                </React.Fragment>
-                            ))}
-                            {Array.from({ length: rowsPerPage - paginatedItems.length }).map((_, index) => (
-                                <TableRow key={`empty-row-${index}`}>
-                                    <TableCell colSpan={4} />
-                                </TableRow>
-                            ))}
-                        </TableBody>
+                                                            )}
+                                                        </div>
+                                                    </TableCell>
+                                                </TableRow>
+                                            )}
+                                        </React.Fragment>
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell colSpan={4} align="center" />
+                                    </TableRow>
+                                )}
+                                {Array.from({ length: rowsPerPage - (data?.projects?.length || 0) }).map((_, index) => (
+                                    <TableRow key={`empty-row-${index}`}>
+                                        <TableCell colSpan={4} />
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        )}
                     </Table>
                 </TableContainer>
                 <div className="flex justify-end items-end grow overflow-x-hide">
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 15, 20]}
                         component="div"
-                        count={data.length}
+                        count={data?.totalProjects || 0}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
@@ -648,4 +681,4 @@ export default function HistoricTable({ historicusercareers, historicscholarship
             </div>
         </main>
     );
-}
+};

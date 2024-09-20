@@ -41,8 +41,8 @@ export default async function Register() {
                 </div>
             </div>
         </main>
-    )
-  }
+    );
+};
 
 
 

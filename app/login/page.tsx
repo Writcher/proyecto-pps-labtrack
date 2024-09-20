@@ -52,6 +52,6 @@ export default async function Login({searchParams}: {searchParams: {verified: st
                 </div>
             </div>
         </main>
-    )
-  }
+    );
+};
 
