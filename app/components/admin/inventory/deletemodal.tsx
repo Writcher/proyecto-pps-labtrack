@@ -1,4 +1,4 @@
-import React, { FormEvent } from 'react';
+import React from 'react';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -6,40 +6,28 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { useForm } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
+import { deleteTableData } from '@/app/services/inventory/inventory.service';
+import { deleteSupplyModalProps } from '@/app/lib/dtos/supply';
 
-interface DeleteSupplyModalProps {
-    open: boolean;
-    handleClose: () => void;
-    id: number;
-    name: string;
-}
-
-export default function DeleteSupplyModal({ open, handleClose, id, name }: DeleteSupplyModalProps) {
-    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        try {
-            const response = await fetch(`/api/admin/inventory?id=${encodeURIComponent(id)}`, {
-                method: 'DELETE',
-            });
-
-            if (response.status === 200) {
+export default function DeleteSupplyModal({ open, handleClose, id, name }: deleteSupplyModalProps) {
+    const { handleSubmit, reset } = useForm();
+    const mutation = useMutation({
+        mutationFn: () => deleteTableData(id),
+        onSuccess: (result) => {
+            if (result && result.success) {
                 handleClose();
-            }
-
-        } catch (error) {
-            if (error instanceof Error) {
-                throw new Error(error.message);
-            } else {
-                throw new Error("Error desconocido, la cagaste");
-            }
+                reset();
+            };
         }
+    });
+    const onSubmit = () => {
+        mutation.mutate();
     };
-
-    //evita que se cierre si sse clickea el background
     const handleDialogClick = (event: React.MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
     };
-
     return (
             <Dialog 
                 open={open} 
@@ -52,7 +40,7 @@ export default function DeleteSupplyModal({ open, handleClose, id, name }: Delet
                 fullWidth
                 PaperProps={{ 
                     component: 'form',
-                    onSubmit: handleSubmit,
+                    onSubmit: handleSubmit(onSubmit),
                     onClick: handleDialogClick,
                     style: { width: '600px', maxWidth: 'none' }
                 }} 
@@ -87,4 +75,4 @@ export default function DeleteSupplyModal({ open, handleClose, id, name }: Delet
                 </div>
             </Dialog>
     );
-}
+};

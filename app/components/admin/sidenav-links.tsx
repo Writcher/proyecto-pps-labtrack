@@ -11,7 +11,10 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import ChatIcon from '@mui/icons-material/Chat';
 import HistoryIcon from '@mui/icons-material/History';
 import Badge from '@mui/material/Badge';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { useQuery } from '@tanstack/react-query';
+import { fetchUnreadCount } from '@/app/services/messages/chat.service';
 
 const linksadmin = [
     { name: 'Inicio', href: '/admin/dashboard', icon: HomeIcon },
@@ -30,37 +33,29 @@ interface LinkProps {
 }
 
 export function SideNavLinksAdmin({ current_id_number }: LinkProps) {
-  const [unreadCount, setUnreadCount] = useState(0); // Estado local para el conteo de mensajes no leídos
-  const pathname = usePathname();
-  const [fetchData, setFetchData] = useState(false);
-
+  const { watch, setValue } = useForm({
+    defaultValues: {
+      unreadCount: 0,
+    }
+  });
+  //fetch unread count
+  const { data, refetch } = useQuery({
+    queryKey: ['getUnreadCount'],
+    queryFn: () => fetchUnreadCount(current_id_number),
+    refetchInterval: 5000,
+  });
   useEffect(() => {
-      async function fetchUnreadCount() {
-          try {
-            const response = await fetch(`/api/messages/unreadcount?currentid=${encodeURIComponent(current_id_number)}`, {
-              method: 'GET',
-            });
-            const data = await response.json();
-            setUnreadCount(data.unreadCount); // Actualizar el estado local
-          } catch (error) {
-            if (error instanceof Error) {
-              console.error(error.message);
-            } else {
-              console.error("Error desconocido, la cagaste");
-            }
-        } 
-      }
-
-      fetchUnreadCount();
-      setFetchData(false);
-      const intervalId = setInterval(fetchUnreadCount, 50000);
-      return () => clearInterval(intervalId);
-  }, [fetchData, current_id_number]);
-
+    if (data !== undefined && data !== null) {
+      setValue("unreadCount", data, { shouldValidate: true });
+    }
+  }, [data, setValue]);
+  const unreadCount = watch('unreadCount');
+  //pathname
+  const pathname = usePathname();
+  //link click
   const handleLinkClick = () => {
-    setFetchData(true); // Establece el estado para ejecutar el efecto
+    refetch();
   };
-
   return (
     <>
       {linksadmin.map((link) => {

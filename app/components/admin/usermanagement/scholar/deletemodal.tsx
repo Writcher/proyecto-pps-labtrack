@@ -1,4 +1,4 @@
-import React, { FormEvent } from 'react';
+import React from 'react';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -6,46 +6,28 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { useMutation } from '@tanstack/react-query';
+import { deactivateTableData } from '@/app/services/admin/usermanagement/scholar.service';
+import { useForm } from 'react-hook-form';
+import { deleteModalProps } from '@/app/lib/dtos/scholar';
 
-interface DeleteScholarModalProps {
-    open: boolean;
-    handleClose: () => void;
-    id: number;
-    name: string;
-}
-
-export default function DeleteScholarModal({ open, handleClose, id, name }: DeleteScholarModalProps) {
-    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        try {
-            const response = await fetch(`/api/admin/usermanagement/scholar/status`, {
-                method: 'PUT',
-                headers: {
-                    "Content-type": "application/json"
-                },
-                body: JSON.stringify({
-                    id
-                })
-            });
-
-            if (response.status === 200) {
-                handleClose();
-            }
-
-        } catch (error) {
-            if (error instanceof Error) {
-                throw new Error(error.message);
-            } else {
-                throw new Error("Error desconocido, la cagaste");
-            }
+export default function DeleteScholarModal({ open, handleClose, id, name }: deleteModalProps) {
+    const { handleSubmit } = useForm();
+    const mutation = useMutation({
+        mutationFn: () => deactivateTableData(id),
+        onSuccess: () => {
+            handleClose();
+        },
+        onError: (error: Error) => {
+            console.error("Error al crear el ítem:", error);
         }
+    });
+    const onSubmit = () => {
+        mutation.mutate();
     };
-
-    //evita que se cierre si sse clickea el background
     const handleDialogClick = (event: React.MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
     };
-
     return (
             <Dialog 
                 open={open} 
@@ -58,7 +40,7 @@ export default function DeleteScholarModal({ open, handleClose, id, name }: Dele
                 fullWidth
                 PaperProps={{ 
                     component: 'form',
-                    onSubmit: handleSubmit,
+                    onSubmit: handleSubmit(onSubmit),
                     onClick: handleDialogClick,
                     style: { width: '600px', maxWidth: 'none' }
                 }} 
@@ -93,4 +75,4 @@ export default function DeleteScholarModal({ open, handleClose, id, name }: Dele
                 </div>
             </Dialog>
     );
-}
+};

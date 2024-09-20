@@ -1,28 +1,33 @@
 import { db } from '@vercel/postgres';
-import { Projecttype, NewProjecttype } from '../definitions';
+import { projectType } from '../dtos/projecttype';
+import { createABMItemQuery } from '../dtos/abm';
 
 const client = db;
 
 export async function getHistoricProjectTypes() {
     try {
-        const result = await client.sql`
+        const text = `
         SELECT * FROM "historicprojecttype"
         `;
-        return result.rows as Projecttype[];
+        const result = await client.query(text)
+        return result.rows as projectType[];
     } catch (error) {
         console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo obtener el projecttype");
+        throw new Error("No se pudo obtener el historicprojecttype");
     }
-}
+};
 
-export async function createHistoricProjectType(historicprojecttype: NewProjecttype) {
+export async function createHistoricProjectType(params: createABMItemQuery) {
     try {
-        return client.sql`
+        const text = `
         INSERT INTO "historicprojecttype" (name)
-        VALUES (${historicprojecttype.name})
+        VALUES ($1)
         `;
+        const values = [params.name];
+        await client.query(text, values);
+        return { success: true, message: "Instancia creada correctamente" };
     } catch(error) {
         console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo crear el projecttype");
+        throw new Error("No se pudo crear el historicprojecttype");
     }
-}
+};

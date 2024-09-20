@@ -1,251 +1,232 @@
 "use client"
 
-import React, { useCallback, useEffect, useState } from "react";
-import { FormEvent } from "react";
-import DeleteIcon from '@mui/icons-material/Delete';
+import { scholarTableProps, fetchedScholar, fetchScholarData, scholarFormData } from "@/app/lib/dtos/scholar";
+import { fetchTableData } from "@/app/services/admin/usermanagement/scholar.service";
+import CreateScholarModal from "./createmodal";
+import EditScholarModal from "./editmodal";
+import DeleteScholarModal from "./deletemodal";
+import TablePagination from "@mui/material/TablePagination";
 import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
-import TableBody from "@mui/material/TableBody";
-import Button from '@mui/material/Button';
-import IconButton from "@mui/material/IconButton";
-import TextField from "@mui/material/TextField";
-import EditIcon from '@mui/icons-material/Edit';
-import AddIcon from '@mui/icons-material/Add';
-import TablePagination from '@mui/material/TablePagination';
-import debounce from "lodash.debounce";
-import CreateScholarModal from "./createmodal";
-import { Scholarshiptype, Usercareer, GetScholar } from "@/app/lib/definitions";
-import DeleteScholarModal from "./deletemodal";
-import EditScholarModal from "./editmodal";
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
-import { ButtonGroup } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Skeleton from "@mui/material/Skeleton";
+import FilterAltOffIcon from '@mui/icons-material/FilterAltOff'
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import debounce from "lodash.debounce";
+import React, { useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import '@/app/components/globals.css';
 
-interface AMBScholarTableProps {
-    usercareers: Usercareer[];
-    scholarships: Scholarshiptype[];
-    laboratory_id: number;
-}
-
-export default function ABMScholarTable({ usercareers, scholarships, laboratory_id }: AMBScholarTableProps ) {
-//filtros
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const menuOpen = Boolean(anchorEl);
-    const [showSearchForm, setShowSearchForm] = useState(true);
-    const [showScholarshipFilter, setShowScholarshipFilter] = useState(false);
-    const [showCarrerFilter, setShowCareerFilter] = useState(false);
-    const [activeFilters, setActiveFilters] = useState<{ [key: string]: any }>({});
-
+export default function ABMScholarTable({ usercareers, scholarships, laboratory_id }: scholarTableProps ) {
+    const { watch, setValue, getValues } = useForm<scholarFormData>({
+        defaultValues: {
+            //filters
+            filterAnchor: null,
+            activeFilters: {},
+            search: "",
+            normalsearch: "",
+            showSearchForm: true,
+            scholarshipTypeFilter: 0,
+            showScholarshipTypeFilter: false,
+            userCareerFilter: 0,
+            showUserCareerFilter: false,
+            //pagination
+            page: 0,
+            rowsPerPage: 10,
+            //modals
+            modalOpenCreate: false,
+            modalOpenDelete: false,
+            modalOpenEdit: false,
+            //selected row
+            selectedRowId: 0,
+            selectedRowName: "",
+            selectedRow: null,
+            //expanded row
+            expandedRowId: null,
+            //sort by column
+            sortDirection: "ASC",
+            sortColumn: "u.name"
+        }
+    });
+    //filters
+    const filterAnchor = watch("filterAnchor") as any;
+    const filterMenuOpen = Boolean(filterAnchor);
+    const activeFilters = watch("activeFilters") as { [key: string ]: any };
     const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
+        setValue("filterAnchor", event.currentTarget);
     };
     const handleFilterClose = () => {
-        setAnchorEl(null);
+        setValue("filterAnchor", null);
     };
+    const handleClearFilters = () => {
+            //reset values
+        setValue("search", "");
+        setValue("normalsearch", "");
+        setValue("scholarshipTypeFilter", 0);
+        setValue("userCareerFilter", 0);
+            //reset default filter show
+        setValue("showSearchForm", true);
+        setValue("showScholarshipTypeFilter", false);
+        setValue("showUserCareerFilter", false);
+            //reset active filters and close
+        setValue("activeFilters", {});
+        handleFilterClose();
+    };
+        //search
+    const search = watch("search") as string;
+    const normalsearch = watch("normalsearch") as string;
+    const showSearchForm = watch("showSearchForm") as boolean;
     const handleSearchFilterSelect = () => {
-        setShowSearchForm(true);
-        setShowCareerFilter(false);
-        setShowScholarshipFilter(false);
+        setValue("showSearchForm", true);
+        setValue("showScholarshipTypeFilter", false);
+        setValue("showUserCareerFilter", false);
         handleFilterClose();
     };
-    const handleScholarshipFilterSelect = () => {
-        setShowScholarshipFilter(true);
-        setShowCareerFilter(false);
-        setShowSearchForm(false);
+    const handleSearchFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValue("normalsearch", event.target.value);
+        handleSearch(event.target.value);
+        const currentFilters = getValues("activeFilters");
+        setValue("activeFilters", {
+            ...currentFilters,
+            search: event.target.value,
+        });
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const handleSearch = useCallback(debounce((searchTerm: string) => {
+        setValue("search", searchTerm);
+    }, 500), []);
+        //scholarshiptype filter
+    const scholarshiptype_id = watch("scholarshipTypeFilter") as number;
+    const showScholarshipTypeFilter = watch("showScholarshipTypeFilter") as boolean;
+    const handleScholarshipTypeFilterSelect = () => {
+        setValue("showScholarshipTypeFilter", true);
+        setValue("showSearchForm", false);
+        setValue("showUserCareerFilter", false);
         handleFilterClose();
-    }
-    const handleCareerFilterSelect = () => {
-        setShowCareerFilter(true);
-        setShowScholarshipFilter(false);
-        setShowSearchForm(false);
-        handleFilterClose();
-    }
-    //filtro beca
-    const [scholarship, setScholarship] = useState<number | ''>('');
-    const handleScholarshipChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        const scholarshipValue = event.target.value as number;
-        setScholarship(scholarshipValue);
-        setActiveFilters((prevFilters) => ({
-            ...prevFilters,
-            scholarship: scholarshipValue,
-        }));
+    };
+    const handleScholarshipTypeFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const scholarshiptypevalue = Number(event.target.value);
+        setValue("scholarshipTypeFilter", scholarshiptypevalue);
+        const currentFilters = getValues("activeFilters");
+        setValue("activeFilters", {
+            ...currentFilters,
+            scholarship: event.target.value,
+        });
     };
     const getScholarshipNameById = (id: number) => {
         const scholarship = scholarships.find(sch => sch.id === id);
         return scholarship ? scholarship.name : 'Desconocida';
     };
-    //filtro busqueda
-    const [search, setSearch] = useState("");
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const searchValue = e.target.value;
-        setSearch(searchValue);
-        setActiveFilters((prevFilters) => ({
-            ...prevFilters,
-            search: searchValue,
-        }));
+        //usercareer filter
+    const usercareer_id = watch("userCareerFilter") as number;
+    const showUserCareerFilter = watch("showUserCareerFilter") as boolean;
+    const handleUserCareerFilterSelect = () => {
+        setValue("showUserCareerFilter", true);
+        setValue("showScholarshipTypeFilter", false);
+        setValue("showSearchForm", false);
+        handleFilterClose();
     };
-    //filtro carrera
-    const [userCareer, setUserCareer] = useState<number | ''>('');
-    const handleUserCareerChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        const careerValue = event.target.value as number;
-        setUserCareer(careerValue);
-        setActiveFilters((prevFilters) => ({
-            ...prevFilters,
-            career: careerValue,
-        }));
+    const handleUserCareerFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const usercareervalue = Number(event.target.value)
+        setValue("userCareerFilter", usercareervalue);
+        const currentFilters = getValues("activeFilters");
+        setValue("activeFilters", {
+            ...currentFilters,
+            career: event.target.value,
+        });
     };
     const getCareerNameById = (id: number) => {
         const career = usercareers.find(sch => sch.id === id);
         return career ? career.name : 'Desconocida';
     };
-    //limpiar filtros
-    const handleClearFilters = () => {
-        setSearch("");
-        setScholarship('');
-        setUserCareer('');
-        setShowSearchForm(true);
-        setShowCareerFilter(false);
-        setShowScholarshipFilter(false);
-        setActiveFilters({});
-        handleFilterClose();
+    //sort by column
+    const sortDirection = watch("sortDirection");
+    const sortColumn = watch("sortColumn");
+    const handleSort = (column: string) => {
+        const newDirection = sortColumn === column && sortDirection === 'ASC' ? 'DESC' : 'ASC';
+        setValue("sortColumn", column);
+        setValue("sortDirection", newDirection);
     };
-//fetch data
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-    };
-    const [data, setData] = useState<GetScholar[]>([]);
-    async function fetchData(searchTerm: string, scholarship: number | '', userCareer: number | '') {
-        try {
-            const url = new URL(`/api/admin/usermanagement/scholar`, window.location.origin);
-            url.searchParams.append('name', searchTerm);
-            url.searchParams.append('labid', laboratory_id.toString());
-            if (scholarship !== '') {
-                url.searchParams.append('scholarship', scholarship.toString());
-            }
-            if (userCareer !== '') {
-                url.searchParams.append('usercareer', userCareer.toString());
-            }
-            const response = await fetch(url.toString(), {
-                method: 'GET',
-            });
-            const fetchedData = await response.json();
-            setData(fetchedData);
-        } catch (error) {
-            if (error instanceof Error) {
-                console.error(error.message);
-            } else {
-                console.error("Error desconocido, la cagaste");
-            }
-        }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const debouncedFetchData = useCallback(
-        debounce((searchTerm: string, scholarship: number | '', userCareer: number | '') => fetchData(searchTerm, scholarship, userCareer), 300),
-        []
-    );
-    useEffect(() => {
-        debouncedFetchData(search, scholarship, userCareer);
-    }, [search, debouncedFetchData, scholarship, userCareer]);
-
-//paginacion
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const paginatedItems = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+    //pagination
+    const page = watch("page");
+    const rowsPerPage = watch("rowsPerPage")
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-        setPage(newPage);
+        setValue("page", newPage);
     };
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
+        setValue("rowsPerPage", parseInt(event.target.value, 10));
+        setValue("page", 0);
     };
-
-//modales
-    //create
-    const [modalOpenCreate, setModalOpenCreate] = useState(false);
-    const handleOpenCreateModal = () => setModalOpenCreate(true);
-    const handleCloseCreateModal = () => {
-        setModalOpenCreate(false);
-    };
-    useEffect(() => {
-        if (!modalOpenCreate) {
-            debouncedFetchData(search, scholarship, userCareer);
-        }
-    }, [debouncedFetchData, modalOpenCreate, scholarship, search, userCareer]);
-
-    //fila seleccionada
-    const [selectedRow, setSelectedRow] = useState<GetScholar | null>(null);
-    const [selectedRowId, setSelectedRowId] = useState<number | null>(null);
-    const [selectedRowName, setSelectedRowName] = useState<string | null>(null);       
-
-    //delete
-    const [modalOpenDelete, setModalOpenDelete] = useState(false);
-    const handleOpenDeleteModal = (id: number, name: string) => {
-        setSelectedRowId(id);
-        setSelectedRowName(name);
-        setModalOpenDelete(true);
-    }
-    const handleCloseDeleteModal = () => {
-        setModalOpenDelete(false);
-    };
-    useEffect(() => {
-        if (!modalOpenDelete) {
-            debouncedFetchData(search, scholarship, userCareer);
-        }
-    }, [debouncedFetchData, modalOpenDelete, scholarship, search, userCareer]);
-
-    //edit
-    const [modalOpenEdit, setModalOpenEdit] = useState(false);
-    const handleOpenEditModal = (row: GetScholar) => {
-        setSelectedRow(row);
-        setModalOpenEdit(true);
-    }
-    const handleCloseEditModal = () => {
-        setModalOpenEdit(false);
-    }
-    useEffect(()=> {
-        if (!modalOpenEdit) {
-            debouncedFetchData(search, scholarship, userCareer);
-        }
-    },[debouncedFetchData, modalOpenEdit, scholarship, search, userCareer]);
-
-//expandir fila
-    const [expandedRowId, setExpandedRowId] = useState<number | null>(null);
+    //fetch
+    const params = {
+        search: search,
+        scholarshiptype_id: scholarshiptype_id,
+        usercareer_id: usercareer_id,
+        laboratory_id: laboratory_id,
+        sortColumn: sortColumn,
+        sortDirection: sortDirection,
+        page: page, 
+        rowsPerPage: rowsPerPage
+    } as fetchScholarData;
+    const { data, isLoading, refetch } = useQuery({
+        queryKey: ['tableData', search, usercareer_id , scholarshiptype_id, sortColumn, sortDirection, page, rowsPerPage ],
+        queryFn: () => fetchTableData(params),
+        refetchOnWindowFocus: false
+    });
+    //expanded row
+    const expandedRowId = watch("expandedRowId");
     const toggleRowExpansion = (id: number) => {
-        setExpandedRowId(expandedRowId === id ? null : id);
+        setValue("expandedRowId", expandedRowId === id ? null : id);
     };
-
-//ordenar por columna
-    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-    const [sortColumn, setSortColumn] = useState<string>('id');
-    const sortData = (data: GetScholar[]) => {
-        return data.slice().sort((a, b) => {
-            const aValue = a[sortColumn as keyof GetScholar] ?? '';
-            const bValue = b[sortColumn as keyof GetScholar] ?? '';
-    
-            if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
-            if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
-            return 0;
-        });
+    //modales
+        //create
+    const modalOpenCreate = watch("modalOpenCreate");
+    const handleOpenCreateModal = () => setValue("modalOpenCreate", true);
+    const handleCloseCreateModal = () => {
+        setValue("modalOpenCreate", false);
+        refetch();
     };
-    useEffect(() => {
-        const sortedData = sortData(data);
-        setData(sortedData);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [sortColumn, sortDirection]);
-    const handleSort = (column: string) => {
-        const newDirection = sortColumn === column && sortDirection === 'asc' ? 'desc' : 'asc';
-        setSortColumn(column);
-        setSortDirection(newDirection);
+        //selected row
+    const selectedRowId = watch("selectedRowId");
+    const selectedRowName = watch("selectedRowName");
+    const selectedRow = watch("selectedRow");
+        //delete
+    const modalOpenDelete = watch("modalOpenDelete");
+    const handleOpenDeleteModal = (id: number, name: string) => {
+        setValue("selectedRowId", id);
+        setValue("selectedRowName", name);
+        setValue("modalOpenDelete", true);
     };
-
+    const handleCloseDeleteModal = () => {
+        setValue("modalOpenDelete", false);
+        refetch();
+    };
+        //edit
+    const modalOpenEdit = watch("modalOpenEdit");
+    const handleOpenEditModal = (row: fetchedScholar) => {
+        setValue("selectedRow", row);
+        setValue("modalOpenEdit", true);
+    };
+    const handleCloseEditModal = () => {
+        setValue("modalOpenEdit", false);
+        refetch();
+    };
     return (
         <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
-            <div className="flex flex-col justify-center md:flex-row w-full md:h-14 gap-4 md:gap-2 text-gray-700">
-                <div className="flex flex-row gap-2 h-14">
+            <div className="flex flex-row w-full mb-4">
+                <div className="flex flex-row gap-2 h-14 text-gray-700">
                     <ButtonGroup variant="outlined" color="inherit">
                         <Button 
                             variant="outlined" 
@@ -279,15 +260,15 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                     </div>
                 </div>
                 <Menu
-                    anchorEl={anchorEl}
-                    open={menuOpen}
+                    anchorEl={filterAnchor}
+                    open={filterMenuOpen}
                     onClose={handleFilterClose}
                 >
                     <MenuItem onClick={handleSearchFilterSelect}>Buscar por Nombre</MenuItem>
-                    <MenuItem onClick={handleScholarshipFilterSelect}>Filtrar por Beca</MenuItem>
-                    <MenuItem onClick={handleCareerFilterSelect}>Filtrar por Carrera</MenuItem>
+                    <MenuItem onClick={handleScholarshipTypeFilterSelect}>Filtrar por Beca</MenuItem>
+                    <MenuItem onClick={handleUserCareerFilterSelect}>Filtrar por Carrera</MenuItem>
                 </Menu>
-                <form className="flex items-center justify-start md:w-2/6" onSubmit={handleSubmit}>
+                <form className="flex items-center justify-start md:w-2/6">
                     {showSearchForm && (
                         <TextField 
                             id="search"
@@ -297,12 +278,11 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                             variant="outlined"
                             color="warning"
                             fullWidth
-                            value={search}
-                            onChange={handleSearchChange}
+                            value={normalsearch}
+                            onChange={handleSearchFilterChange}
                         />
-                        
                     )}
-                    {showScholarshipFilter && (
+                    {showScholarshipTypeFilter && (
                         <TextField 
                             id="scholarship" 
                             name="scholarship" 
@@ -312,15 +292,15 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                             color="warning"
                             select 
                             fullWidth 
-                            value={scholarship} 
-                            onChange={handleScholarshipChange}
+                            value={scholarshiptype_id} 
+                            onChange={handleScholarshipTypeFilterChange}
                         > 
                             {scholarships.map(scholarshipprop => (
                                 <MenuItem key={scholarshipprop.id} value={scholarshipprop.id}>{scholarshipprop.name}</MenuItem>
                             ))}
                         </TextField>
                     )}
-                    {showCarrerFilter && (
+                    {showUserCareerFilter && (
                         <TextField 
                             id="career" 
                             name="career" 
@@ -330,8 +310,8 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                             color="warning"
                             select 
                             fullWidth
-                            value={userCareer} 
-                            onChange={handleUserCareerChange}
+                            value={usercareer_id} 
+                            onChange={handleUserCareerFilterChange}
                         >
                             {usercareers.map(usercareerprop => (
                                 <MenuItem key={usercareerprop.id} value={usercareerprop.id}>{usercareerprop.name}</MenuItem>
@@ -352,10 +332,10 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                     </Button>
                 </div>
             </div>
-            <div className="flex flex-col gap-2 md:flex-row">
+            <div className="flex gap-2 md:flex-row md:flex-wrap">
                 {Object.entries(activeFilters).map(([key, value]) => (
                     value && (
-                        <span key={key} className="border border-gray-700 p-2 rounded text-xs md:text-sm">
+                        <span key={key} className="border border-gray-700 p-2 rounded text-xs text-gray-700 md:text-sm">
                             {key === "search" && `Nombre: ${value}`}
                             {key === "scholarship" && `Beca: ${getScholarshipNameById(value as number)}`}
                             {key === "career" && `Carrera: ${getCareerNameById(value as number)}`}
@@ -363,30 +343,33 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                     )
                 ))}
             </div>
-            <div className="flex flex-col overflow-y-auto h-full">
+            <div className="flex flex-col custom-scrollbar overflow-y-auto h-full">
                 <TableContainer>
                     <Table stickyHeader>
                         <TableBody>
                             <TableRow>
-                                <TableCell align="left"
-                                    onClick={() => handleSort('name')}
+                                <TableCell
+                                    align="left"
+                                    onClick={() => handleSort('u.name')}
                                     style={{ cursor: 'pointer' }}
                                     width="40%"
                                 >
-                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'name' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
+                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'u.name' ? (sortDirection === 'ASC' ? 'text-orange-500' : 'text-red-500') : ''}`}>
                                         Nombre
                                     </div>
                                 </TableCell>
-                                <TableCell align="center"
-                                    onClick={() => handleSort('userstatus')}
+                                <TableCell 
+                                    align="center"
+                                    onClick={() => handleSort('u.userstatus_id')}
                                     style={{ cursor: 'pointer' }}
                                     width="30%"
                                 >
-                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'userstatus' ? (sortDirection === 'asc' ? 'text-orange-500' : 'text-red-500') : ''}`}>
+                                    <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 'u.userstatus_id' ? (sortDirection === 'ASC' ? 'text-orange-500' : 'text-red-500') : ''}`}>
                                         Estado
                                     </div>
                                 </TableCell>
-                                <TableCell align="right"
+                                <TableCell 
+                                    align="right"
                                     width="30%"
                                 >
                                     <div className="mr-4 text-gray-700 font-medium md:font-bold text-[17px] md:text-lg">
@@ -395,114 +378,145 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                                 </TableCell>
                             </TableRow>
                         </TableBody>
-                        <TableBody>
-                            {paginatedItems.map((row) => (
-                                <React.Fragment key={row.id}>
-                                    <TableRow 
-                                        onClick={() => toggleRowExpansion(row.id)}
-                                        className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-100' : ''}`}
-                                    >
-                                        <TableCell align="left" size="small">
-                                            <div className="text-gray-700 font-medium text-[15px] md:text-lg">
-                                                {row.name}
+                        {isLoading ? (
+                            <TableBody>
+                                {Array.from({ length: rowsPerPage }).map((_, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell align="left" size="small" width="40%">
+                                            <div className="flex items-center justify-start">
+                                                <Skeleton variant="text" width={300} />
                                             </div>
                                         </TableCell>
-                                        <TableCell align="center" size="small">
-                                            <div className={`
-                                                md:max-w-[50%] flex justify-center items-center mx-auto text-center  text-white font-medium text-[15px] md:text-lg py-2 px-2 rounded-3xl
-                                                ${row.userstatus === 'Activo' ? 'bg-green-600' : ''}
-                                                ${row.userstatus === 'Inactivo' ? 'bg-red-500' : ''}
-                                                ${row.userstatus === 'Pendiente' ? 'bg-yellow-500' : ''}
-                                            `}>
-                                                {row.userstatus}
+                                        <TableCell align="center" size="small" width="30%">
+                                            <div className="flex items-center justify-center">
+                                                <Skeleton variant="text" width={200} />
                                             </div>
                                         </TableCell>
-                                        <TableCell align="right" size="small">
-                                            <div className="flex flex-row justify-end gap-5 text-gray-700">
-                                                <IconButton color="inherit" onClick={() => handleOpenEditModal(row)}>
-                                                    <EditIcon />
-                                                </IconButton>
-                                                <IconButton color="error" onClick={() => handleOpenDeleteModal(row.id, row.name)}>
-                                                    <DeleteIcon />
-                                                </IconButton>
+                                        <TableCell align="right" size="small" width="30%">
+                                            <div className="flex items-center gap-6 mr-5 justify-end">
+                                                <Skeleton variant="circular" width={25} height={25} />
+                                                <Skeleton variant="circular" width={25} height={25} />
                                             </div>
                                         </TableCell>
                                     </TableRow>
-                                    {expandedRowId === row.id && (
-                                        <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-100">
-                                            <TableCell colSpan={3}>
-                                                <div className="flex flex-col w-full">
-                                                    <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Beca: </strong>{row.scholarshiptype}
+                                ))}
+                            </TableBody>
+                        ) : (
+                            <TableBody>
+                                {data && data.scholars && data.scholars.length > 0 ? (
+                                    data.scholars.map((row: any) => (
+                                        <React.Fragment key={row.id}>
+                                            <TableRow 
+                                                onClick={() => toggleRowExpansion(row.id)}
+                                                className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-100' : ''}`}
+                                            >
+                                                <TableCell align="left" size="small" width="40%">
+                                                    <div className="text-gray-700 font-medium text-[15px] md:text-lg">
+                                                        {row.name}
                                                     </div>
-                                                    <div className="flex flex-col md:flex-row gap-4 mt-4">
-                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>DNI: </strong>{row.dni}
-                                                        </div>
-                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Legajo: </strong>{row.file}
-                                                        </div>
+                                                </TableCell>
+                                                <TableCell align="center" size="small" width="30%">
+                                                    <div className={`
+                                                        md:max-w-[50%] flex justify-center items-center mx-auto text-center  text-white font-medium text-[15px] md:text-lg py-2 px-2 rounded-3xl
+                                                        ${row.userstatus === 'Activo' ? 'bg-green-600' : ''}
+                                                        ${row.userstatus === 'Inactivo' ? 'bg-red-500' : ''}
+                                                        ${row.userstatus === 'Pendiente' ? 'bg-yellow-500' : ''}
+                                                    `}>
+                                                        {row.userstatus}
                                                     </div>
-                                                    <div className="flex flex-col md:flex-row gap-4 mt-4">
-                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Carrera: </strong>{row.usercareer}
-                                                        </div>
-                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Año de Cursado: </strong>{row.careerlevel}
-                                                        </div>
+                                                </TableCell>
+                                                <TableCell align="right" size="small" width="30%">
+                                                    <div className="flex flex-row justify-end gap-5 text-gray-700">
+                                                        <IconButton color="inherit" onClick={() => handleOpenEditModal(row)}>
+                                                            <EditIcon />
+                                                        </IconButton>
+                                                        <IconButton color="error" onClick={() => handleOpenDeleteModal(row.id, row.name)}>
+                                                            <DeleteIcon />
+                                                        </IconButton>
                                                     </div>
-                                                    <div className="flex flex-col md:flex-row gap-4 mt-4">
-                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Email: </strong>{row.email}
+                                                </TableCell>
+                                            </TableRow>
+                                            {expandedRowId === row.id && (
+                                                <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-100">
+                                                    <TableCell colSpan={3}>
+                                                        <div className="flex flex-col w-full">
+                                                            <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">
+                                                                <strong>Beca: </strong>{row.scholarshiptype}
+                                                            </div>
+                                                            <div className="flex flex-col md:flex-row gap-4 mt-4">
+                                                                <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                    <strong>DNI: </strong>{row.dni}
+                                                                </div>
+                                                                <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                    <strong>Legajo: </strong>{row.file}
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex flex-col md:flex-row gap-4 mt-4">
+                                                                <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                    <strong>Carrera: </strong>{row.usercareer}
+                                                                </div>
+                                                                <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                    <strong>Año de Cursado: </strong>{row.careerlevel}
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex flex-col md:flex-row gap-4 mt-4">
+                                                                <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                    <strong>Email: </strong>{row.email}
+                                                                </div>
+                                                                <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                    <strong>Telefono: </strong>{row.phone}
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex flex-col md:flex-row gap-4 mt-4">
+                                                                <div className="text-gray-700 font-medium md:text-[17px]">
+                                                                    <strong>Dirección: </strong>{row.address}
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex flex-col md:flex-row gap-4 mt-4">
+                                                                <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                    <strong>Fecha de Creación: </strong>
+                                                                    {new Date(row.created_at).toLocaleDateString('es-AR', {
+                                                                        year: 'numeric',
+                                                                        month: 'long',
+                                                                        day: 'numeric'
+                                                                    })}
+                                                                </div>
+                                                                <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
+                                                                    <strong>Fecha de Inhabilitación: </strong>
+                                                                    {row.dropped_at ? 
+                                                                        new Date(row.dropped_at).toLocaleDateString('es-AR', {
+                                                                            year: 'numeric',
+                                                                            month: 'long',
+                                                                            day: 'numeric'
+                                                                        })
+                                                                    : ''}
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Telefono: </strong>{row.phone}
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex flex-col md:flex-row gap-4 mt-4">
-                                                        <div className="text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Dirección: </strong>{row.address}
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex flex-col md:flex-row gap-4 mt-4">
-                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Fecha de Creación: </strong>
-                                                            {new Date(row.created_at).toLocaleDateString('es-AR', {
-                                                                year: 'numeric',
-                                                                month: 'long',
-                                                                day: 'numeric'
-                                                            })}
-                                                        </div>
-                                                        <div className="flex gap-1 md:w-3/6 text-gray-700 font-medium md:text-[17px]">
-                                                            <strong>Fecha de Inhabilitación: </strong>
-                                                            {row.dropped_at ? 
-                                                                new Date(row.dropped_at).toLocaleDateString('es-AR', {
-                                                                    year: 'numeric',
-                                                                    month: 'long',
-                                                                    day: 'numeric'
-                                                                })
-                                                                : ''}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    )}
-                                </React.Fragment>
-                            ))}
-                            {Array.from({ length: rowsPerPage - paginatedItems.length }).map((_, index) => (
-                                <TableRow key={`empty-row-${index}`}>
-                                    <TableCell colSpan={3} />
-                                </TableRow>
-                            ))}
-                        </TableBody>
+                                                    </TableCell>
+                                                </TableRow>
+                                            )}
+                                        </React.Fragment>
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell colSpan={3} align="center" />
+                                    </TableRow>
+                                )}
+                                {Array.from({ length: rowsPerPage - (data?.scholars?.length || 0) }).map((_, index) => (
+                                    <TableRow key={`empty-row-${index}`}>
+                                        <TableCell colSpan={3} />
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        )}
                     </Table>
                 </TableContainer>
                 <div className="flex justify-end items-end grow overflow-x-hide">
                     <TablePagination
-                        rowsPerPageOptions={[5, 10, 15, 20]}
+                        rowsPerPageOptions={[5, 10, 15]}
                         component="div"
-                        count={data.length}
+                        count={data?.totalScholars || 0}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
@@ -532,4 +546,4 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
             />
         </main>
     );
-}
+};

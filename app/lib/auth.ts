@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import credentials from "next-auth/providers/credentials";
 import { getUserByEmail } from "./queries/user";
 import bcrypt from 'bcryptjs';
-import { User } from "./definitions";
+import { user } from "./dtos/user";
 
 export const {
     handlers: { GET, POST },
@@ -18,7 +18,7 @@ export const {
             async authorize(credentials) {
                 if ( credentials === null ) return null;
                 try {
-                    const user = await getUserByEmail(credentials?.email as string) as User;
+                    const user = await getUserByEmail(credentials?.email as string) as user;
                     if (user) {
                         const hashedPassword = user.password;
         
@@ -47,13 +47,13 @@ export const {
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
-                token.user = user as unknown as User;
+                token.user = user as unknown as user;
             }
             return token;
         },
         async session({ session, token }) {
             if (token.user) {
-                session.user = token.user as User;
+                session.user = token.user as user;
             }
             return session;
         }

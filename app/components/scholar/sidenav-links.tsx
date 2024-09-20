@@ -6,7 +6,10 @@ import Link from 'next/link';
 import HomeIcon from '@mui/icons-material/Home';
 import ChatIcon from '@mui/icons-material/Chat';
 import Badge from '@mui/material/Badge';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { useQuery } from '@tanstack/react-query';
+import { fetchUnreadCount } from '@/app/services/messages/chat.service';
 
 const linksscholar = [
   { name: 'Inicio', href: '/scholar/dashboard', icon: HomeIcon },
@@ -20,37 +23,29 @@ interface LinkProps {
 }
 
 export function SideNavLinksScholar({ current_id_number }: LinkProps) {
-  const [unreadCount, setUnreadCount] = useState(0); // Estado local para el conteo de mensajes no leídos
-  const pathname = usePathname();
-  const [fetchData, setFetchData] = useState(false);
-
-  useEffect(() => {
-    async function fetchUnreadCount() {
-        try {
-          const response = await fetch(`/api/messages/unreadcount?currentid=${encodeURIComponent(current_id_number)}`, {
-            method: 'GET',
-          });
-          const data = await response.json();
-          setUnreadCount(data.unreadCount); // Actualizar el estado local
-        } catch (error) {
-          if (error instanceof Error) {
-            console.error(error.message);
-          } else {
-            console.error("Error desconocido, la cagaste");
-          }
-      } 
+  const { watch, setValue } = useForm({
+    defaultValues: {
+      unreadCount: 0,
     }
-
-    fetchUnreadCount();
-    setFetchData(false);
-    const intervalId = setInterval(fetchUnreadCount, 50000);
-    return () => clearInterval(intervalId);
-  }, [fetchData, current_id_number]);
-
+  });
+  //fetch unread count
+  const { data, refetch } = useQuery({
+    queryKey: ['getUnreadCount'],
+    queryFn: () => fetchUnreadCount(current_id_number),
+    refetchInterval: 5000,
+  });
+  useEffect(() => {
+    if (data !== undefined && data !== null) {
+      setValue("unreadCount", data, { shouldValidate: true });
+    }
+  }, [data, setValue]);
+  const unreadCount = watch('unreadCount');
+  //pathname
+  const pathname = usePathname();
+  //link click
   const handleLinkClick = () => {
-    setFetchData(true); // Establece el estado para ejecutar el efecto
+    refetch();
   };
-
   return (
     <>
       {linksscholar.map((link) => {

@@ -1,6 +1,6 @@
 import { auth } from "@/app/lib/auth";
 import { redirect } from "next/navigation";
-import ABMProjectTable from "@/app/components/admin/projects/table";
+
 
 export default async function Invitados() {
     const session = await auth();

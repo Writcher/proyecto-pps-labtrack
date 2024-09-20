@@ -1,6 +1,6 @@
 import { auth } from "@/app/lib/auth";
-import InventoryTable from "@/app/components/guest/inventory/table";
 import { redirect } from "next/navigation";
+import GuestInventoryQuery from "@/app/components/guest/inventory/inventoryQuery";
 
 export default async function InventarioInvitados() {
     const session = await auth();
@@ -16,7 +16,7 @@ export default async function InventarioInvitados() {
                 </p>
             </div>
             <div className="flex flex-col min-h-[80%] max-h-[80%] mt-10 md:px-10 items-center justify-center">
-                <InventoryTable 
+                <GuestInventoryQuery 
                     laboratory_id={laboratory_id} 
                 />
             </div>

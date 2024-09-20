@@ -1,4 +1,6 @@
-import React, { FormEvent } from 'react';
+"use client"
+
+import React, { useEffect, useState } from 'react';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -7,52 +9,57 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { editTableData } from '@/app/services/admin/paramsmanagement/abm.service';
+import { useMutation } from '@tanstack/react-query';
+import { editABMQuery, editFormData, editModalProps } from '@/app/lib/dtos/abm';
 
-interface EditModalProps {
-    open: boolean;
-    handleClose: () => void;
-    table: string;
-    id: number;
-    name: string;
-}
+interface APIError {
+    name?: string
+};
 
-export default function EditModal({ open, handleClose, table, id, name }: EditModalProps) {
-    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        try {
-            const formData = new FormData(event.currentTarget);
-            const name = formData.get("name") as string;
-
-            const response = await fetch("/api/admin/paramsmanagement", {
-                method: 'PUT',
-                headers: {
-                    "Content-type": "application/json"
-                },
-                body: JSON.stringify({
-                    name,
-                    id,
-                    table
-                })
-            })
-
-            if (response.status === 200) {
+export default function EditModal({ open, handleClose, table, id, name }: editModalProps) {
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<editFormData>({
+        defaultValues: {
+            name: name
+        },
+    });
+    const [apiError, setApiError] = useState<APIError>({});
+    const mutation = useMutation({
+        mutationFn: (data: editABMQuery) => editTableData(data),
+        onSuccess: (result) => {
+            if (result && result.success) {
                 handleClose();
-            }
-
-        } catch (error) {
-            if (error instanceof Error) {
-                throw new Error(error.message);
-            } else {
-                throw new Error("Error desconocido, la cagaste");
-            }
-        }
+                reset();
+            } else if (result) {
+                if (result.apiError) {
+                    setApiError(result.apiError);
+                };
+            };
+        },
+        onError: (error: APIError) => {
+            setApiError({ name: error.name });
+        },
+    });
+    const onSubmit: SubmitHandler<editFormData> = (data) => {
+        mutation.mutate({ 
+            name: data.name, 
+            id, table 
+        });
     };
-
-    //evita que se cierre si sse clickea el background
+    const handleExit = () => {
+        handleClose();
+        setApiError({});
+        reset();
+    };
     const handleDialogClick = (event: React.MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
     };
-
+    useEffect(() => {
+        reset({
+            name: name
+        });
+    }, [name, reset]);
     return (
             <Dialog 
                 open={open} 
@@ -65,7 +72,7 @@ export default function EditModal({ open, handleClose, table, id, name }: EditMo
                 fullWidth
                 PaperProps={{ 
                     component: 'form',
-                    onSubmit: handleSubmit,
+                    onSubmit: handleSubmit(onSubmit),
                     onClick: handleDialogClick,
                     style: { width: '600px', maxWidth: 'none' }
                 }} 
@@ -88,6 +95,8 @@ export default function EditModal({ open, handleClose, table, id, name }: EditMo
                                         return " Tipo de Beca ";
                                     case "grade":
                                         return " Calificación ";
+                                    case "usercareer":
+                                        return " Carrera ";
                                     default:
                                         return "";
                                 }
@@ -97,19 +106,29 @@ export default function EditModal({ open, handleClose, table, id, name }: EditMo
                     </DialogTitle>
                     <DialogContent>
                         <div className='flex flex-col w-full items-center justify-center pt-4 gap-4'>
-                            <TextField id="name" name="name" label="Nombre" helperText="Nombre de Nuevo Tipo" type="text" variant="outlined" color="warning" fullWidth required/>
+                            <TextField 
+                                id="name" 
+                                label="Nombre *"
+                                type="text" 
+                                variant="outlined" 
+                                color="warning" 
+                                fullWidth
+                                {...register("name", { required: "Este campo es requerido" })}
+                                error={!!errors.name || !!apiError.name}
+                                helperText={errors.name ? errors.name.message : apiError.name ? apiError.name : "Nombre de Nuevo Elemento"}
+                            />
                         </div>
                     </DialogContent>
                     <DialogActions>
                         <div className='flex flex-row m-4 hidden md:block'>
                             <div className='flex flex-row gap-4'>
-                                <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                                <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
                                 <Button variant="contained" size="large" color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
                             </div>
                         </div>
                         <div className='flex flex-row m-3 block md:hidden'>
                             <div className='flex flex-row justify-center gap-1'>
-                                <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                                <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
                                 <Button variant="contained"  color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
                             </div>
                         </div>
@@ -117,4 +136,4 @@ export default function EditModal({ open, handleClose, table, id, name }: EditMo
                 </div>
             </Dialog>
     );
-}
+};

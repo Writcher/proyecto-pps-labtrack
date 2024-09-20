@@ -1,112 +1,77 @@
 "use client"
 
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
+import MenuItem from '@mui/material/MenuItem';
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
-import { Alert, MenuItem } from '@mui/material';
-import { Scholarshiptype, Usercareer } from '@/app/lib/definitions';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
+import { createTableData } from '@/app/services/admin/usermanagement/scholar.service';
+import { createFormData, createModalPorps, createScholarData } from '@/app/lib/dtos/scholar';
 
-interface CreateModalProps {
-    open: boolean;
-    handleClose: () => void;
-    usercareers: Usercareer[];
-    scholarships: Scholarshiptype[];
-    laboratory_id: number;
-}
+interface APIErrors {
+    dni?: string,
+    file?: string,
+    email?: string,
+};
 
-export default function CreateScholarModal({ open, handleClose, usercareers, scholarships, laboratory_id }: CreateModalProps) {
-    const [error, setError] = useState("");
-
-    // Resetea el error cuando el modal se cierra
-    useEffect(() => {
-        if (!open) {
-            setError("");
-        }
-    }, [open]);
-
-    const [userCareer, setUserCareer] = useState<number | ''>('');
-    const handleUserCareerChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setUserCareer(event.target.value as number);
-    };
-
-    const [scholarship, setScholarship] = useState<number | ''>('');
-    const handleScholarshipChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setScholarship(event.target.value as number);
-    };
-
-    const [careerLevel, setCareerLevel] = useState<number | ''>('');
-    const handleCareerLevelChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setCareerLevel(event.target.value as number);
-    };
-
-    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        try {
-            const formData = new FormData(event.currentTarget);
-            const name = formData.get("name") as string;
-            const file = formData.get("file") as string;
-            const dni = formData.get("dni") as string;
-            const careerstring = formData.get("career");
-            const careerlevelstring = formData.get("careerlevel");
-            const address = formData.get("address") as string;
-            const phone = formData.get("phone") as string;
-            const email = formData.get("email") as string;
-            const password = formData.get("password") as string;
-            const scholarshipstring = formData.get("scholarship"); 
-
-            const scholarshiptype_id = scholarshipstring ? parseInt(scholarshipstring as string, 10) : undefined;
-            const usercareer_id = careerstring ? parseInt(careerstring as string, 10) : undefined;
-            const careerlevel = careerlevelstring ? parseInt(careerlevelstring as string, 10) : undefined;
-
-            const response = await fetch("/api/admin/usermanagement/scholar", {
-                method: 'POST',
-                headers: {
-                    "content-type": "application/json"
-                },
-                body: JSON.stringify({
-                    name,
-                    file,
-                    dni,
-                    address,
-                    phone,
-                    careerlevel,
-                    email,
-                    password,
-                    laboratory_id,
-                    scholarshiptype_id,
-                    usercareer_id,
-                })
-            });
-
-            if (response.ok) {
+export default function CreateScholarModal({ open, handleClose, usercareers, scholarships, laboratory_id }: createModalPorps) {
+    const { watch, register, handleSubmit, reset, formState: { errors } } = useForm<createFormData>({
+        defaultValues: {
+            careerlevel: 0,
+            usercareer_id: 0,
+            scholarshiptype_id: 0,
+        },
+      });
+    const [apiError, setApiError] = useState<APIErrors>({});
+    const mutation = useMutation({
+        mutationFn: (data: createScholarData) => createTableData(data),
+        onSuccess: (result) => {
+            if (result && result.success) {
                 handleClose();
-            } else {
-                const result = await response.json();
-                setError(result.error || "Error desconocido");
-            }
-        } catch (error) {
-            if (error instanceof Error) {
-                setError(error.message);
-            } else {
-                setError("Error desconocido");
-            }
-        }
+                reset();
+            } else if (result) {
+                if (result.apiError) {
+                    setApiError(result.apiError);
+                };
+            };
+        },
+        onError: (error: APIErrors) => {
+            setApiError({ dni: error.dni, file: error.file, email: error.email });
+        },
+    });
+    const onSubmit: SubmitHandler<createFormData> = (data) => {
+        mutation.mutate({ 
+            name: data.name,
+            file: data.file,
+            dni: data.dni,
+            careerlevel: data.careerlevel,
+            usercareer_id: data.usercareer_id,
+            scholarshiptype_id: data.scholarshiptype_id,
+            address: data.address,
+            phone: data.phone,
+            email: data.email,
+            password: data.password,
+            laboratory_id: laboratory_id
+        });
     };
-
-    // Evita que se cierre si se clickea el background
+    const handleExit = () => {
+        handleClose();
+        setApiError({});
+        reset();
+    };
     const handleDialogClick = (event: React.MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
     };
-
     return (
-        <Dialog 
-            open={open} 
+        <Dialog
+            open={open}
             onClose={(event, reason) => {
                 if (reason !== 'backdropClick') {
                     handleClose();
@@ -114,12 +79,12 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
             }}
             maxWidth={false}
             fullWidth
-            PaperProps={{ 
+            PaperProps={{
                 component: 'form',
-                onSubmit: handleSubmit,
+                onSubmit: handleSubmit(onSubmit),
                 onClick: handleDialogClick,
                 style: { width: '600px', maxWidth: 'none' }
-            }} 
+            }}
         >
             <div className='flex flex-col m-2'>
                 <DialogTitle>
@@ -130,26 +95,82 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
                 <DialogContent>
                     <div className='flex flex-col w-full items-center justify-center pt-4 gap-4'>
                         <div className='flex w-full'>
-                            <TextField id="name" name="name" label="Nombre y Apellido" helperText="Ingrese Nombre y Apellido" type="text" variant="outlined" color="warning" fullWidth required/>
+                        <TextField
+                            id="name"
+                            label="Nombre y Apellido *"
+                            type="text"
+                            variant="outlined"
+                            color="warning"
+                            fullWidth
+                            {...register("name", { required: "Este campo es requerido" })}
+                            error={!!errors.name}
+                            helperText={errors.name ? errors.name.message : "Ingrese Nombre y Apellido"}
+                        />
                         </div>
-                        <div className='md:flex md:gap-4 w-full'>                    
-                            <div className='flex w-full mb-4 md:mb-0 md:w-4/5'>
-                                <TextField id="dni" name="dni" label="DNI" helperText="Ingrese DNI" type="text" variant="outlined" color="warning" fullWidth required/>
+                        <div className='md:flex md:gap-4 w-full'>          
+                            <div className='flex w-full mb-4 md:mb-0 md:w-4/6'>
+                                <TextField
+                                    id="dni"
+                                    label="DNI *"
+                                    type="text"
+                                    variant="outlined"
+                                    color="warning"
+                                    fullWidth
+                                    {...register("dni", { required: "Este campo es requerido" })}
+                                    error={!!errors.dni || !!apiError.dni}
+                                    helperText={errors.dni ? errors.dni.message : apiError.dni ? apiError.dni : "Ingrese DNI"}
+                                />
                             </div>                    
                             <div className='flex w-full md:w-2/6'>
-                                <TextField id="file" name="file" label="Legajo" helperText="Ingrese Legajo" type="text" variant="outlined" color="warning" fullWidth required/>
-                            </div>
+                                <TextField
+                                    id="file"
+                                    label="Legajo *"
+                                    type="text"
+                                    variant="outlined"
+                                    color="warning"
+                                    fullWidth
+                                    {...register("file", { required: "Este campo es requerido" })}
+                                    error={!!errors.file || !!apiError.file}
+                                    helperText={errors.file ? errors.file.message : apiError.file ? apiError.file : "Ingrese Legajo"}
+                                />
+                            </div>    
                         </div>
                         <div className='md:flex md:gap-4 w-full'>
-                            <div className='flex w-full mb-4 md:mb-0 md:w-4/5'>
-                                <TextField id="career" name="career" label="Carrera" helperText="Seleccionar Carrera" type="text" variant="outlined" color="warning" select fullWidth required value={userCareer} onChange={handleUserCareerChange}>
+                            <div className='flex w-full mb-4 md:mb-0 md:w-4/6'>
+                                <TextField
+                                    id="usercareer_id"
+                                    label="Carrera *"
+                                    type="text"
+                                    variant="outlined"
+                                    color="warning"
+                                    select
+                                    fullWidth
+                                    value={watch("usercareer_id")}
+                                    {...register("usercareer_id", { required: "Este campo es requerido", validate: value => value !== 0 || "Este campo es requerido" })}
+                                    error={!!errors.usercareer_id}
+                                    helperText={errors.usercareer_id ? errors.usercareer_id.message : "Seleccionar Carrera"}
+                                >
+                                    <MenuItem value={0}></MenuItem>
                                     {usercareers.map(usercareer => (
                                         <MenuItem key={usercareer.id} value={usercareer.id}>{usercareer.name}</MenuItem>
                                     ))}
                                 </TextField>
                             </div>
                             <div className='flex w-full md:w-2/6'>
-                                <TextField id="careerlevel" name="careerlevel" label="Año" helperText="Año de Cursado" type="text" variant="outlined" color="warning" select fullWidth required value={careerLevel} onChange={handleCareerLevelChange}>
+                                <TextField
+                                    id="careerlevel"
+                                    label="Año *"
+                                    type="text"
+                                    variant="outlined"
+                                    color="warning"
+                                    select
+                                    fullWidth
+                                    value={watch("careerlevel")}
+                                    {...register("careerlevel", { required: "Este campo es requerido", validate: value => value !== 0 || "Este campo es requerido" })}
+                                    error={!!errors.careerlevel}
+                                    helperText={errors.careerlevel ? errors.careerlevel.message : "Año de Cursado"}
+                                >
+                                    <MenuItem value={0}></MenuItem>
                                     <MenuItem key={1} value={1}>Primero</MenuItem>
                                     <MenuItem key={2} value={2}>Segundo</MenuItem>
                                     <MenuItem key={3} value={3}>Tercero</MenuItem>
@@ -160,37 +181,106 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
                             </div>
                         </div>
                         <div className='flex w-full'>
-                            <TextField id="scholarship" name="scholarship" label="Beca" helperText="Selecciona la Beca Correspondiente" type="text" variant="outlined" color="warning" select fullWidth required value={scholarship} onChange={handleScholarshipChange}> 
+                            <TextField
+                                id="scholarshiptype_id"
+                                label="Beca *"
+                                type="text"
+                                variant="outlined"
+                                color="warning"
+                                select
+                                fullWidth
+                                value={watch("scholarshiptype_id")}
+                                {...register("scholarshiptype_id", { required: "Este campo es requerido", validate: value => value !== 0 || "Este campo es requerido" })}
+                                error={!!errors.scholarshiptype_id}
+                                helperText={errors.scholarshiptype_id ? errors.scholarshiptype_id.message : "Selecciona la Beca Correspondiente"}
+                            >
+                                <MenuItem value={0}></MenuItem>
                                 {scholarships.map(scholarship => (
                                     <MenuItem key={scholarship.id} value={scholarship.id}>{scholarship.name}</MenuItem>
                                 ))}
                             </TextField>
                         </div>
                         <div className='flex w-full'>
-                            <TextField id="address" name="address" label="Dirección" helperText="Ingrese Dirección" type="text" variant="outlined" color="warning" fullWidth required/>
+                        <TextField
+                            id="address"
+                            label="Dirección *"
+                            type="text"
+                            variant="outlined"
+                            color="warning"
+                            fullWidth
+                            {...register("address", { required: "Este campo es requerido" })}
+                            error={!!errors.address}
+                            helperText={errors.address ? errors.address.message : "Ingrese Dirección"}
+                        />
                         </div>
                         <div className='flex w-full'>
-                            <TextField id="phone" name="phone" label="Teléfono" helperText="Ingrese Teléfono" type="text" variant="outlined" color="warning" fullWidth required/>
+                            <TextField
+                                id="phone"
+                                label="Teléfono *"
+                                type="text"
+                                variant="outlined"
+                                color="warning"
+                                fullWidth
+                                {...register("phone", { required: "Este campo es requerido" })}
+                                error={!!errors.phone}
+                                helperText={errors.phone ? errors.phone.message : "Ingrese Teléfono"}
+                            />
                         </div>
                         <div className='flex w-full'>
-                            <TextField id="email" name="email" label="Email" helperText="Ingrese Email" type="email" variant="outlined" color="warning" fullWidth required/>
+                            <TextField
+                                id="email"
+                                label="Email *"
+                                type="text"
+                                variant="outlined"
+                                color="warning"
+                                fullWidth
+                                {...register("email", { 
+                                    required: "Este campo es requerido",
+                                    pattern: {
+                                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                        message: "Ingrese un email válido"
+                                    }
+                                 }
+                                )}
+                                error={!!errors.email || !!apiError.email}
+                                helperText={errors.email ? errors.email.message : apiError.email ? apiError.email : "Ingrese Email"}
+                            />
                         </div>
                         <div className='flex w-full'>
-                            <TextField id="password" name="password" label="Contraseña" helperText="Ingrese Contraseña" type="password" variant="outlined" color="warning" fullWidth required/>
+                            <TextField
+                                id="password"
+                                label="Contraseña *"
+                                type="password"
+                                variant="outlined"
+                                color="warning"
+                                fullWidth
+                                {...register("password", { 
+                                    required: "Este campo es requerido", 
+                                    minLength: {
+                                        value: 12,
+                                        message: "Debe tener al menos 12 caracteres"
+                                    },
+                                    pattern: {
+                                        value: /(?=.*\d)/,
+                                        message: "Debe incluir al menos 1 número"
+                                    }
+                                })}
+                                error={!!errors.password}
+                                helperText={errors.password ? errors.password.message : "Ingrese Contraseña"}
+                            />
                         </div>
-                        {error && <Alert severity="error">{error}</Alert>}
                     </div>
                 </DialogContent>
                 <DialogActions>
                     <div className='flex flex-row m-4 hidden md:block'>
                         <div className='flex flex-row gap-4'>
-                            <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                            <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
                             <Button variant="contained" size="large" color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
                         </div>
                     </div>
                     <div className='flex flex-row m-3 block md:hidden'>
                         <div className='flex flex-row justify-center gap-1'>
-                            <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                            <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
                             <Button variant="contained"  color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
                         </div>
                     </div>
@@ -198,4 +288,4 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
             </div>
         </Dialog>
     );
-}
+};

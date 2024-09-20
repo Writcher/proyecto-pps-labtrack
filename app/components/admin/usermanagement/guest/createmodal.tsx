@@ -1,6 +1,6 @@
 "use client"
 
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -15,77 +15,64 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider/LocalizationProvider';
 import 'dayjs/locale/es';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
-import Alert from '@mui/material/Alert';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
+import { createTableData } from '@/app/services/admin/usermanagement/guest.service';
+import { createFormData, createGuestData, createModalProps } from '@/app/lib/dtos/guest';
 
 dayjs.locale('es');
 dayjs.extend(localizedFormat);
 
-interface CreateModalProps {
-    open: boolean;
-    handleClose: () => void;
-    laboratory_id: number;
-}
+interface APIError {
+    email?:string,
+};
 
-export default function CreateGuestModal({ open, handleClose, laboratory_id }: CreateModalProps) {
-    const [error, setError] = useState("");
-    const [expiresAt, setExpiresAt] = useState<Dayjs | null>(null);
-
-    // Resetea el error cuando el modal se cierra
-    useEffect(() => {
-        if (!open) {
-            setError("");
-        }
-    }, [open]);
-
-    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        try {
-            const formData = new FormData(event.currentTarget);
-            const name = formData.get("name") as string;
-            const email = formData.get("email") as string;
-            const password = formData.get("password") as string;
-            
-            const expires_at = expiresAt ? expiresAt.toDate().toISOString() : null;
-
-            if (!expires_at) {
-                setError("Debe seleccionar una fecha de vencimiento");
-                return;
-            }
-
-            const response = await fetch("/api/admin/usermanagement/guest", {
-                method: 'POST',
-                headers: {
-                    "content-type": "application/json"
-                },
-                body: JSON.stringify({
-                    name,
-                    email,
-                    expires_at,
-                    password,
-                    laboratory_id
-                })
-            });
-
-            if (response.ok) {
+export default function CreateGuestModal({ open, handleClose, laboratory_id }: createModalProps) {
+    const { watch, register, handleSubmit, reset, formState: { errors }, setValue, setError, clearErrors } = useForm<createFormData>({
+        defaultValues: {
+            name: '',
+            email: '',
+            expires_at: null,
+            password: ''
+        },
+      });
+    const [apiError, setApiError] = useState<APIError>({});
+    const mutation = useMutation({
+        mutationFn: (data: createGuestData) => createTableData(data),
+        onSuccess: (result) => {
+            if (result && result.success) {
                 handleClose();
-            } else {
-                const result = await response.json();
-                setError(result.error || "Error desconocido");
-            }
-        } catch (error) {
-            if (error instanceof Error) {
-                setError(error.message);
-            } else {
-                setError("Error desconocido");
-            }
-        }
+                reset();
+            } else if (result) {
+                if (result.apiError) {
+                    setApiError(result.apiError);
+                };
+            };
+        },
+        onError: (error: APIError) => {
+            setApiError({ email: error.email });
+        },
+    });
+    const onSubmit: SubmitHandler<createFormData> = (data) => {
+        mutation.mutate({ 
+            name: data.name,
+            email: data.email,
+            expires_at: data.expires_at,
+            password: data.password,
+            laboratory_id: laboratory_id
+        });
     };
-
-    // Evita que se cierre si se clickea el background
+    const handleExit = () => {
+        handleClose();
+        setApiError({});
+        reset();
+    };
     const handleDialogClick = (event: React.MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
     };
-
+    const isValidFutureDate = (value: Dayjs | null) => {
+        return value && value.isValid() && value.isAfter(dayjs());
+    };    
     return (
         <Dialog 
             open={open} 
@@ -98,7 +85,7 @@ export default function CreateGuestModal({ open, handleClose, laboratory_id }: C
             fullWidth
             PaperProps={{ 
                 component: 'form',
-                onSubmit: handleSubmit,
+                onSubmit: handleSubmit(onSubmit),
                 onClick: handleDialogClick,
                 style: { width: '600px', maxWidth: 'none' }
             }} 
@@ -112,46 +99,107 @@ export default function CreateGuestModal({ open, handleClose, laboratory_id }: C
                 <DialogContent>
                     <div className='flex flex-col w-full items-center justify-center pt-4 gap-4'>
                         <div className='flex w-full'>
-                            <TextField id="name" name="name" label="Nombre y Apellido" helperText="Ingrese Nombre y Apellido" type="text" variant="outlined" color="warning" fullWidth required/>
+                            <TextField
+                                id="name"
+                                label="Nombre y Apellido *"
+                                type="text"
+                                variant="outlined"
+                                color="warning"
+                                fullWidth
+                                {...register('name', { required: "Este campo es requerido" })}
+                                error={!!errors.name}
+                                helperText={errors.name ? errors.name.message : 'Ingrese Nombre y Apellido'}
+                            />
                         </div>
                         <div className='flex w-full'>
-                            <TextField id="email" name="email" label="Email" helperText="Ingrese Email" type="email" variant="outlined" color="warning" fullWidth required/>
+                            <TextField
+                                id="email"
+                                label="Email *"
+                                type="text"
+                                variant="outlined"
+                                color="warning"
+                                fullWidth
+                                {...register("email", { 
+                                    required: "Este campo es requerido",
+                                    pattern: {
+                                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                        message: "Ingrese un email válido"
+                                    }
+                                 }
+                                )}
+                                error={!!errors.email || !!apiError.email}
+                                helperText={errors.email ? errors.email.message : apiError.email ? apiError.email : "Ingrese Email"}
+                            />
                         </div>
                         <div className='flex w-full'>
                             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-                                <DatePicker
-                                    label="Fecha de Vencimiento"
-                                    value={expiresAt}
-                                    onChange={(newValue) => setExpiresAt(newValue)}
-                                    slotProps={{
-                                        textField: {
-                                            id: "expires_at",
-                                            name: "expires_at",
-                                            helperText: "Ingrese Fecha de Vencimiento",
-                                            fullWidth: true,
-                                            variant: "outlined",
-                                            color: "warning"
-                                        }
-                                    }}
-                                />
+                            <DatePicker
+                                label="Fecha de Vencimiento *"
+                                value={watch('expires_at')}
+                                onChange={(newValue) => {
+                                    if (!newValue) {
+                                        setError('expires_at', {
+                                            type: 'manual',
+                                            message: 'Este campo es requerido',
+                                        });
+                                    } else if (!isValidFutureDate(newValue)) {
+                                        setError('expires_at', {
+                                            type: 'manual',
+                                            message: 'La fecha debe ser válida y futura',
+                                        });
+                                    } else {
+                                        clearErrors('expires_at');
+                                    }
+                                    setValue('expires_at', newValue, { shouldValidate: true });
+                                }}
+                                slotProps={{
+                                    textField: {
+                                        id: "expires_at",
+                                        helperText: errors.expires_at ? errors.expires_at.message : 'Ingrese Fecha de Vencimiento',
+                                        error: !!errors.expires_at,
+                                        fullWidth: true,
+                                        variant: "outlined",
+                                        color: "warning"
+                                    }
+                                }}
+                            />
                             </LocalizationProvider>
                         </div>
                         <div className='flex w-full'>
-                            <TextField id="password" name="password" label="Contraseña" helperText="Ingrese Contraseña" type="password" variant="outlined" color="warning" fullWidth required/>
+                            <TextField
+                                id="password"
+                                label="Contraseña *"
+                                type="password"
+                                variant="outlined"
+                                color="warning"
+                                fullWidth
+                                {...register("password", { 
+                                    required: "Este campo es requerido", 
+                                    minLength: {
+                                        value: 12,
+                                        message: "Debe tener al menos 12 caracteres"
+                                    },
+                                    pattern: {
+                                        value: /(?=.*\d)/,
+                                        message: "Debe incluir al menos 1 número"
+                                    }
+                                })}
+                                error={!!errors.password}
+                                helperText={errors.password ? errors.password.message : "Ingrese Contraseña"}
+                            />
                         </div>
-                        {error && <Alert severity="error">{error}</Alert>}
                     </div>
                 </DialogContent>
                 <DialogActions>
                     <div className='flex flex-row m-4 hidden md:block'>
                         <div className='flex flex-row gap-4'>
-                            <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                            <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
                             <Button variant="contained" size="large" color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
                         </div>
                     </div>
                     <div className='flex flex-row m-3 block md:hidden'>
                         <div className='flex flex-row justify-center gap-1'>
-                            <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                            <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
                             <Button variant="contained"  color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
                         </div>
                     </div>
@@ -159,4 +207,4 @@ export default function CreateGuestModal({ open, handleClose, laboratory_id }: C
             </div>
         </Dialog>
     );
-}
+};

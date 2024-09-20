@@ -1,10 +1,10 @@
 import { auth } from "@/app/lib/auth";
 import { getSupplyStatuses } from "@/app/lib/queries/supplystatus";
 import { getSupplyTypes } from "@/app/lib/queries/supplytype";
-import ABMInventoryTable from "@/app/components/admin/inventory/table";
 import { redirect } from "next/navigation";
+import InventoryQuery from "@/app/components/admin/inventory/inventoryQuery";
 
-export default async function Invitados() {
+export default async function Inventario() {
     const session = await auth();
     if (!session?.user) redirect("/");
 
@@ -21,7 +21,7 @@ export default async function Invitados() {
                 </p>
             </div>
             <div className="flex flex-col min-h-[80%] max-h-[80%] mt-10 md:px-10 items-center justify-center">
-                <ABMInventoryTable 
+                <InventoryQuery 
                     laboratory_id={laboratory_id} 
                     supplystatuses={supplystatus} 
                     supplytypes={supplytypes}

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -9,52 +9,44 @@ import DialogTitle from "@mui/material/DialogTitle";
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Alert from '@mui/material/Alert';
+import { useForm } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
+import { deleteTableData } from '@/app/services/admin/usermanagement/guest.service';
+import { deleteModalProps } from '@/app/lib/dtos/guest';
 
-interface DeleteGuestModalProps {
-    open: boolean;
-    handleClose: () => void;
-    id: number;
-    name: string;
-}
+interface APIError {
+    message?: string,
+};
 
-export default function DeleteGuestModal({ open, handleClose, id, name }: DeleteGuestModalProps) {
-    const [error, setError] = useState("");
-
-    useEffect(() => {
-        if (!open) {
-            setError("");
-        }
-    }, [open]);
-
-    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        try {
-            const response = await fetch(`/api/admin/usermanagement/guest?id=${encodeURIComponent(id)}`, {
-                method: 'DELETE',
-
-            });
-
-            if (response.status === 200) {
+export default function DeleteGuestModal({ open, handleClose, id, name }: deleteModalProps) {
+    const { handleSubmit, reset } = useForm();
+    const [apiError, setApiError] = useState<APIError>({});
+    const mutation = useMutation({
+        mutationFn: () => deleteTableData(id),
+        onSuccess: (result) => {
+            if (result && result.success) {
                 handleClose();
-            } else {
-                const result = await response.json();
-                setError(result.error || "Error desconocido");
-            }
-
-        } catch (error) {
-            if (error instanceof Error) {
-                throw new Error(error.message);
-            } else {
-                throw new Error("Error desconocido, la cagaste");
-            }
-        }
+                reset();
+            } else if (result) {
+                if (result.apiError) {
+                    setApiError(result.apiError);
+                };
+            };
+        },
+        onError: (error: APIError) => {
+            setApiError({ message: error.message });
+        },
+    });
+    const onSubmit = () => {
+        mutation.mutate();
     };
-
-    //evita que se cierre si sse clickea el background
     const handleDialogClick = (event: React.MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
     };
-
+    const handleExit = () => {
+        setApiError({});
+        handleClose();
+    };
     return (
             <Dialog 
                 open={open} 
@@ -67,7 +59,7 @@ export default function DeleteGuestModal({ open, handleClose, id, name }: Delete
                 fullWidth
                 PaperProps={{ 
                     component: 'form',
-                    onSubmit: handleSubmit,
+                    onSubmit: handleSubmit(onSubmit),
                     onClick: handleDialogClick,
                     style: { width: '600px', maxWidth: 'none' }
                 }} 
@@ -79,23 +71,23 @@ export default function DeleteGuestModal({ open, handleClose, id, name }: Delete
                         </div>
                     </DialogTitle>
                     <DialogContent>
-                        <div className='flex flex-col w-full items-center justify-center pt-4 gap-4'>
+                        <div className='flex flex-col w-full pt-4 gap-4'>
                             <div className='text-gray-700 font-medium text-xl mb-2'>
                                 Esto eliminara la cuenta del invitado, ¿Esta seguro?
                             </div>
-                            {error && <Alert severity="error">{error}</Alert>}
+                            {apiError.message && <Alert severity="error" sx={{ fontSize: '1.05rem' }}>{apiError.message}</Alert>}
                         </div>
                     </DialogContent>
                     <DialogActions>
                         <div className='flex flex-row m-4 hidden md:block'>
                             <div className='flex flex-row gap-4'>
-                                <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                                <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
                                 <Button variant="contained" size="large" color="success" disableElevation endIcon={<DeleteForeverIcon />} type="submit">BORRAR</Button>
                             </div>
                         </div>
                         <div className='flex flex-row m-3 block md:hidden'>
                             <div className='flex flex-row justify-center gap-4'>
-                                <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
+                                <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
                                 <Button variant="contained"  color="success" disableElevation endIcon={<DeleteForeverIcon />} type="submit">BORRAR</Button>
                             </div>
                         </div>
@@ -103,4 +95,4 @@ export default function DeleteGuestModal({ open, handleClose, id, name }: Delete
                 </div>
             </Dialog>
     );
-}
+};

@@ -13,10 +13,6 @@ const linksguest = [
   //Añadir links segun necesario aca.
 ];
 
-interface LinkProps {
-  current_id_number: number;
-}
-
 export function SideNavLinksGuest() {
   const pathname = usePathname();
   return (

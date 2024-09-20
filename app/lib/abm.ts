@@ -1,295 +1,191 @@
-import { ABMcreate, ABMdelete, ABMedit, Grade, NewGrade, NewProjecttype, NewScolarchiptype, NewSupplystatus, NewSupplytype, NewUsercareer, Projectstatus, Projecttype, Scholarshiptype, Supplystatus, Supplytype, Usercareer } from '../lib/definitions';
-import { createGrade, dropGrade, getGradeByName, getGrades, updateGrade} from './queries/grade';
+import { createABMQuery, editABMQuery, checkExistanceQuery, fetchABMItemQuery, fetchABMQuery, checkItemExistanceQuery, editABMItemQuery, createABMItemQuery } from './dtos/abm';
+import { checkGradesABM, createGrade, getGradesABM, editGrade} from './queries/grade';
 import { createHistoricProjectStatus } from './queries/historicprojectstatus';
 import { createHistoricProjectType } from './queries/historicprojecttype';
 import { createHistoricScholarshipType } from './queries/historicscholarshiptype';
 import { createHistoricUserCareer } from './queries/historicusercareer';
-import { createProjectStatus, dropProjectStatus, getProjectStatusByName, getProjectStatuses, updateProjectStatus } from './queries/projectstatus';
-import { createProjectType, dropProjectType, getProjectTypeByName, getProjectTypes, updateProjectType } from './queries/projecttype';
-import { createScholarshipType, dropScholarshipType, getScholarshipTypeByName, getScholarshipTypes, updateScholarshipType } from './queries/scholarshiptype';
-import { createSupplyStatus, dropSupplyStatus, getSupplyStatusByName, getSupplyStatuses, updateSupplyStatus } from './queries/supplystatus';
-import { createSupplyType, dropSupplyType, getSupplyTypeByName, getSupplyTypes, updateSupplyType } from './queries/supplytype';
-import { createUserCareer, dropUserCareer, getUserCareerByName, getUserCareers, updateUserCareer } from './queries/usercareer';
+import { checkProjectStatusesABM, createProjectStatus, getProjectStatusesABM, editProjectStatus } from './queries/projectstatus';
+import { checkProjectTypesABM, createProjectType, getProjectTypesABM, editProjectType } from './queries/projecttype';
+import { checkScholarshipTypesABM, createScholarshipType, getScholarshipTypesABM, editScholarshipType } from './queries/scholarshiptype';
+import { checkSupplyStatusesABM, createSupplyStatus, getSupplyStatusesABM, editSupplyStatus } from './queries/supplystatus';
+import { checkSupplyTypesABM, createSupplyType, getSupplyTypesABM, editSupplyType } from './queries/supplytype';
+import { checkUserCareersABM, createUserCareer, getUserCareersABM, editUserCareer } from './queries/usercareer';
 
-export async function createInstance(query: ABMcreate) {
+export async function createInstance(params: createABMQuery) {
     try {
         const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade", "usercareer"];
-        if (!allowedTables.includes(query.table)) {
-            throw new Error(`Tabla no valida: ${query.table}`);
+        if (!allowedTables.includes(params.table)) {
+            throw new Error(`Tabla no valida: ${params.table}`);
         }
-
-        switch (query.table) {
+        const query = {
+            name: params.name,
+        } as createABMItemQuery;
+        switch (params.table) {
             case "supplytype":
-                const newSupplyType: NewSupplytype = {
-                    name: query.name,
-                };
-                await createSupplyType(newSupplyType);
+                await createSupplyType(query);
                 break;
             case "supplystatus":
-                const newSupplyStatus: NewSupplystatus = {
-                    name: query.name,
-                };
-                await createSupplyStatus(newSupplyStatus);
+                await createSupplyStatus(query);
                 break;
             case "projecttype":
-                const newProjectType: NewProjecttype = {
-                    name: query.name,
-                }
-                await createProjectType(newProjectType);
-                await createHistoricProjectType(newProjectType);
+                await createProjectType(query);
+                await createHistoricProjectType(query);
                 break;
             case "projectstatus":
-                const newProjectStatus: NewSupplystatus = {
-                    name: query.name,
-                }
-                await createProjectStatus(newProjectStatus);
-                await createHistoricProjectStatus(newProjectStatus);
+                await createProjectStatus(query);
+                await createHistoricProjectStatus(query);
                 break;
             case "scholarshiptype":
-                const newScholarshipType: NewScolarchiptype = {
-                    name: query.name,
-                }
-                await createScholarshipType(newScholarshipType);
-                await createHistoricScholarshipType(newScholarshipType);
+                await createScholarshipType(query);
+                await createHistoricScholarshipType(query);
                 break;
             case "grade":
-                const newGrade: NewGrade = {
-                    name: query.name,
-                }
-                await createGrade(newGrade);
+                await createGrade(query);
             case "usercareer":
-                const newUsercareer: NewUsercareer = {
-                    name: query.name,
-                }
-                await createUserCareer(newUsercareer);
-                await createHistoricUserCareer(newUsercareer);
+                await createUserCareer(query);
+                await createHistoricUserCareer(query);
                 break;
             default:
-                throw new Error(`No se puede manejar la tabla: ${query.table}`);
+                throw new Error(`No se puede manejar la tabla: ${params.table}`);
         }
-
         return { success: true };
-
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo crear instancia (profundo)");
     }
-}
+};
 
-{/*export async function deleteInstance(query: ABMdelete) {
+export async function editInstance(params: editABMQuery) {
     try {
         const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade", "usercareer"];
-        if (!allowedTables.includes(query.table)) {
-            throw new Error(`Tabla no valida: ${query.table}`);
+        if (!allowedTables.includes(params.table)) {
+            throw new Error(`Tabla no valida: ${params.table}`);
         }
-
-        switch (query.table) {
+        const query = {
+            name: params.name,
+            id: params.id,
+        } as editABMItemQuery;
+        const query2 = {
+            name: params.name,
+        } as createABMItemQuery;
+        switch (params.table) {
             case "supplytype":
-                await dropSupplyType(query.id);
+                await editSupplyType(query);
                 break;
             case "supplystatus":
-                await dropSupplyStatus(query.id);
+                await editSupplyStatus(query);
                 break;
             case "projecttype":
-                await dropProjectType(query.id);
+                await createHistoricProjectType(query2);
+                await editProjectType(query);
                 break;
             case "projectstatus":
-                await dropProjectStatus(query.id);
+                await createHistoricProjectStatus(query2);
+                await editProjectStatus(query);
                 break;
             case "scholarshiptype":
-                await dropScholarshipType(query.id);
+                await createHistoricScholarshipType(query2);
+                await editScholarshipType(query);
                 break;
             case "grade":
-                await dropGrade(query.id);
+                await editGrade(query);
                 break;
             case "usercareer":
-                await dropUserCareer(query.id);
+                await createHistoricUserCareer(query2);
+                await editUserCareer(query);
                 break;
             default:
-                throw new Error(`No se puede manejar la tabla: ${query.table}`);
+                throw new Error(`No se puede manejar la tabla: ${params.table}`);
         }
-
         return { success: true };
-
-    } catch (error) {
-        console.error("Error de Base de Datos:", error);
-        throw new Error("Error al eliminar la tabla (profundo)");
-    }
-}*/}
-
-export async function editInstance(query: ABMedit) {
-    try {
-        const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade", "usercareer"];
-        if (!allowedTables.includes(query.table)) {
-            throw new Error(`Tabla no valida: ${query.table}`);
-        }
-
-        switch (query.table) {
-            case "supplytype":
-                const editSupplyType: Supplytype = {
-                    name: query.name,
-                    id: query.id
-                };
-                await updateSupplyType(editSupplyType);
-                break;
-            case "supplystatus":
-                const editSupplyStatus: Supplystatus = {
-                    name: query.name,
-                    id: query.id
-                };
-                await updateSupplyStatus(editSupplyStatus);
-                break;
-            case "projecttype":
-                const editProjectType: Projecttype = {
-                    name: query.name,
-                    id: query.id
-                }
-                const newProjectType: NewProjecttype = {
-                    name: query.name,
-                }
-                await createHistoricProjectType(newProjectType);
-                await updateProjectType(editProjectType);
-                break;
-            case "projectstatus":
-                const editProjectStatus: Projectstatus = {
-                    name: query.name,
-                    id: query.id
-                }
-                const newProjectStatus: NewSupplystatus = {
-                    name: query.name,
-                }
-                await createHistoricProjectStatus(newProjectStatus);
-                await updateProjectStatus(editProjectStatus);
-                break;
-            case "scholarshiptype":
-                const editScholarshipType: Scholarshiptype = {
-                    name: query.name,
-                    id: query.id
-                }
-                const newScholarshipType: NewScolarchiptype = {
-                    name: query.name,
-                }
-                await createHistoricScholarshipType(newScholarshipType);
-                await updateScholarshipType(editScholarshipType);
-                break;
-            case "grade":
-                const editGrade: Grade = {
-                    name: query.name,
-                    id: query.id    
-                }
-                await updateGrade(editGrade);
-                break;
-            case "usercareer":
-                const editUsercareer: Usercareer = {
-                    name: query.name,
-                    id: query.id    
-                }
-                const newUsercareer: NewUsercareer = {
-                    name: query.name,
-                }
-                await createHistoricUserCareer(newUsercareer);
-                await updateUserCareer(editUsercareer);
-                break;
-            default:
-                throw new Error(`No se puede manejar la tabla: ${query.table}`);
-        }
-
-        return { success: true };
-
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo editar instancia (profundo)");
     }
-}
+};
 
-export async function getAllInstances(table: string) {
-    let data;
+export async function getInstances(params: fetchABMQuery) {  
     try {
+        let data;
         const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade", "usercareer"];
-        if (!allowedTables.includes(table)) {
-            throw new Error(`Tabla no valida: ${table}`);
+        if (!allowedTables.includes(params.table)) {
+            throw new Error(`Tabla no valida: ${params.table}`);
         }
-
-        switch (table) {
+        const query = {
+            name: params.name,
+            page: params.page,
+            rowsPerPage: params.rowsPerPage
+        } as fetchABMItemQuery;
+        switch (params.table) {
             case "supplytype":
-                data = await getSupplyTypes();
+                data = await getSupplyTypesABM(query);
                 break;
             case "supplystatus":
-                data = await getSupplyStatuses();
+                data = await getSupplyStatusesABM(query);
                 break;
             case "projecttype":
-                data = await getProjectTypes();
+                data = await getProjectTypesABM(query);
                 break;
             case "projectstatus":
-                data = await getProjectStatuses();
+                data = await getProjectStatusesABM(query);
                 break;
             case "scholarshiptype":
-                data = await getScholarshipTypes();
+                data = await getScholarshipTypesABM(query);
                 break;
             case "grade":
-                data = await getGrades();
+                data = await getGradesABM(query);
                 break;
             case "usercareer":
-                data = await getUserCareers();
+                data = await getUserCareersABM(query);
                 break;
             default:
-                throw new Error(`No se puede manejar la tabla: ${table}`);
+                throw new Error(`No se puede manejar la tabla: ${params.table}`);
         }
-
         return data;
-
     } catch (error) {
         console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo crear instancia (profundo)");
+        throw new Error("No se pudo obtener la instancia (profundo)");
     }
-}
+};
 
-export async function searchInstance(query: ABMcreate) {
-    let data;
-    let name;
+export async function checkInstanceExistance(params: checkExistanceQuery) {
     try {
+        let data;
         const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade", "usercareer"];
-        if (!allowedTables.includes(query.table)) {
-            throw new Error(`Tabla no valida: ${query.table}`);
+        if (!allowedTables.includes(params.table)) {
+            throw new Error(`Tabla no valida: ${params.table}`);
         }
-
-        switch (query.table) {
+        const query = {
+            name: params.name,
+        } as checkItemExistanceQuery;
+        switch (params.table) {
             case "supplytype":
-                name = query.name as string;
-                data = await getSupplyTypeByName(name);
+                data = await checkSupplyTypesABM(query);
                 break;
             case "supplystatus":
-                name = query.name as string;
-                data = await getSupplyStatusByName(name);
+                data = await checkSupplyStatusesABM(query);
                 break;
             case "projecttype":
-                name = query.name as string;
-                data = await getProjectTypeByName(name);
+                data = await checkProjectTypesABM(query);
                 break;
             case "projectstatus":
-                name = query.name as string;
-                data = await getProjectStatusByName(name);
+                data = await checkProjectStatusesABM(query);
                 break;
             case "scholarshiptype":
-                name = query.name as string;
-                data = await getScholarshipTypeByName(name);
+                data = await checkScholarshipTypesABM(query);
                 break;
             case "grade":
-                name = query.name as string;
-                data = await getGradeByName(name);
+                data = await checkGradesABM(query);
                 break;
             case "usercareer":
-                name = query.name as string;
-                data = await getUserCareerByName(name);
+                data = await checkUserCareersABM(query);
                 break;
             default:
-                throw new Error(`No se puede manejar la tabla: ${query.table}`);
+                throw new Error(`No se puede manejar la tabla: ${params.table}`);
         }
-
-        return data.rows;
-
+        return data;
     } catch (error) {
         console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo crear instancia (profundo)");
+        throw new Error("No se pudo obtener la instancia (profundo)");
     }
-}
+};
