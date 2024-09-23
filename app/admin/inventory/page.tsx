@@ -14,13 +14,13 @@ export default async function Inventario() {
     const supplystatus = await getSupplyStatuses();
 
     return (
-        <main className="flex flex-col w-full h-full">
-            <div className="flex flex-col text-xl md:text-3xl text-gray-700 text-center font-bold">
-                <p className="mt-16">
+        <main className="flex flex-col w-full h-full px-4 md:px-6 md:py-6">
+            <div className="flex flex-col items-center justify-center text-3xl text-gray-700 text-center font-bold h-[10%]">
+                <p>
                     Inventario
                 </p>
             </div>
-            <div className="flex flex-col min-h-[80%] max-h-[80%] mt-10 md:px-10 items-center justify-center">
+            <div className="flex flex-col items-center justify-center h-[90%]">
                 <InventoryQuery 
                     laboratory_id={laboratory_id} 
                     supplystatuses={supplystatus} 

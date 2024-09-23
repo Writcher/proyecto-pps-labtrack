@@ -12,7 +12,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { createAdminData, registerFormData } from '@/app/lib/dtos/user';
 import { createAdmin, fetchLaboratories } from '@/app/services/register/register.service';
 import { laboratory } from '@/app/lib/dtos/laboratory';
-import { IconButton } from '@mui/material';
+import { CircularProgress, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CreateLaboratoryModal from './createmodal';
 
@@ -173,8 +173,17 @@ export default function RegisterForm() {
                             helperText={errors.confirmPassword ? errors.confirmPassword.message : "Confirme Contraseña"}
                         />
                     </div>
-                    <Button variant="contained" size="large" color="warning" disableElevation endIcon={<KeyboardArrowRightIcon />} fullWidth type="submit">
-                        REGISTRARSE
+                    <Button 
+                        variant="contained" 
+                        size="large" 
+                        color="warning" 
+                        disableElevation 
+                        endIcon={registerUser.isPending ? <CircularProgress color="warning" size={26}/> : <KeyboardArrowRightIcon />} 
+                        fullWidth 
+                        type="submit"
+                        disabled={registerUser.isPending}
+                        >
+                            REGISTRARSE
                     </Button>
                 </div>
             </form>

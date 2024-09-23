@@ -1,7 +1,7 @@
 "use client"
 
 import Button from "@mui/material/Button";
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import LoginIcon from '@mui/icons-material/Login';
 import { useRouter } from "next/navigation"; 
 import { useState } from "react";
 import TextField from "@mui/material/TextField";
@@ -89,11 +89,12 @@ export default function LoginForm({ admin, guest, scholar }: loginFormProps ) {
                     size="large" 
                     color="warning" 
                     disableElevation
+                    endIcon={mutation.isPending ? <CircularProgress color="warning" size={26}/> : <LoginIcon />} 
                     fullWidth 
                     type="submit"
                     disabled={mutation.isPending}
                 >
-                    {mutation.isPending ? <CircularProgress color="warning" size={26}/> : "INICIAR SESIÓN"}
+                    INICIAR SESIÓN
                 </Button>
             </form>
             {apiError.other && <Alert severity="error">{apiError.other}</Alert>}

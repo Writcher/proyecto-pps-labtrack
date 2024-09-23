@@ -14,15 +14,15 @@ export default async function Layout({ children }: { children: React.ReactNode }
                 No tienes permiso para ver esta página.
               </p>
           </div>
-      )
-  }
+      );
+  };
 
   return (
-      <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
-        <div className="w-full flex-none md:w-60">
+      <div className="flex flex-col md:flex-row h-screen">
+        <div className="w-full md:w-[15%]">
           <SideNav />
         </div>
-        <div className="flex-grow bg-gray-100 md:overflow-y-auto">{children}</div>
+        <div className="flex flex-grow bg-gray-100 md:w-[85%]">{children}</div>
       </div>
   );
-}
+};

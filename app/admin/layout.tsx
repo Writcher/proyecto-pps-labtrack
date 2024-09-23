@@ -18,15 +18,15 @@ export default async function Layout({ children }: { children: React.ReactNode }
                   No tienes permiso para ver esta página.
               </p>
           </div>
-      )
-  }
+      );
+  };
   
   return (
       <div className="flex flex-col md:flex-row h-screen">
         <div className="w-full md:w-[15%]">
           <SideNav />
         </div>
-        <div className="flex-grow bg-gray-100">{children}</div>
+        <div className="flex flex-grow bg-gray-100 md:w-[85%]">{children}</div>
         <div className="h-16 w-full md:hidden">
           <form action={doLogout}>
             <div className="flex flex-row h-16 bg-gradient-to-t from-gray-800 to-gray-700 border-t-4 border-orange-500 text-white items-center justify-end">
@@ -38,4 +38,4 @@ export default async function Layout({ children }: { children: React.ReactNode }
         </div>
       </div>
   );
-}
+};

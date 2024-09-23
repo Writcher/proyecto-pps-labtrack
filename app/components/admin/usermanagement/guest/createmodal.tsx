@@ -19,6 +19,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { createTableData } from '@/app/services/admin/usermanagement/guest.service';
 import { createFormData, createGuestData, createModalProps } from '@/app/lib/dtos/guest';
+import CircularProgress from '@mui/material/CircularProgress';
 
 dayjs.locale('es');
 dayjs.extend(localizedFormat);
@@ -194,13 +195,13 @@ export default function CreateGuestModal({ open, handleClose, laboratory_id }: c
                     <div className='flex flex-row m-4 hidden md:block'>
                         <div className='flex flex-row gap-4'>
                             <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
-                            <Button variant="contained" size="large" color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
+                            <Button variant="contained" size="large" color="success" disableElevation endIcon={mutation.isPending ? <CircularProgress color="warning" size={26}/> : <SaveIcon />} type="submit" disabled={mutation.isPending}>GUARDAR</Button>
                         </div>
                     </div>
                     <div className='flex flex-row m-3 block md:hidden'>
                         <div className='flex flex-row justify-center gap-1'>
                             <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
-                            <Button variant="contained"  color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
+                            <Button variant="contained"  color="success" disableElevation endIcon={mutation.isPending ? <CircularProgress color="warning" size={26}/> : <SaveIcon />} type="submit" disabled={mutation.isPending}>GUARDAR</Button>
                         </div>
                     </div>
                 </DialogActions>

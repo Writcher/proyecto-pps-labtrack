@@ -224,9 +224,9 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
         refetch();
     };
     return (
-        <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
-            <div className="flex flex-row w-full mb-4">
-                <div className="flex flex-row gap-2 h-14 text-gray-700">
+        <main className="flex flex-col gap-2 w-full h-full">
+            <div className="flex flex-col md:flex-row justify-center text-gray-700">
+                <div className="flex flex-row gap-2 h-14">
                     <ButtonGroup variant="outlined" color="inherit">
                         <Button 
                             variant="outlined" 
@@ -268,7 +268,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                     <MenuItem onClick={handleScholarshipTypeFilterSelect}>Filtrar por Beca</MenuItem>
                     <MenuItem onClick={handleUserCareerFilterSelect}>Filtrar por Carrera</MenuItem>
                 </Menu>
-                <form className="flex items-center justify-start md:w-2/6">
+                <form className="flex items-center justify-start mt-4 md:mt-0 md:w-2/6">
                     {showSearchForm && (
                         <TextField 
                             id="search"
@@ -332,7 +332,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                     </Button>
                 </div>
             </div>
-            <div className="flex gap-2 md:flex-row md:flex-wrap">
+            <div className="flex flex-col md:flex-row md:flex-wrap gap-2">
                 {Object.entries(activeFilters).map(([key, value]) => (
                     value && (
                         <span key={key} className="border border-gray-700 p-2 rounded text-xs text-gray-700 md:text-sm">
@@ -343,7 +343,7 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                     )
                 ))}
             </div>
-            <div className="flex flex-col custom-scrollbar overflow-y-auto h-full">
+            <div className="flex flex-grow custom-scrollbar overflow-y-auto">
                 <TableContainer>
                     <Table stickyHeader>
                         <TableBody>
@@ -512,17 +512,17 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                         )}
                     </Table>
                 </TableContainer>
-                <div className="flex justify-end items-end grow overflow-x-hide">
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 15]}
-                        component="div"
-                        count={data?.totalScholars || 0}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                </div>
+            </div>
+            <div className="flex justify-end items-end overflow-x-hide">
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 15]}
+                    component="div"
+                    count={data?.totalScholars || 0}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
             </div>
             <CreateScholarModal
                 open={modalOpenCreate}

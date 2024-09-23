@@ -325,8 +325,8 @@ export default function ABMHistoricTable({ historicusercareers, historicscholars
         refetch();
     };
     return (
-        <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
-            <div className="flex flex-col justify-center md:flex-row w-full md:h-14 gap-4 md:gap-2 text-gray-700">
+        <main className="flex flex-col gap-2 w-full h-full">
+            <div className="flex flex-col md:flex-row justify-center text-gray-700">
                 <div className="flex flex-row gap-2 h-14">
                     <ButtonGroup variant="outlined" color="inherit">
                         <Button 
@@ -373,7 +373,7 @@ export default function ABMHistoricTable({ historicusercareers, historicscholars
                     <MenuItem onClick={handleScholarshipTypeFilterSelect}>Filtrar por Beca</MenuItem>
                     <MenuItem onClick={handleUserCareerFilterSelect}>Filtrar por Carrera</MenuItem>
                 </Menu>
-                <form className="flex items-center justify-start md:w-2/6">
+                <form className="flex items-center justify-start mt-4 md:mt-0 md:w-2/6">
                     {showProjectSearchForm && (
                         <TextField 
                             id="projectsearch"
@@ -506,7 +506,7 @@ export default function ABMHistoricTable({ historicusercareers, historicscholars
                     </Button>
                 </div>
             </div>
-            <div className="flex flex-col gap-2 md:flex-row md:flex-wrap">
+            <div className="flex flex-col md:flex-row md:flex-wrap gap-2">
                 {Object.entries(activeFilters).map(([key, value]) => (
                     value && (
                         <span key={key} className="border border-gray-700 p-2 rounded text-xs md:text-sm">
@@ -521,7 +521,7 @@ export default function ABMHistoricTable({ historicusercareers, historicscholars
                     )
                 ))}
             </div>
-            <div className="flex flex-col custom-scrollbar overflow-y-auto h-full">
+            <div className="flex flex-grow custom-scrollbar overflow-y-auto">
                 <TableContainer>
                     <Table stickyHeader>
                         <TableBody>
@@ -585,7 +585,7 @@ export default function ABMHistoricTable({ historicusercareers, historicscholars
                                         </TableCell>
                                         <TableCell align="right" size="small" width="20%">
                                             <div className="flex items-center justify-end">
-                                            <Skeleton variant="text" width={100} />
+                                                <Skeleton variant="text" width={100} />
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -598,7 +598,7 @@ export default function ABMHistoricTable({ historicusercareers, historicscholars
                                         <React.Fragment key={row.id}>
                                             <TableRow 
                                                 onClick={() => toggleRowExpansion(row.id)}
-                                                className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-100' : ''}`}
+                                                className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-200' : ''}`}
                                             >
                                                 <TableCell align="left" size="small">
                                                     <div className="text-gray-700 font-medium text-[15px] md:text-lg">
@@ -622,9 +622,9 @@ export default function ABMHistoricTable({ historicusercareers, historicscholars
                                                 </TableCell>
                                             </TableRow>
                                             {expandedRowId === row.id && (
-                                                <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-100">
+                                                <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-200">
                                                     <TableCell colSpan={4}>
-                                                        <div className="flex flex-col w-full">
+                                                        <div className="flex flex-col">
                                                             <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">
                                                                 <strong>Descripción: </strong>{row.description}
                                                             </div>
@@ -692,17 +692,17 @@ export default function ABMHistoricTable({ historicusercareers, historicscholars
                         )}
                     </Table>
                 </TableContainer>
-                <div className="flex justify-end items-end grow overflow-x-hide">
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 15, 20]}
-                        component="div"
-                        count={data?.totalProjects || 0}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                </div>
+            </div>
+            <div className="flex justify-end items-end overflow-x-hide">
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 15, 20]}
+                    component="div"
+                    count={data?.totalProjects || 0}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
             </div>
             <CreateHistoricProjectModal
                 open={modalOpenCreate}

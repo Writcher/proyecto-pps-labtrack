@@ -78,9 +78,9 @@ export default function GuestInventoryTable({ laboratory_id }: guestInventoryTab
         setValue("expandedRowId", expandedRowId === id ? null : id);
     };
     return (
-        <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
-            <div className="flex flex-row w-full mb-4">
-                <form className="flew items-center justify-start w-2/6">
+        <main className="flex flex-col gap-2 w-full h-full">
+            <div className="flex flex-row justify-center text-gray-700">
+                <form className="flex items-center justify-start md:w-2/6">
                     <TextField 
                         id="search"
                         name="search"
@@ -94,7 +94,7 @@ export default function GuestInventoryTable({ laboratory_id }: guestInventoryTab
                 </form>
                 <div className="flex grow" />
             </div>
-            <div className="flex flex-col custom-scrollbar overflow-y-auto h-full">
+            <div className="flex flex-grow custom-scrollbar overflow-y-auto">
                 <TableContainer>
                     <Table stickyHeader>
                         <TableBody>
@@ -225,17 +225,17 @@ export default function GuestInventoryTable({ laboratory_id }: guestInventoryTab
                         )}
                     </Table>
                 </TableContainer>
-                <div className="flex justify-end items-end grow overflow-x-hide">
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 15, 20]}
-                        component="div"
-                        count={data?.totalSupplies || 0}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                </div>
+            </div>
+            <div className="flex justify-end items-end overflow-x-hide">
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 15, 20]}
+                    component="div"
+                    count={data?.totalSupplies || 0}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
             </div>
         </main>
     );
