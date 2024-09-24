@@ -191,7 +191,7 @@ export default function ABMGuestTable({ laboratory_id }: guestTableProps ) {
                                         <React.Fragment key={row.id}>
                                             <TableRow 
                                                 onClick={() => toggleRowExpansion(row.id)}
-                                                className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-100' : ''}`}
+                                                className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-200' : ''}`}
                                             >
                                                 <TableCell align="left" size="small" width="40%">
                                                     <div className="text-gray-700 font-medium text-[15px] md:text-lg">
@@ -217,7 +217,7 @@ export default function ABMGuestTable({ laboratory_id }: guestTableProps ) {
                                                 </TableCell>
                                             </TableRow>
                                             {expandedRowId === row.id && (
-                                                <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-100">
+                                                <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-200">
                                                     <TableCell colSpan={3}>
                                                         <div className="flex flex-col w-full">
                                                             <div className="flex flex-col md:flex-row gap-4">

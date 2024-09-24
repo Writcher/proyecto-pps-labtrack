@@ -41,7 +41,7 @@ export async function createTableData(data: newHistoricProjectData) {
         try {
             await createHistoricProject(historicproject);
             return { success: true };
-        } catch(error) {
+        } catch (error) {
             console.error("Error al crear proyecto:", error);
             return { success: false };
         };

@@ -248,7 +248,7 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
                                         <React.Fragment key={row.id}>
                                                 <TableRow 
                                                     onClick={() => toggleRowExpansion(row.id)}
-                                                    className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-100' : ''}`}
+                                                    className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-200' : ''}`}
                                                 >
                                                     <TableCell align="left" size="small" width="40%">
                                                         <div className="text-gray-700 font-medium text-[15px] md:text-lg">
@@ -282,7 +282,7 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
                                                     </TableCell>
                                                 </TableRow>
                                                 {expandedRowId === row.id && (
-                                                    <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-100">
+                                                    <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-200">
                                                         <TableCell colSpan={5}>
                                                             <div className="flex flex-col w-full">
                                                                 <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">

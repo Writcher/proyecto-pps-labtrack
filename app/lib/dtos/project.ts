@@ -1,5 +1,6 @@
 import { projectStatus } from "./projectstatus";
 import { projectType } from "./projecttype";
+import { fetchedProjectPageScholar } from "./scholar";
 import { scholarshipType } from "./scholarshiptype";
 import { userCareer } from "./usercareer";
 
@@ -37,7 +38,7 @@ export type projectsTableProps = {
     laboratory_id: number;
 };
 
-export type fetchProjectData = {
+export type fetchTableProjectData = {
     projectSearch: string;
     projectstatus_id: number;
     projecttype_id: number;
@@ -49,9 +50,9 @@ export type fetchProjectData = {
     rowsPerPage: number;
 };
 
-export type fetchProjectQuery = fetchProjectData;
+export type fetchTableProjectQuery = fetchTableProjectData;
 
-export type fetchedProject = {
+export type fetchedTableProject = {
     id: number;
     name: string;
     description: string;
@@ -60,3 +61,70 @@ export type fetchedProject = {
     projecttypename: string;
     projectstatusname: string;
 };
+
+export type createModalProps = {
+    open: boolean;
+    handleClose: () => void;
+    projecttypes: projectType[];
+    projectstatuses: projectStatus[];
+    laboratory_id: number;
+};
+
+export type createFormData = {
+    name: string;
+    description: string;
+    projectstatus: number;
+    projecttype: number;
+    scholars: { scholar_id: number }[];
+};
+
+export type newProjectData = {
+    name: string;
+    description: string;
+    projectstatus_id: number;
+    projecttype_id: number;
+    laboratory_id: number;
+    scholars: { scholar_id: number }[];
+};
+
+export type newProjectQuery = newProjectData;
+
+export type fetchedPageProject = {
+    id: number;
+    name: string;
+    description: string;
+    projecttype_id: number;
+    projectstatus_id: number;
+    laboratory_id: number;
+    scholars: fetchedProjectPageScholar[];
+};
+
+export type editProjectParams = {
+    id: number;
+    name: string;
+    description: string;
+    projecttype_id: number;
+    projectstatus_id: number;
+};
+
+export type editFormProps = {
+    refetch: () => void;
+    project: editProjectParams;
+};
+
+export type editFormData = {
+    name: string;
+    description: string;
+    projectstatus_id: number;
+    projecttype_id: number;
+};
+
+export type editProjectData = {
+    name: string;
+    description: string;
+    projectstatus_id: number;
+    projecttype_id: number;
+    id: number;
+};
+
+export type editProjectQuery = editProjectData;

@@ -48,6 +48,28 @@ export async function getChatScholars(labid: number) {
     };
 };
 
+export async function getAddScholars(labid: number, scholar_ids: number[]) {
+    try {
+        const type = await getTypeScholar();
+        let text = `
+        SELECT u.id, u.name
+        FROM "user" u
+        WHERE u.usertype_id = $1
+            AND u.laboratory_id = $2
+        `;
+        if (scholar_ids.length > 0) {
+            text +=  `${scholar_ids.length > 0 ? `AND u.id NOT IN (${scholar_ids.join(",")})` : ""}`
+        };
+
+        const values = [type, labid];
+        const result = await client.query(text, values);
+        return result.rows as fetchedChatUser[];
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el becario");
+    };
+};
+
 export async function getScholarsTable(params: fetchScholarQuery) {
     try {
         const type = await getTypeScholar();

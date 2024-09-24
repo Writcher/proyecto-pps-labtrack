@@ -1,9 +1,10 @@
 import { db } from "@vercel/postgres";
-import { fetchedProject, fetchProjectData } from "../dtos/project";
+import { editProjectQuery, fetchedPageProject, fetchedTableProject, fetchTableProjectData, newProjectQuery } from "../dtos/project";
+import { addScholarQuery, removeScholarQuery } from "../dtos/scholar";
 
 const client = db;
 
-export async function getProjectsTable(params: fetchProjectData) {
+export async function getProjectsTable(params: fetchTableProjectData) {
     try {
         const offset = (params.page) * params.rowsPerPage;
         const projectsearch = `%${params.projectSearch}%`;
@@ -53,9 +54,9 @@ export async function getProjectsTable(params: fetchProjectData) {
             filtertext += `AND EXISTS (
                 SELECT 1
                 FROM "projectscholar" psc2
-                JOIN "scholar" s2 ON s2.id = psc2.scholar_id
+                JOIN "user" u ON u.id = psc2.scholar_id
                 WHERE psc2.project_id = p.id
-                AND unaccent(s2.name) ILIKE unaccent($${values.length + 1})
+                AND unaccent(u.name) ILIKE unaccent($${values.length + 1})
             )
             `;
             values.push(scholarsearch)
@@ -100,11 +101,147 @@ export async function getProjectsTable(params: fetchProjectData) {
         const values2 = [params.laboratory_id];
         const countresult = await client.query(text2, values2);
         return {
-            projects: result.rows as fetchedProject[],
+            projects: result.rows as fetchedTableProject[],
             totalProjects: countresult.rows[0].total,
         };
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener los proyectos");
+    };
+};
+
+export async function getProjectById(id: number) {
+    try {
+        let text = `
+            SELECT 
+                p.id, 
+                p.name, 
+                p.description,  
+                p.projecttype_id,
+                p.projectstatus_id,
+                p.laboratory_id,
+                COALESCE(
+                    json_agg(
+                        json_build_object(
+                            'id', s.id,
+                            'name', u.name,
+                            'email', u.email,
+                            'file', s.file
+                        )
+                    ) FILTER (WHERE s.id IS NOT NULL), '[]'
+                ) AS scholars
+            FROM "project" p
+            JOIN "projecttype" pt ON p.projecttype_id = pt.id
+            JOIN "projectstatus" ps ON p.projectstatus_id = ps.id
+            LEFT JOIN "projectscholar" psc ON p.id = psc.project_id
+            LEFT JOIN "scholar" s ON s.id = psc.scholar_id
+            LEFT JOIN "user" u ON u.id = s.id
+            WHERE p.id = $1
+        `;
+        const values= [id]
+        const grouptext = `
+            GROUP BY 
+                p.id, pt.name, ps.name
+        `;
+        text += grouptext;
+        text += `
+            LIMIT 1
+        `;
+        const result = await client.query(text, values);
+        return result.rows[0] as fetchedPageProject;
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener los proyectos");
+    };
+};
+
+export async function createProject(params: newProjectQuery) {
+    try {
+        const textbegin = `BEGIN`;
+        await client.query(textbegin);
+        const text1 = `
+        INSERT INTO "project" (name, description, laboratory_id, projectstatus_id, projecttype_id)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING id
+        ;`;
+        const values1 = [params.name, params.description, params.laboratory_id, params.projectstatus_id, params.projecttype_id];
+        const response = await client.query(text1, values1);
+        const projectid = response.rows[0].id;
+        for (const scholar of params.scholars) {
+            const scholarid = scholar.scholar_id;
+            const text2 = `
+            INSERT INTO "projectscholar" (project_id, scholar_id)
+            VALUES ($1, $2)
+            `;
+            const values2 = [projectid, scholarid];
+            await client.query(text2, values2)
+        }
+        const textcommit = `COMMIT`;
+        await client.query(textcommit);
+        return { success: true, message: "Instancia creada correctamente" };
+    } catch(error) {
+        console.error("Error de Base de Datos:", error);
+        const textrollback = `ROLLBACK`;
+        await client.query(textrollback);
+        throw new Error("No se pudo crear el proyecto");
+    };
+};
+
+export async function addScholar(params: addScholarQuery) {
+    try {
+        const textbegin = `BEGIN`;
+        await client.query(textbegin);
+        for (const scholar of params.scholars) {
+            const scholarid = scholar.scholar_id;
+            const text2 = `
+            INSERT INTO "projectscholar" (project_id, scholar_id)
+            VALUES ($1, $2)
+            `;
+            const values2 = [params.project_id, scholarid];
+            await client.query(text2, values2)
+        }
+        const textcommit = `COMMIT`;
+        await client.query(textcommit);
+        return { success: true, message: "Becario agregado correctamente" };
+    } catch(error) {
+        console.error("Error de Base de Datos:", error);
+        const textrollback = `ROLLBACK`;
+        await client.query(textrollback);
+        throw new Error("No se pudo agregar el becario");
+    };
+};
+
+export async function removeScholar(params: removeScholarQuery) {
+    try {
+        const text = `
+            DELETE FROM "projectscholar"
+            WHERE scholar_id = $1 AND project_id = $2
+            `;
+        const values = [params.scholar_id, params.project_id];
+        await client.query(text, values)
+        return { success: true, message: "Becario desasociado correctamente" };
+    } catch(error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo quitar el becario");
+    };
+};
+
+export async function editProject(params: editProjectQuery) {
+    try {
+        const currenttimestamp = new Date().toISOString();
+        const text = `
+        UPDATE "project"
+        SET name = $1,
+            description = $2,
+            projectstatus_id = $3,
+            projecttype_id = $4,
+            modified_at = $5
+        WHERE id = $6
+        `;
+        const values = [params.name, params.description, params.projectstatus_id, params.projecttype_id, currenttimestamp, params.id];
+        return client.query(text, values);
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo editar el proyecto");
     };
 };

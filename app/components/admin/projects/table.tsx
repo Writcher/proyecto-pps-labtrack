@@ -20,9 +20,11 @@ import { ButtonGroup, Card, CardActionArea, CardContent } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import '@/app/components/globals.css';
-import { fetchProjectData, projectFormData, projectsTableProps } from "@/app/lib/dtos/project";
+import { fetchTableProjectData, projectFormData, projectsTableProps } from "@/app/lib/dtos/project";
 import { fetchTableData } from "@/app/services/projects/projects.service";
 import { CircularProgressWithLabel, MasonrySkeleton } from "./utils";
+import CreateProjectModal from "./createmodal";
+import { useRouter } from "next/navigation";
 
 export default function ABMProjectTable({ usercareers, scholarships, projecttypes, projectstatuses, laboratory_id }: projectsTableProps ) {
     const { watch, setValue, getValues } = useForm<projectFormData>({
@@ -51,6 +53,8 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
             modalOpenCreate: false,
         }
     });
+    //router init
+    const router = useRouter();
     //filters
     const filterAnchor = watch("filterAnchor") as any;
     const filterMenuOpen = Boolean(filterAnchor);
@@ -255,12 +259,16 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
         laboratory_id: laboratory_id,
         page: page,
         rowsPerPage: rowsPerPage,
-    } as fetchProjectData;
+    } as fetchTableProjectData;
     const { data, isLoading, refetch } = useQuery({
         queryKey: ['tableData', projectSearch, projectstatus_id, projecttype_id, scholarSearch, usercareer_id, scholarshiptype_id, page, rowsPerPage],
         queryFn: () => fetchTableData(params),
         refetchOnWindowFocus: false
     });
+    //card click
+    const handleCardClick = (id: number) => {
+        router.push(`/admin/projects/${id}`);
+    };
     //modals
         //create
     const modalOpenCreate = watch("modalOpenCreate");
@@ -459,11 +467,17 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
                                     <Masonry columns={{xs: 1, md: 3}} spacing={1}>
                                         {data && data.projects && data.projects.length > 0 ? (
                                             data.projects.map((row: any) => {
-                                                const projectprogress = (row.projecttaskcount/row.completedprojecttaskcount) * 100;
+                                                let projectprogress;
+                                                if (row.projecttaskcount && typeof row.projecttaskcount === "number" && 
+                                                    typeof row.completedprojecttaskcount === "number") {
+                                                    projectprogress = (row.completedprojecttaskcount / row.projecttaskcount) * 100;
+                                                } else {
+                                                    projectprogress = 0;
+                                                };                                 
                                                 return (
                                                 <React.Fragment key={row.id}>                     
-                                                    <Card className="flex flex-col bg-gray-100 shadow-none border border-gray-800">
-                                                        <CardActionArea>
+                                                    <Card className="flex flex-col bg-gray-100 shadow-none border border-gray-400">
+                                                        <CardActionArea onClick={() => handleCardClick(row.id)}>
                                                             <CardContent>
                                                                 <div className="flex flex-col gap-4">
                                                                     <div className="flex flex-row items-center">
@@ -473,12 +487,14 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
                                                                         <div className="flex flex-grow" />
                                                                         <CircularProgressWithLabel value={projectprogress} color="warning"/>
                                                                     </div>
-                                                                    <div className="flex text-gray-700 font-medium text-[15px] md:text-lg">
-                                                                        {row.projecttypename}
-                                                                    </div>
-                                                                    <div className="flex text-gray-700 font-medium text-[15px] md:text-lg">
-                                                                        {row.projectstatusname}
-                                                                    </div>
+                                                                    <div className="flex flex-row gap-6">
+                                                                        <div className="flex gap-1 text-gray-700 font-medium text-[15px] md:text-lg">
+                                                                            <strong>Tipo: </strong>{row.projecttypename}
+                                                                        </div>
+                                                                        <div className="flex gap-1 text-gray-700 font-medium text-[15px] md:text-lg">
+                                                                            <strong>Estado: </strong>{row.projectstatusname}
+                                                                        </div>
+                                                                    </div>                                                                    
                                                                     <div className="flex flex-grow text-gray-700 font-medium text-[15px] md:text-lg">
                                                                         {row.description}
                                                                     </div>
@@ -502,7 +518,7 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
             </div>
             <div className="flex justify-end items-end overflow-x-hide">
                 <TablePagination
-                    rowsPerPageOptions={[6, 12, 18, 24]}
+                    rowsPerPageOptions={[3, 6, 12, 18, 24]}
                     component="div"
                     count={data?.totalProjects || 0}
                     rowsPerPage={rowsPerPage}
@@ -511,15 +527,13 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
                     onRowsPerPageChange={handleChangeRowsPerPage}
                     />
             </div>
-            {/**<CreateProjectModal
+            <CreateProjectModal
                 open={modalOpenCreate}
                 handleClose={handleCloseCreateModal}
-                usercareers={usercareers}
-                scholarships={scholarships}
                 projecttypes={projecttypes}
                 projectstatuses={projectstatuses}
                 laboratory_id={laboratory_id}
-            />*/}
+            />
         </main>
     );
 };

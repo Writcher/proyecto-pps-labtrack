@@ -11,42 +11,29 @@ import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import { createTableData } from '@/app/services/admin/paramsmanagement/abm.service';
-import { createABMQuery, createFormData, createModalProps } from '@/app/lib/dtos/abm';
 import CircularProgress from '@mui/material/CircularProgress';
+import { createProjectObservationData, createProjectObservationFormData, createProjectObservationModalProps } from '@/app/lib/dtos/observation';
+import { createProjectObservation } from '@/app/services/projects/projects.service';
 
-interface APIError {
-    name?: string
-};
-
-export default function CreateModal({ open, handleClose, table }: createModalProps) {
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<createFormData>();
-    const [apiError, setApiError] = useState<APIError>({});
+export default function CreateObservationModal({ open, handleClose, project_id }: createProjectObservationModalProps) {
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<createProjectObservationFormData>();
     const mutation = useMutation({
-        mutationFn: (data: createABMQuery) => createTableData(data),
+        mutationFn: (data: createProjectObservationData) => createProjectObservation(data),
         onSuccess: (result) => {
             if (result && result.success) {
                 handleClose();
                 reset();
-            } else if (result) {
-                if (result.apiError) {
-                    setApiError(result.apiError);
-                };
             };
-        },
-        onError: (error: APIError) => {
-            setApiError({ name: error.name });
         }
     });
-    const onSubmit: SubmitHandler<createFormData> = (data) => {
+    const onSubmit: SubmitHandler<createProjectObservationFormData> = (data) => {
         mutation.mutate({ 
-            name: data.name, 
-            table 
+            content: data.content,
+            project_id: project_id
         });
     };
     const handleExit = () => {
         handleClose();
-        setApiError({});
         reset();
     };
     const handleDialogClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -72,44 +59,30 @@ export default function CreateModal({ open, handleClose, table }: createModalPro
             <div className='flex flex-col m-2'>
                 <DialogTitle>
                     <div className='text-gray-700 items-center font-medium text-2xl md:text-3xl mb-2'>
-                        Crear nuev  
-                        {(() => {
-                            switch (table) {
-                                case "supplytype":
-                                    return "o Tipo de Insumo";
-                                case "projecttype":
-                                    return "o Tipo de Proyecto";
-                                case "supplystatus":
-                                    return "o Estado de Insumo";
-                                case "projectstatus":
-                                    return "o Estado de Proyecto";
-                                case "scholarshiptype":
-                                    return "o Tipo de Beca";
-                                case "grade":
-                                    return "a Calificación";
-                                case "usercareer":
-                                    return "a Carrera";
-                                default:
-                                    return "";
-                            }
-                        })()}
+                        Nueva Observación
                     </div>
                 </DialogTitle>
                 <DialogContent>
                     <div className='flex flex-col w-full items-center justify-center pt-4 gap-4'>
                         <TextField
-                            id="name"
-                            label="Nombre *"
+                            id="content"
+                            label="Observación *"
                             type="text"
                             variant="outlined"
                             color="warning"
+                            multiline 
+                            rows={4} 
                             fullWidth
-                            {...register("name", { 
-                                    required: "Este campo es requerido" 
+                            {...register("content", { 
+                                    required: "Este campo es requerido",
+                                    maxLength: {
+                                        value: 255, 
+                                        message: "Máximo 255 caracteres"
+                                    },
                                 }
                             )}
-                            error={!!errors.name || !!apiError.name}
-                            helperText={errors.name ? errors.name.message : apiError.name ? apiError.name : "Nombre de Nuevo Elemento"}
+                            error={!!errors.content }
+                            helperText={errors.content ? errors.content.message : "Observación"}
                         />
                     </div>
                 </DialogContent>

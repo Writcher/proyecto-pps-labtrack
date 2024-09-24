@@ -39,7 +39,6 @@ export default function ChatScholar({ laboratory_id, current_id, usertype_id }: 
         queryFn: () => fetchChatUsers(params),
         refetchInterval: 5000,
     });
-    console.log(usersQuery)
     useEffect(() => {
         if (usersQuery) {
             setValue("users", usersQuery);

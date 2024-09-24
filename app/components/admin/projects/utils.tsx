@@ -13,7 +13,7 @@ export function MasonrySkeleton() {
       <Masonry columns={matches ? 3 : 1} spacing={1}>
         {Array.from({ length: 6 }).map((_, index) => (
           <div key={index} className="flex flex-col">
-            <Skeleton variant="rectangular" height={225} />
+            <Skeleton variant="rectangular" height={225} className='rounded'/>
           </div>
         ))}
       </Masonry>
