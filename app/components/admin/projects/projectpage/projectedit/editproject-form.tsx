@@ -16,8 +16,8 @@ export default function EditProjectForm({ project, refetch }: editFormProps) {
         defaultValues: {
             name: "",
             description: "",
-            projectstatus_id: 0,
-            projecttype_id: 0
+            projectstatus_id: '',
+            projecttype_id: ''
         },
     });
     const { data: selectdata, isLoading } = useQuery({
@@ -37,8 +37,8 @@ export default function EditProjectForm({ project, refetch }: editFormProps) {
         mutation.mutate({ 
             name: data.name,
             description: data.description,
-            projecttype_id: data.projecttype_id,
-            projectstatus_id: data.projectstatus_id,
+            projecttype_id: data.projecttype_id as number,
+            projectstatus_id: data.projectstatus_id as number,
             id: project.id,
         });
     };
@@ -113,6 +113,7 @@ export default function EditProjectForm({ project, refetch }: editFormProps) {
                             error={!!errors.projecttype_id}
                             disabled={isLoading}
                         >
+                            {isLoading && <MenuItem value=''></MenuItem>}
                             {selectdata && selectdata.projecttypes && selectdata.projecttypes.length > 0 && selectdata.projecttypes.map((type: any) => (
                                 <MenuItem key={type.id} value={type.id}>{type.name}</MenuItem>
                             ))}
@@ -132,6 +133,7 @@ export default function EditProjectForm({ project, refetch }: editFormProps) {
                             error={!!errors.projectstatus_id}
                             disabled={isLoading}
                         > 
+                            {isLoading && <MenuItem value=''></MenuItem>}
                             {selectdata && selectdata.projectstatuses && selectdata.projectstatuses.length > 0 && selectdata.projectstatuses.map((status: any) => (
                                 <MenuItem key={status.id} value={status.id}>{status.name}</MenuItem>
                             ))}

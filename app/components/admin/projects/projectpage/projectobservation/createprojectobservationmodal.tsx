@@ -15,7 +15,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { createProjectObservationData, createProjectObservationFormData, createProjectObservationModalProps } from '@/app/lib/dtos/observation';
 import { createProjectObservation } from '@/app/services/projects/projects.service';
 
-export default function CreateObservationModal({ open, handleClose, project_id }: createProjectObservationModalProps) {
+export default function CreateObservationModal({ open, handleClose, project_id, scholar_ids }: createProjectObservationModalProps) {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<createProjectObservationFormData>();
     const mutation = useMutation({
         mutationFn: (data: createProjectObservationData) => createProjectObservation(data),
@@ -29,7 +29,8 @@ export default function CreateObservationModal({ open, handleClose, project_id }
     const onSubmit: SubmitHandler<createProjectObservationFormData> = (data) => {
         mutation.mutate({ 
             content: data.content,
-            project_id: project_id
+            project_id: project_id,
+            scholar_ids: scholar_ids
         });
     };
     const handleExit = () => {

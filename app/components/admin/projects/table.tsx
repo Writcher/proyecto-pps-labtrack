@@ -479,7 +479,7 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
                                                     <Card className="flex flex-col bg-gray-100 shadow-none border border-gray-400">
                                                         <CardActionArea onClick={() => handleCardClick(row.id)}>
                                                             <CardContent>
-                                                                <div className="flex flex-col gap-4">
+                                                                <div className="flex flex-col gap-2">
                                                                     <div className="flex flex-row items-center">
                                                                         <div className="flex text-gray-700 font-medium md:font-bold text-[17px] md:text-lg">
                                                                             {row.name}

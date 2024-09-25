@@ -129,6 +129,7 @@ export default function AddScholarModal({ open, handleClose, laboratory_id, proj
                                         helperText={errors.scholars?.[index]?.scholar_id ? errors.scholars[index].scholar_id.message : isLoading ? "Cargando Becarios" : "Seleccionar Becario"}
                                         disabled={isLoading}
                                     >
+                                        {isLoading && <MenuItem value=''></MenuItem>}
                                         {labscholars && labscholars.length > 0 && labscholars.map((scholar: any) => (
                                             <MenuItem key={scholar.id} value={scholar.id}>{scholar.name}</MenuItem>
                                         ))}

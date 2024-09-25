@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Box, CircularProgress, CircularProgressProps, Skeleton, Typography, useMediaQuery } from '@mui/material';
 import Masonry from '@mui/lab/Masonry';
+import { styled } from '@mui/material/styles';
+import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 
 export function MasonrySkeleton() {
   const [isMounted, setIsMounted] = useState(false);
@@ -50,3 +52,19 @@ export function CircularProgressWithLabel(
       </Box>
   );
 };
+
+const Gray800Tooltip = styled(({ className, ...props }: TooltipProps) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+        backgroundColor: '#1F2937',
+        color: '#FFFFFF',
+        fontSize: 11,
+        maxWidth: 'none',
+    },
+    [`& .${tooltipClasses.arrow}`]: {
+      color: '#1F2937',
+    }
+}));
+
+export default Gray800Tooltip;

@@ -190,7 +190,7 @@ export async function createProject(params: newProjectQuery) {
             `;
             const values2 = [projectid, scholarid];
             await client.query(text2, values2)
-        }
+        };
         const textcommit = `COMMIT`;
         await client.query(textcommit);
         return { success: true, message: "Instancia creada correctamente" };

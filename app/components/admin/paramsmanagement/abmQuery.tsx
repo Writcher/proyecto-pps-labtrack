@@ -78,7 +78,7 @@ export default function ABMQuery() {
             value="scholarshiptype"
           />
           <Tab
-            label="carrerra"
+            label="Carrera"
             value="usercareer"
           />
         </Tabs>

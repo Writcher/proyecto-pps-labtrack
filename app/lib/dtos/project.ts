@@ -115,8 +115,8 @@ export type editFormProps = {
 export type editFormData = {
     name: string;
     description: string;
-    projectstatus_id: number;
-    projecttype_id: number;
+    projectstatus_id: number | '';
+    projecttype_id: number | '';
 };
 
 export type editProjectData = {

@@ -1,4 +1,4 @@
-import ProjectPageQuery from '@/app/components/admin/projects/projectpageQuery';
+import ProjectPageQuery from '@/app/components/admin/projects/projectpage/projectpageQuery';
 import { getProjectName } from '@/app/lib/queries/project';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import Link from "next/link";

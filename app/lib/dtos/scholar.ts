@@ -201,7 +201,7 @@ export type projectScholarTableProps = {
 export type projectScholarFormData = {
     modalOpenCreate: boolean;
     modalOpenDelete: boolean;
-    selectedRowId: number;
+    selectedRowId: number | '';
     selectedRowName: string;
     expandedRowId: number | null;
 };

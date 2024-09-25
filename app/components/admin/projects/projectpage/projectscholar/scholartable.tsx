@@ -17,7 +17,7 @@ export default function ProjectScholarTable({ project_id, laboratory_id, scholar
             modalOpenCreate: false,
             modalOpenDelete: false,
             //selected row
-            selectedRowId: 0,
+            selectedRowId: '',
             selectedRowName: "",
             //expanded row
             expandedRowId: null,
@@ -151,7 +151,7 @@ export default function ProjectScholarTable({ project_id, laboratory_id, scholar
                 open={modalOpenDelete}
                 handleClose={handleCloseDeleteModal}
                 project_id={project_id}
-                scholar_id={selectedRowId}
+                scholar_id={selectedRowId as number}
                 scholarname={selectedRowName}
             />
         </div>

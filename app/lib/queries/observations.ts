@@ -40,29 +40,56 @@ export async function getProjectObservations(project_id: number, page: number)  
 
 export async function createObservationProject(params: createProjectObservationQuery) {
     try {
+        const textbegin = `BEGIN`;
+        await client.query(textbegin);
         const text1 = `
         INSERT INTO "observation" (content, project_id)
         VALUES ($1, $2)
+        RETURNING id
         `;
         const values1 = [params.content, params.project_id];
         const response = await client.query(text1, values1);
+        const observationid = response.rows[0].id;
+        for (const scholar_id of params.scholar_ids) {
+            const text2 = `
+            INSERT INTO "observation_read" (scholar_id, observation_id)
+            VALUES ($1, $2)
+            `;
+            const values2 = [scholar_id, observationid];
+            await client.query(text2, values2);
+        };
+        const textcommit = `COMMIT`;
+        await client.query(textcommit);
         return { success: true, message: "Instancia creada correctamente" };
     } catch(error) {
         console.error("Error de Base de Datos:", error);
+        const textrollback = `ROLLBACK`;
+        await client.query(textrollback);
         throw new Error("No se pudo crear la observacion");
     };
 };
 
 export async function dropObservation(params: deleteObservationQuery) {
     try {
+        const textbegin = `BEGIN`;
+        await client.query(textbegin);
         const text1 = `
         DELETE FROM "observation" WHERE id = $1
         `;
         const values1 = [params.id];
-        const response = await client.query(text1, values1);
+        await client.query(text1, values1);
+        const text2 = `
+        DELETE FROM "observation_read" WHERE observation_id = $1
+        `;
+        const values2 = [params.id];
+        await client.query(text2, values2);
+        const textcommit = `COMMIT`;
+        await client.query(textcommit);
         return { success: true, message: "Instancia eliminada correctamente" };
     } catch (error) {
         console.error("Error de Base de Datos:", error);
-        throw new Error("No se pudo eliminar la observacion")
+        const textrollback = `ROLLBACK`;
+        await client.query(textrollback);
+        throw new Error("No se pudo eliminar la observacion");
     };
 };
