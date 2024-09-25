@@ -4,6 +4,21 @@ import { addScholarQuery, removeScholarQuery } from "../dtos/scholar";
 
 const client = db;
 
+export async function getProjectName(id: number) {
+    try {
+        const text = `
+        SELECT name FROM "project" WHERE id = $1 LIMIT 1
+        `;
+        const values = [id];
+        const result = await client.query(text, values);
+        let response =  result.rows;
+        return response[0].name;
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el nombre");
+    };
+};
+
 export async function getProjectsTable(params: fetchTableProjectData) {
     try {
         const offset = (params.page) * params.rowsPerPage;

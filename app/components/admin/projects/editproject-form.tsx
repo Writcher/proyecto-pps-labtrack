@@ -55,11 +55,11 @@ export default function EditProjectForm({ project, refetch }: editFormProps) {
     return (
         <form className="flex flex-col w-full h-full gap-2" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-row gap-4">
-                <div className='flex text-gray-700 items-center justify-center font-bold text-l md:text-2xl mb-2'>
-                    Información de Proyecto
+                <div className='flex text-gray-700 items-center justify-center font-bold text-xl md:text-2xl mb-2'>
+                    Información
                 </div>
                 <div className="flex grow" />
-                <div className="flex">
+                <div className="flex mr-2">
                     <Button variant="contained" color="success" disableElevation endIcon={mutation.isPending ? <CircularProgress color="warning" size={26}/> : <SaveIcon />} type="submit" disabled={mutation.isPending}>GUARDAR</Button>
                 </div>
             </div>

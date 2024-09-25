@@ -1,9 +1,9 @@
 "use server"
 
-import { createProjectObservationData } from "@/app/lib/dtos/observation";
+import { createProjectObservationData, deleteObservationData } from "@/app/lib/dtos/observation";
 import { editProjectData, fetchedTableProject, fetchTableProjectData, fetchTableProjectQuery, newProjectData } from "@/app/lib/dtos/project";
 import { addScholarData, removeScholarData } from "@/app/lib/dtos/scholar";
-import { createObservationProject, getProjectObservations } from "@/app/lib/queries/observations";
+import { createObservationProject, dropObservation, getProjectObservations } from "@/app/lib/queries/observations";
 import { addScholar, createProject, editProject, getProjectById, getProjectsTable, removeScholar } from "@/app/lib/queries/project";
 import { getProjectStatuses } from "@/app/lib/queries/projectstatus";
 import { getProjectTypes } from "@/app/lib/queries/projecttype";
@@ -127,9 +127,9 @@ export async function removeProjectScholar(data: removeScholarData) {
     } ;
 };
 
-export async function fetchProjectObservations(project_id: number)  {
+export async function fetchProjectObservations(project_id: number, page: number)  {
     try {
-        const response = await getProjectObservations(project_id);
+        const response = await getProjectObservations(project_id, page);
         return response;
     } catch (error) {
         console.error("Error en fetchLabScholars:", error);
@@ -147,6 +147,21 @@ export async function createProjectObservation(data: createProjectObservationDat
         };
     } catch (error) {
         console.error("Error en createProjectObservation:", error);
+        return { success: false };
+    };
+};
+
+export async function deleteObservation(data: deleteObservationData) {
+    try {
+        try {
+            await dropObservation(data);
+            return { success: true };
+        } catch (error) {
+            console.error("Error al eliminar observación:", error);
+            return { success: false };
+        };
+    } catch (error) {
+        console.error("Error en deleteObservation:", error);
         return { success: false };
     };
 };

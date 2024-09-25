@@ -29,7 +29,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
         <div className="flex flex-grow bg-gray-100 md:w-[85%] h-[90%] md:h-full">{children}</div>
         <div className="flex flex-col h-[10%] w-full md:hidden">
           <form action={doLogout} className="flex flex-grow items-end">
-            <div className="flex flex-grow bg-gradient-to-t from-gray-800 to-gray-700 border-t-4 border-orange-500 text-white items-center justify-end">
+            <div className="flex flex-grow h-full bg-gradient-to-t from-gray-800 to-gray-700 border-t-4 border-orange-500 text-white items-center justify-end">
               <Button variant="text" size="large" color="inherit" type="submit" disableElevation endIcon={<LogoutIcon />} fullWidth>
                 CERRAR SESIÓN
               </Button>

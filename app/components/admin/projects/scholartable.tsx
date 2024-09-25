@@ -59,11 +59,11 @@ export default function ProjectScholarTable({ project_id, laboratory_id, scholar
     return (
         <div className="flex flex-col w-full h-full">
             <div className="flex flex-row gap-4">
-                <div className='flex text-gray-700 items-center justify-center font-bold text-l md:text-2xl mb-2'>
+                <div className='flex text-gray-700 items-center justify-center font-bold text-xl md:text-2xl mb-2'>
                     Becarios Asignados
                 </div>
                 <div className="flex grow" />
-                <div className="flex">
+                <div className="flex mr-2">
                     <Button variant="contained" color="success" disableElevation endIcon={<AddIcon/>} onClick={handleOpenCreateModal}>AÑADIR</Button>
                 </div>
             </div>

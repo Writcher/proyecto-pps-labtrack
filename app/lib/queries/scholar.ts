@@ -60,7 +60,6 @@ export async function getAddScholars(labid: number, scholar_ids: number[]) {
         if (scholar_ids.length > 0) {
             text +=  `${scholar_ids.length > 0 ? `AND u.id NOT IN (${scholar_ids.join(",")})` : ""}`
         };
-
         const values = [type, labid];
         const result = await client.query(text, values);
         return result.rows as fetchedChatUser[];

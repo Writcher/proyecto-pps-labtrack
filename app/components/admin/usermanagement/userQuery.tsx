@@ -1,12 +1,21 @@
 "use client"
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import ABMTable from "./table";
 import { useForm } from "react-hook-form";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import { userCareer } from "@/app/lib/dtos/usercareer";
+import { scholarshipType } from "@/app/lib/dtos/scholarshiptype";
+import ABMScholarTable from "./scholar/table";
+import ABMGuestTable from "./guest/table";
 
-export default function ABMQuery() {
+interface QueryClientProps {
+  laboratory_id: number;
+  usercareers: userCareer[];
+  scholarships: scholarshipType[];
+};
+
+export default function ScholarQuery({ laboratory_id, usercareers, scholarships }: QueryClientProps) {
   const queryClient = new QueryClient();
   const { watch, setValue } = useForm({
     defaultValues: {
@@ -23,22 +32,26 @@ export default function ABMQuery() {
         return (
           <div className="flex flex-col items-center justify-center text-3xl text-gray-700 text-center font-bold gap-10">
             <p>
-              Gestión de Parámetros
+              Gestión de Usuarios
             </p>
             <div className="flex flex-col items-center justify-center text-xl text-gray-700 text-center">
               Seleccione una pestaña
             </div>
           </div>
         );
-      case "projecttype":
-      case "projectstatus":
-      case "grade":
-      case "supplytype":
-      case "supplystatus":
-      case "scholarshiptype":
-      case "usercareer":
+      case "becario":
         return (
-          <ABMTable key={selectedTab} table={selectedTab} />
+          <ABMScholarTable
+            usercareers={usercareers}
+            scholarships={scholarships}
+            laboratory_id={laboratory_id}
+          />
+        );
+      case "invitado":
+        return (
+          <ABMGuestTable
+            laboratory_id={laboratory_id}
+          />
         );
     };
   };
@@ -54,32 +67,12 @@ export default function ABMQuery() {
           onChange={handleTabChange}
         >
           <Tab
-            label="Tipo de Proyecto"
-            value="projecttype"
+            label="Becarios"
+            value="becario"
           />
           <Tab
-            label="Estado de Proyecto"
-            value="projectstatus"
-          />
-          <Tab
-            label="Calificación"
-            value="grade"
-          />
-          <Tab
-            label="Tipo de Insumo"
-            value="supplytype"
-          />
-          <Tab
-            label="Estado de Insumo"
-            value="supplystatus"
-          />
-          <Tab
-            label="Tipo de Beca"
-            value="scholarshiptype"
-          />
-          <Tab
-            label="carrerra"
-            value="usercareer"
+            label="Invitados"
+            value="invitado"
           />
         </Tabs>
       </div>

@@ -89,7 +89,7 @@ export default function ChatScholar({ laboratory_id, current_id, usertype_id }: 
     };
     return (
         <main className="flex flex-col h-screen w-full">
-            <div className="flex h-[8%] bg-gray-700 border-b-4 border-orange-500 md:border-transparent text-white items-center">
+            <div className="flex h-[10%] bg-gray-700 border-b-4 border-orange-500 md:border-transparent text-white items-center">
                 <Tabs
                     value={tabValue}
                     onChange={handleTabChange} 

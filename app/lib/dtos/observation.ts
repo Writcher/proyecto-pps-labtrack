@@ -9,10 +9,10 @@ export type projectObservationTableProps = {
 };
 
 export type projectObservationFormData = {
+    loadMoreDisabled: boolean;
+    observations: fetchedObservations[];
     modalOpenCreate: boolean;
-    modalOpenDelete: boolean;
-    selectedRowId: number;
-    expandedRowId: number | null;
+    page: number;
 };
 
 export type createProjectObservationModalProps = {
@@ -31,3 +31,9 @@ export type createProjectObservationData = {
 };
 
 export type createProjectObservationQuery = createProjectObservationData;
+
+export type deleteObservationData = {
+    id: number
+};
+
+export type  deleteObservationQuery = deleteObservationData;

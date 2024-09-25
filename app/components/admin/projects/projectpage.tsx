@@ -1,6 +1,6 @@
 "use client"
 
-import { fetchProjectById, fetchProjectObservations } from "@/app/services/projects/projects.service";
+import { fetchProjectById } from "@/app/services/projects/projects.service";
 import Skeleton from "@mui/material/Skeleton";
 import { useQuery } from "@tanstack/react-query";
 import EditProjectForm from "./editproject-form";
@@ -31,12 +31,7 @@ export default function ProjectPage({ id }: pageProps) {
     };
     return (
         <main className="flex flex-col w-full h-full gap-2">
-            <div className="flex flex-col items-center justify-center text-xl md:text-3xl text-gray-700 text-center font-bold h-[15%] md:h-[10%]">
-                <p className="mt-6 md:mt-0">
-                    {isLoading ? <Skeleton variant='rectangular' height={40} width={400}/> : data?.name ?? ""}
-                </p>
-            </div>
-            <div className="flex flex-col h-[85%] md:h-[90%] pr-2 md:gap-2 overflow-y-auto custom-scrollbar">
+            <div className="flex flex-col h-full pr-2 md:gap-2 overflow-y-auto custom-scrollbar">
                 <div className="flex flex-col md:flex-row w-full md:h-[48%] md:gap-4">
                     <div className="flex flex-grow md:w-[50%]">
                         <EditProjectForm refetch={refetch} project={editParams!} />
@@ -49,7 +44,7 @@ export default function ProjectPage({ id }: pageProps) {
                     </div>
                 </div>
                 <Divider className="w-full"></Divider>
-                <div className="flex flex-col md:flex-row w-full md:h-[48%] md:gap-4">
+                <div className="flex flex-col md:flex-row w-full mt-2 md:h-[48%] md:gap-4">
                     <div className="flex flex-grow md:w-[50%]">
                     </div>
                     <div className="block md:hidden">
