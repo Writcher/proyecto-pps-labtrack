@@ -67,7 +67,7 @@ export default function ProjectScholarTable({ project_id, laboratory_id, scholar
                     <Button variant="contained" color="success" disableElevation endIcon={<AddIcon/>} onClick={handleOpenCreateModal}>AÑADIR</Button>
                 </div>
             </div>
-            <div className="flex flex-grow h-full w-full overflow-y-auto custom-scrollbar">
+            <div className="flex flex-grow h-full w-full overflow-y-auto custom-scrollbar pr-2">
                 <TableContainer>
                     <Table stickyHeader>
                         <TableBody>
@@ -99,43 +99,53 @@ export default function ProjectScholarTable({ project_id, laboratory_id, scholar
                             </TableRow>
                         </TableBody>
                         <TableBody>
-                            {scholars && scholars.length > 0 && scholars.map(row => (
-                                <React.Fragment key={row.id}>
-                                    <TableRow 
-                                        onClick={() => toggleRowExpansion(row.id)}
-                                        className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-200' : ''}`}
-                                    >
-                                        <TableCell align="left" size="small" width="40%">
-                                            <div className="text-gray-700 font-medium text-[15px] md:text-[17px]">
-                                                {row.name}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell align="center" size="small" width="30%">
-                                            <div className="text-gray-700 font-medium text-[15px] md:text-[17px]">
-                                                {row.file}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell align="right" size="small" width="30%">
-                                            <div className="flex flex-row justify-end gap-5 text-gray-700 mr-8">
-                                                <IconButton color="error" onClick={() => handleOpenDeleteModal(row.id, row.name)}>
-                                                    <DeleteIcon />
-                                                </IconButton>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                    {expandedRowId === row.id && (
-                                        <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-200">
-                                            <TableCell colSpan={3} size="small">
-                                                <div className="flex flex-col w-full">
-                                                    <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">
-                                                        <strong>Email: </strong>{row.email}
-                                                    </div>
+                            {scholars && scholars.length > 0 ? (
+                                scholars.map(row => (
+                                    <React.Fragment key={row.id}>
+                                        <TableRow 
+                                            onClick={() => toggleRowExpansion(row.id)}
+                                            className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-200' : ''}`}
+                                        >
+                                            <TableCell align="left" size="small" width="40%">
+                                                <div className="text-gray-700 font-medium text-[15px] md:text-[17px]">
+                                                    {row.name}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell align="center" size="small" width="30%">
+                                                <div className="text-gray-700 font-medium text-[15px] md:text-[17px]">
+                                                    {row.file}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell align="right" size="small" width="30%">
+                                                <div className="flex flex-row justify-end gap-5 text-gray-700 mr-8">
+                                                    <IconButton color="error" onClick={() => handleOpenDeleteModal(row.id, row.name)}>
+                                                        <DeleteIcon />
+                                                    </IconButton>
                                                 </div>
                                             </TableCell>
                                         </TableRow>
-                                    )}
-                                </React.Fragment>
-                            ))}
+                                        {expandedRowId === row.id && (
+                                            <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-200">
+                                                <TableCell colSpan={3} size="small">
+                                                    <div className="flex flex-col w-full">
+                                                        <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">
+                                                            <strong>Email: </strong>{row.email}
+                                                        </div>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </React.Fragment>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={3} align="center">
+                                        <div className="text-gray-700 font-medium text-[15px] md:text-[17px]">
+                                            No hay becarios asignados
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
                 </TableContainer>

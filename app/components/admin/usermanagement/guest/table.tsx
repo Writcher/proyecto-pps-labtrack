@@ -21,6 +21,7 @@ import Skeleton from "@mui/material/Skeleton";
 import { fetchTableData } from "@/app/services/admin/usermanagement/guest.service";
 import { guestFormData, guestTableProps } from "@/app/lib/dtos/guest";
 import '@/app/components/globals.css';
+import Chip from "@mui/material/Chip";
 
 export default function ABMGuestTable({ laboratory_id }: guestTableProps ) {
     const { watch, setValue } = useForm<guestFormData>({
@@ -199,13 +200,17 @@ export default function ABMGuestTable({ laboratory_id }: guestTableProps ) {
                                                     </div>
                                                 </TableCell>
                                                 <TableCell align="center" size="small" width="30%">
-                                                    <div className={`
-                                                        md:max-w-[50%] flex justify-center items-center mx-auto text-center  text-white font-medium text-[15px] md:text-lg py-2 px-2 rounded-3xl
-                                                        ${row.userstatus === 'Activo' ? 'bg-green-600' : ''}
-                                                        ${row.userstatus === 'Expirado' ? 'bg-red-500' : ''}
-                                                        ${row.userstatus === 'Pendiente' ? 'bg-yellow-500' : ''}
-                                                    `}>
-                                                        {row.userstatus}
+                                                    <div className="flex text-gray-700 font-medium md:font-bold text-[15px] items-center justify-center">
+                                                        <Chip 
+                                                            label={row.userstatus} 
+                                                            color={
+                                                                row.taskstatusname === "Expirado"
+                                                                ? "error"
+                                                                : row.taskstatusname === "Pendiente"
+                                                                ? "warning"
+                                                                : "success"
+                                                            } 
+                                                        />
                                                     </div>
                                                 </TableCell>
                                                 <TableCell align="right" size="small" width="30%">

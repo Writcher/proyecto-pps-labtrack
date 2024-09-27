@@ -8,6 +8,7 @@ import { getLabById } from "@/app/lib/queries/laboratory";
 import { getTypeAdmin } from "@/app/lib/queries/usertype";
 import SideNavQuery from "./sidenavQuery";
 import { doLogout } from "@/app/services/login/login.service";
+import IconButton from "@mui/material/IconButton";
 
 export default async function SideNav() {
   const session = await auth();
@@ -53,6 +54,11 @@ export default async function SideNav() {
             <Button variant="text" size="large" color="inherit" type="submit" disableElevation endIcon={<LogoutIcon />} fullWidth>
               CERRAR SESIÓN
             </Button>
+          </div>
+          <div className="flex h-16 grow items-center justify-center gap-2 block md:hidden text-white">
+            <IconButton color="inherit" type="submit">
+              <LogoutIcon/>
+            </IconButton>
           </div>
         </form>
       </div>

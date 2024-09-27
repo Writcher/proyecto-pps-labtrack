@@ -73,16 +73,16 @@ export async function dropObservation(params: deleteObservationQuery) {
     try {
         const textbegin = `BEGIN`;
         await client.query(textbegin);
-        const text1 = `
-        DELETE FROM "observation" WHERE id = $1
-        `;
-        const values1 = [params.id];
-        await client.query(text1, values1);
         const text2 = `
         DELETE FROM "observation_read" WHERE observation_id = $1
         `;
         const values2 = [params.id];
         await client.query(text2, values2);
+        const text1 = `
+        DELETE FROM "observation" WHERE id = $1
+        `;
+        const values1 = [params.id];
+        await client.query(text1, values1);
         const textcommit = `COMMIT`;
         await client.query(textcommit);
         return { success: true, message: "Instancia eliminada correctamente" };

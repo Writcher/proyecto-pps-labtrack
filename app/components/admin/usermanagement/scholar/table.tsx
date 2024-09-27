@@ -28,6 +28,7 @@ import React, { useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import '@/app/components/globals.css';
+import Chip from "@mui/material/Chip";
 
 export default function ABMScholarTable({ usercareers, scholarships, laboratory_id }: scholarTableProps ) {
     const { watch, setValue, getValues } = useForm<scholarFormData>({
@@ -416,13 +417,17 @@ export default function ABMScholarTable({ usercareers, scholarships, laboratory_
                                                     </div>
                                                 </TableCell>
                                                 <TableCell align="center" size="small" width="30%">
-                                                    <div className={`
-                                                        md:max-w-[50%] flex justify-center items-center mx-auto text-center  text-white font-medium text-[15px] md:text-lg py-2 px-2 rounded-3xl
-                                                        ${row.userstatus === 'Activo' ? 'bg-green-600' : ''}
-                                                        ${row.userstatus === 'Inactivo' ? 'bg-red-500' : ''}
-                                                        ${row.userstatus === 'Pendiente' ? 'bg-yellow-500' : ''}
-                                                    `}>
-                                                        {row.userstatus}
+                                                    <div className="flex text-gray-700 font-medium md:font-bold text-[15px] items-center justify-center">
+                                                        <Chip 
+                                                            label={row.userstatus} 
+                                                            color={
+                                                                row.taskstatusname === "Inactivo"
+                                                                ? "error"
+                                                                : row.taskstatusname === "Pendiente"
+                                                                ? "warning"
+                                                                : "success"
+                                                            } 
+                                                        />
                                                     </div>
                                                 </TableCell>
                                                 <TableCell align="right" size="small" width="30%">

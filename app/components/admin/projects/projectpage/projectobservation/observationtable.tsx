@@ -38,15 +38,20 @@ export default function ProjectObservationTable({ project_id, scholar_ids }: pro
     });
     useEffect(() => {
         if (data) {
+            const existingObservations = getValues("observations") || [];
             if (page === 1) {
                 setValue("observations", data.observations);
             } else {
-                const existingObservations = getValues("observations");
                 setValue("observations", [...existingObservations, ...data.observations]);
             };
-            setValue("loadMoreDisabled", observations.length == data.totalObservations);
         };
     }, [data, page, setValue, getValues]);
+    useEffect(() => {
+        if (data) {
+            const currentObservations = getValues("observations") || [];
+            setValue("loadMoreDisabled", currentObservations.length == data.totalObservations);
+        };
+    }, [observations, setValue, data]);
     const handleLoadMore = () => setValue("page", page + 1);
     //modales
     //create
@@ -87,9 +92,9 @@ export default function ProjectObservationTable({ project_id, scholar_ids }: pro
             <div className="flex flex-grow overflow-y-auto custom-scrollbar">
                 {isLoading ?
                     (
-                        <div className="flex flex-col gap-2 w-full h-full">
-                            <Skeleton variant="rectangular" width="100%" height="50%" className="rounded mr-2"/>
-                            <Skeleton variant="rectangular" width="100%" height="50%" className="rounded mr-2"/>
+                        <div className="flex flex-col gap-2 w-full h-full mr-2">
+                            <Skeleton variant="rectangular" width="100%" height="50%" className="rounded"/>
+                            <Skeleton variant="rectangular" width="100%" height="50%" className="rounded"/>
                         </div>
                     ) : (
                         <Masonry columns={1} spacing={1}>
@@ -121,7 +126,7 @@ export default function ProjectObservationTable({ project_id, scholar_ids }: pro
                                     </React.Fragment>
                                 ))
                             ) : (
-                                <div></div>
+                                <div className="flex h-1"></div>
                             )}
                         </Masonry>
                     )

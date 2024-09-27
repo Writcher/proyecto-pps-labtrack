@@ -8,6 +8,7 @@ import { addScholar, createProject, editProject, getProjectById, getProjectsTabl
 import { getProjectStatuses } from "@/app/lib/queries/projectstatus";
 import { getProjectTypes } from "@/app/lib/queries/projecttype";
 import { getAddScholars, getChatScholars } from "@/app/lib/queries/scholar";
+import { getProjectTasks } from "@/app/lib/queries/task";
 
 export async function fetchTableData(data: fetchTableProjectData) {
     try {
@@ -163,5 +164,14 @@ export async function deleteObservation(data: deleteObservationData) {
     } catch (error) {
         console.error("Error en deleteObservation:", error);
         return { success: false };
+    };
+};
+
+export async function fetchProjectTasks(project_id: number, page: number) {
+    try {
+        const response = await getProjectTasks(project_id, page);
+        return response;
+    } catch (error) {
+        console.error("Error en fetchProjectTasks:", error);
     };
 };
