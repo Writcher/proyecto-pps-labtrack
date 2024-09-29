@@ -1,0 +1,182 @@
+"use client"
+
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { deleteTask, fetchCalendarTasks } from '@/app/services/projects/projects.service';
+import { deleteTaskData, projectTaskCalendarFormData } from '@/app/lib/dtos/task';
+import Chip from '@mui/material/Chip';
+import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import { useRouter } from 'next/navigation';
+import InfoIcon from '@mui/icons-material/Info';
+
+interface pageProps {
+    id: number
+};
+
+export default function ProjectCalendar({ id }: pageProps) {
+    const calendarRef = useRef<FullCalendar | null>(null);
+    const { watch, setValue, getValues, reset } = useForm<projectTaskCalendarFormData>({
+        defaultValues: {
+            events: [],
+            start_date: null,
+            end_date: null,
+        }
+    });
+    //dates init
+    useEffect(() => {
+        const today = new Date();
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1); // Primer día del mes actual
+        const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0); // Último día del mes actual
+
+        setValue("start_date", startOfMonth);
+        setValue("end_date", endOfMonth);
+    }, [setValue]);
+    //fetch tasks
+    const start_date = watch("start_date");
+    const end_date = watch("end_date");
+    const handleDatesSet = (dateInfo: { start: Date; end: Date }) => {
+        setValue("start_date", dateInfo.start);
+        setValue("end_date", dateInfo.end);
+    };
+    const { data, isLoading } = useQuery({
+        queryKey: ['fetchProjectTasks', id, start_date, end_date],
+        queryFn: () => {
+            if (start_date) {
+                return fetchCalendarTasks(id, start_date, end_date!);
+            }
+            return Promise.resolve([]);
+        },
+        refetchOnWindowFocus: false,
+        enabled: !!start_date && !!end_date,
+    });
+    //format events
+    const events = watch("events");
+    useEffect(() => {
+        if (data) {
+            const formattedEvents = data.map(task => ({
+                id: task.id.toString(),
+                title: task.title,
+                start: new Date(task.start),
+                end: new Date(task.end),
+                extendedProps: {
+                    description: task.description,
+                    taskstatusname: task.taskstatusname,
+                    created_at: task.created_at
+                },
+                allDay: true
+            }));
+            const currentEvents = getValues("events");
+            setValue("events", [...currentEvents, ...formattedEvents]);
+        }
+    }, [data, setValue, getValues]);
+    //delete
+    const mutation = useMutation({
+        mutationFn: (data: deleteTaskData) => deleteTask(data),
+        onSuccess: (result, variables) => {
+            if (result && result.success) {
+                const existingTasks = getValues("events");
+                const updatedTasks = existingTasks.filter((task: any) => task.id !== variables.id.toString());
+                setValue("events", updatedTasks);
+            };
+        }
+    });
+    const handleDelete = (id: string) => {
+        mutation.mutate({
+            id: Number(id)
+        })
+    };
+    //buttons
+    const [headerToolbar, setHeaderToolbar] = useState({
+        left: 'title',
+        center: '',
+        right: 'prev,next today'
+    });
+    //router init
+    const router = useRouter();
+    //card click
+    const handleCardClick = (id: number) => {
+        router.push(`/admin/projects/${id}`);
+    };
+    //change header responsive
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 768) {
+                setHeaderToolbar({
+                    left: 'title',
+                    center: '',
+                    right: 'prev,next'
+                });
+            } else {
+                setHeaderToolbar({
+                    left: 'title',
+                    center: '',
+                    right: 'prev,next dayGridMonth,dayGridWeek today'
+                });
+            }
+        };
+        window.addEventListener('resize', handleResize);
+        handleResize();
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+    return (
+        <main className="flex flex-col w-full h-full">
+            <div className="flex flex-col h-full text-gray-700 overflow-y-auto custom-scrollbar">
+                <FullCalendar
+                    ref={calendarRef}
+                    plugins={[dayGridPlugin, interactionPlugin]}
+                    initialView="dayGridMonth"
+                    locale="esLocale"
+                    headerToolbar={headerToolbar}
+                    titleFormat={{
+                        year: 'numeric',
+                        month: 'long',
+                    }}
+                    buttonText={{
+                        today: 'Hoy',
+                        dayGridMonth: 'Mes',
+                        dayGridWeek: 'Semana'
+                    }}
+                    height="100%"
+                    datesSet={handleDatesSet}
+                    events={events}
+                    eventClassNames="bg-gray-100 border-gray-800 rounded p-4"
+                    eventContent={eventInfo => (
+                        <div className="flex flex-col h-full max-h-[150px] gap-2 overflow-y-auto custom-scrollbar">
+                            <div className="flex items-center text-gray-700 font-medium md:font-bold text-[15px] break-words whitespace-pre-line mr-2">
+                                {eventInfo.event.title}
+                            </div>
+                            <div className="flex items-center text-gray-700 font-medium text-[15px] break-words whitespace-pre-line mr-2">
+                                {eventInfo.event.extendedProps.description}
+                            </div>
+                            <div className="flex items-center text-gray-700 font-medium md:font-bold text-[15px] gap-1 mr-2">
+                                <Chip
+                                    label={eventInfo.event.extendedProps.taskstatusname}
+                                    color={
+                                        eventInfo.event.extendedProps.taskstatusname === "Pendiente"
+                                            ? "error"
+                                            : eventInfo.event.extendedProps.taskstatusname === "En Progreso"
+                                                ? "warning"
+                                                : "success"
+                                    }
+                                />
+                                <IconButton color="error" onClick={() => handleDelete(eventInfo.event.id)}>
+                                    <DeleteIcon />
+                                </IconButton>
+                                <IconButton>
+                                    <InfoIcon color="inherit" onClick={() => handleCardClick(1)} />
+                                </IconButton>
+                            </div>
+                        </div>
+                    )}
+                />
+            </div>
+        </main>
+    );
+};

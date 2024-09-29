@@ -3,12 +3,13 @@
 import { createProjectObservationData, deleteObservationData } from "@/app/lib/dtos/observation";
 import { editProjectData, fetchedTableProject, fetchTableProjectData, fetchTableProjectQuery, newProjectData } from "@/app/lib/dtos/project";
 import { addScholarData, removeScholarData } from "@/app/lib/dtos/scholar";
+import { createProjectTaskData, deleteTaskData } from "@/app/lib/dtos/task";
 import { createObservationProject, dropObservation, getProjectObservations } from "@/app/lib/queries/observations";
 import { addScholar, createProject, editProject, getProjectById, getProjectsTable, removeScholar } from "@/app/lib/queries/project";
 import { getProjectStatuses } from "@/app/lib/queries/projectstatus";
 import { getProjectTypes } from "@/app/lib/queries/projecttype";
 import { getAddScholars, getChatScholars } from "@/app/lib/queries/scholar";
-import { getProjectTasks } from "@/app/lib/queries/task";
+import { createTaskProject, dropTask, getCalendarTasks, getProjectTasks } from "@/app/lib/queries/task";
 
 export async function fetchTableData(data: fetchTableProjectData) {
     try {
@@ -170,6 +171,45 @@ export async function deleteObservation(data: deleteObservationData) {
 export async function fetchProjectTasks(project_id: number, page: number) {
     try {
         const response = await getProjectTasks(project_id, page);
+        return response;
+    } catch (error) {
+        console.error("Error en fetchProjectTasks:", error);
+    };
+};
+
+export async function createProjectTask(data: createProjectTaskData) {
+    try {
+        try {
+            await createTaskProject(data);
+            return { success: true };
+        } catch (error) {
+            console.error("Error al crear tarea:", error);
+            return { success: false };
+        };
+    } catch (error) {
+        console.error("Error en createProjectTask:", error);
+        return { success: false };
+    };
+};
+
+export async function deleteTask(data: deleteTaskData) {
+    try {
+        try {
+            await dropTask(data);
+            return { success: true };
+        } catch (error) {
+            console.error("Error al eliminar tarea:", error);
+            return { success: false };
+        };
+    } catch (error) {
+        console.error("Error en deleteTask:", error);
+        return { success: false };
+    };
+};
+
+export async function fetchCalendarTasks(id: number, start_date: Date, end_date: Date) {
+    try {
+        const response = await getCalendarTasks(id, start_date, end_date);
         return response;
     } catch (error) {
         console.error("Error en fetchProjectTasks:", error);

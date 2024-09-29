@@ -7,7 +7,6 @@ import EditProjectForm from "./projectedit/editproject-form";
 import Divider from "@mui/material/Divider";
 import ProjectScholarTable from "./projectscholar/scholartable";
 import ProjectObservationTable from "./projectobservation/observationtable";
-import { useEffect } from "react";
 import ProjectTaskTable from "./projecttask/tasktable";
 
 interface pageProps {
@@ -55,7 +54,7 @@ export default function ProjectPage({ id }: pageProps) {
                 <Divider className="flex w-full"></Divider>
                 <div className="flex flex-col md:flex-row w-full md:h-[48%] gap-4">
                     <div className="flex flex-grow md:w-[50%]">
-                        {isLoading ? <Skeleton variant="rectangular" width="100%" height="100%" className="rounded"/> : <ProjectTaskTable project_id={id} scholar_ids={scholar_ids!}/>}
+                        {isLoading ? <Skeleton variant="rectangular" width="100%" height="100%" className="rounded"/> : <ProjectTaskTable project_id={id}/>}
                     </div>
                     <div className="block md:hidden">
                         <Divider className="w-full mb-4"></Divider>
