@@ -25,6 +25,7 @@ export type createProjectTaskModalProps = {
     open: boolean;
     handleClose: () => void;
     project_id: number;
+    start_date_new?: Date;
 };
 
 export type createProjectTaskFormData = {
@@ -70,4 +71,6 @@ export type projectTaskCalendarFormData = {
     events: any;
     start_date: Date | null;
     end_date: Date | null;
+    modalOpenCreate: boolean;
+    start_date_new: Date;
 };

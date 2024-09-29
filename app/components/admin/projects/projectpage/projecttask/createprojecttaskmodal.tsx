@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -23,8 +23,13 @@ import { createProjectTask } from '@/app/services/projects/projects.service';
 dayjs.locale('es');
 dayjs.extend(localizedFormat);
 
-export default function CreateTaskModal({ open, handleClose, project_id }: createProjectTaskModalProps) {
-    const { register, handleSubmit, reset, formState: { errors }, setValue, setError, clearErrors, watch } = useForm<createProjectTaskFormData>();
+export default function CreateTaskModal({ open, handleClose, project_id, start_date_new }: createProjectTaskModalProps) {
+    let startDate = null as Dayjs | null;
+    const { register, handleSubmit, reset, formState: { errors }, setValue, setError, clearErrors, watch } = useForm<createProjectTaskFormData>({
+        defaultValues: {
+            start: startDate ? startDate : null
+        }
+    });
     const mutation = useMutation({
         mutationFn: (data: createProjectTaskData) => createProjectTask(data),
         onSuccess: (result) => {
@@ -53,6 +58,13 @@ export default function CreateTaskModal({ open, handleClose, project_id }: creat
     const isValidFutureDate = (value: Dayjs | null) => {
         return value && value.isValid() && value.isAfter(dayjs());
     };  
+    useEffect(() => {
+        if (start_date_new) {
+            reset({
+                start: dayjs(start_date_new)
+            })
+        };
+    }, [start_date_new]);
     return (
         <Dialog
             open={open}

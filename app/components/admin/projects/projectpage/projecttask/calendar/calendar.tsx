@@ -11,10 +11,9 @@ import { deleteTaskData, projectTaskCalendarFormData } from '@/app/lib/dtos/task
 import Chip from '@mui/material/Chip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import { useRouter } from 'next/navigation';
 import InfoIcon from '@mui/icons-material/Info';
+import CreateTaskModal from '../createprojecttaskmodal';
 
 interface pageProps {
     id: number
@@ -22,11 +21,12 @@ interface pageProps {
 
 export default function ProjectCalendar({ id }: pageProps) {
     const calendarRef = useRef<FullCalendar | null>(null);
-    const { watch, setValue, getValues, reset } = useForm<projectTaskCalendarFormData>({
+    const { watch, setValue, getValues } = useForm<projectTaskCalendarFormData>({
         defaultValues: {
             events: [],
             start_date: null,
             end_date: null,
+            modalOpenCreate: false,
         }
     });
     //dates init
@@ -34,7 +34,6 @@ export default function ProjectCalendar({ id }: pageProps) {
         const today = new Date();
         const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1); // Primer día del mes actual
         const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0); // Último día del mes actual
-
         setValue("start_date", startOfMonth);
         setValue("end_date", endOfMonth);
     }, [setValue]);
@@ -45,7 +44,7 @@ export default function ProjectCalendar({ id }: pageProps) {
         setValue("start_date", dateInfo.start);
         setValue("end_date", dateInfo.end);
     };
-    const { data, isLoading } = useQuery({
+    const { data, refetch } = useQuery({
         queryKey: ['fetchProjectTasks', id, start_date, end_date],
         queryFn: () => {
             if (start_date) {
@@ -72,10 +71,9 @@ export default function ProjectCalendar({ id }: pageProps) {
                 },
                 allDay: true
             }));
-            const currentEvents = getValues("events");
-            setValue("events", [...currentEvents, ...formattedEvents]);
+            setValue("events", formattedEvents);
         }
-    }, [data, setValue, getValues]);
+    }, [data, setValue]);
     //delete
     const mutation = useMutation({
         mutationFn: (data: deleteTaskData) => deleteTask(data),
@@ -91,6 +89,18 @@ export default function ProjectCalendar({ id }: pageProps) {
         mutation.mutate({
             id: Number(id)
         })
+    };
+    //modales
+    //create
+    const start_date_new = watch("start_date_new");
+    const modalOpenCreate = watch("modalOpenCreate");
+    const handleOpenCreateModal = (start_date: Date) => {
+        setValue("start_date_new", start_date);
+        setValue("modalOpenCreate", true);
+    };
+    const handleCloseCreateModal = () => {
+        setValue("modalOpenCreate", false);
+        refetch();
     };
     //buttons
     const [headerToolbar, setHeaderToolbar] = useState({
@@ -131,6 +141,13 @@ export default function ProjectCalendar({ id }: pageProps) {
                 <FullCalendar
                     ref={calendarRef}
                     plugins={[dayGridPlugin, interactionPlugin]}
+                    selectable={true}
+                    selectAllow={(selectInfo) => {
+                        const diffInMilliseconds = selectInfo.end.getTime() - selectInfo.start.getTime();
+                        const diffInDays = diffInMilliseconds / (1000 * 60 * 60 * 24);
+                        return diffInDays <= 1;
+                    }}
+                    dateClick={(SelectInfo) => {handleOpenCreateModal(SelectInfo.date)}}
                     initialView="dayGridMonth"
                     locale="esLocale"
                     headerToolbar={headerToolbar}
@@ -177,6 +194,12 @@ export default function ProjectCalendar({ id }: pageProps) {
                     )}
                 />
             </div>
+            <CreateTaskModal
+                open={modalOpenCreate}
+                handleClose={handleCloseCreateModal}
+                project_id={id}
+                start_date_new={start_date_new}
+            />
         </main>
     );
 };

@@ -1,4 +1,4 @@
-import ProjectCalendarQuery from '@/app/components/admin/projects/projectpage/calendar/projectcalendarQuery';
+import ProjectCalendarQuery from '@/app/components/admin/projects/projectpage/projecttask/calendar/projectcalendarQuery';
 import { getProjectName } from '@/app/lib/queries/project';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import Link from "next/link";
