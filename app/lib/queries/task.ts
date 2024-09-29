@@ -1,5 +1,5 @@
 import { db } from "@vercel/postgres";
-import { calendarTasks, createProjectTaskQuery, deleteTaskQuery, fetchedPageTask } from "../dtos/task";
+import { calendarTasks, createProjectTaskQuery, deleteTaskQuery, dragTaskQuery, fetchedPageTask } from "../dtos/task";
 import { getTaskStatusPending } from "./taskstatus";
 import dayjs from "dayjs";
 
@@ -99,5 +99,24 @@ export async function dropTask(params: deleteTaskQuery) {
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo eliminar la observacion");
+    };
+};
+
+export async function editDragTask(params: dragTaskQuery) {
+    try {
+        const startDate = new Date(params.start).toISOString();
+        const endDate = new Date(params.end).toISOString();
+        const text = `
+        UPDATE "task" 
+        SET start_date = $2,
+            end_date = $3
+        WHERE id = $1
+        `;
+        const values = [params.id, startDate, endDate];
+        await client.query(text, values);
+        return { success: true, message: "Instancia editada correctamente" };
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo editar la observacion");
     };
 };

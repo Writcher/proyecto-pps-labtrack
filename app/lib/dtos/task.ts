@@ -74,3 +74,11 @@ export type projectTaskCalendarFormData = {
     modalOpenCreate: boolean;
     start_date_new: Date;
 };
+
+export type dragTaskData = {
+    id: number;
+    start: Date;
+    end: Date;
+};
+
+export type dragTaskQuery = dragTaskData;

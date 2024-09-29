@@ -6,8 +6,8 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { deleteTask, fetchCalendarTasks } from '@/app/services/projects/projects.service';
-import { deleteTaskData, projectTaskCalendarFormData } from '@/app/lib/dtos/task';
+import { deleteTask, dragTask, fetchCalendarTasks } from '@/app/services/projects/projects.service';
+import { deleteTaskData, dragTaskData, projectTaskCalendarFormData } from '@/app/lib/dtos/task';
 import Chip from '@mui/material/Chip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
@@ -77,11 +77,9 @@ export default function ProjectCalendar({ id }: pageProps) {
     //delete
     const mutation = useMutation({
         mutationFn: (data: deleteTaskData) => deleteTask(data),
-        onSuccess: (result, variables) => {
+        onSuccess: (result) => {
             if (result && result.success) {
-                const existingTasks = getValues("events");
-                const updatedTasks = existingTasks.filter((task: any) => task.id !== variables.id.toString());
-                setValue("events", updatedTasks);
+                refetch();
             };
         }
     });
@@ -89,6 +87,31 @@ export default function ProjectCalendar({ id }: pageProps) {
         mutation.mutate({
             id: Number(id)
         })
+    };
+    //handle event drag
+    const mutationUpdateDate = useMutation({
+        mutationFn: (data: dragTaskData) => dragTask(data),
+        onSuccess: (result) => {
+            if (result && result.success) {
+                refetch();
+            };
+        }
+    });
+    const handleEventDrop = (info: any) => {
+        const { event } = info;
+        mutationUpdateDate.mutate({
+            id: Number(event.id),
+            start: event.start,
+            end: event.end
+        });
+    };
+    const handleEventResize = (info: any) => {
+        const { event } = info;
+        mutationUpdateDate.mutate({
+            id: Number(event.id),
+            start: event.start,
+            end: event.end
+        });
     };
     //modales
     //create
@@ -141,12 +164,15 @@ export default function ProjectCalendar({ id }: pageProps) {
                 <FullCalendar
                     ref={calendarRef}
                     plugins={[dayGridPlugin, interactionPlugin]}
+                    editable={true}
                     selectable={true}
                     selectAllow={(selectInfo) => {
                         const diffInMilliseconds = selectInfo.end.getTime() - selectInfo.start.getTime();
                         const diffInDays = diffInMilliseconds / (1000 * 60 * 60 * 24);
                         return diffInDays <= 1;
                     }}
+                    eventDrop={handleEventDrop}
+                    eventResize={handleEventResize}
                     dateClick={(SelectInfo) => {handleOpenCreateModal(SelectInfo.date)}}
                     initialView="dayGridMonth"
                     locale="esLocale"

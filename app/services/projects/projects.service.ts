@@ -3,13 +3,13 @@
 import { createProjectObservationData, deleteObservationData } from "@/app/lib/dtos/observation";
 import { editProjectData, fetchedTableProject, fetchTableProjectData, fetchTableProjectQuery, newProjectData } from "@/app/lib/dtos/project";
 import { addScholarData, removeScholarData } from "@/app/lib/dtos/scholar";
-import { createProjectTaskData, deleteTaskData } from "@/app/lib/dtos/task";
+import { createProjectTaskData, deleteTaskData, dragTaskData } from "@/app/lib/dtos/task";
 import { createObservationProject, dropObservation, getProjectObservations } from "@/app/lib/queries/observations";
 import { addScholar, createProject, editProject, getProjectById, getProjectsTable, removeScholar } from "@/app/lib/queries/project";
 import { getProjectStatuses } from "@/app/lib/queries/projectstatus";
 import { getProjectTypes } from "@/app/lib/queries/projecttype";
 import { getAddScholars, getChatScholars } from "@/app/lib/queries/scholar";
-import { createTaskProject, dropTask, getCalendarTasks, getProjectTasks } from "@/app/lib/queries/task";
+import { createTaskProject, dropTask, editDragTask, getCalendarTasks, getProjectTasks } from "@/app/lib/queries/task";
 
 export async function fetchTableData(data: fetchTableProjectData) {
     try {
@@ -213,5 +213,20 @@ export async function fetchCalendarTasks(id: number, start_date: Date, end_date:
         return response;
     } catch (error) {
         console.error("Error en fetchProjectTasks:", error);
+    };
+};
+
+export async function dragTask(data: dragTaskData) {
+    try {
+        try {
+            await editDragTask(data);
+            return { success: true };
+        } catch (error) {
+            console.error("Error al arrastrar tarea:", error);
+            return { success: false };
+        };
+    } catch (error) {
+        console.error("Error en dragTask:", error);
+        return { success: false };
     };
 };
