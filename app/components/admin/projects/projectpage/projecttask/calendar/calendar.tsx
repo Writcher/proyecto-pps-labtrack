@@ -32,10 +32,14 @@ export default function ProjectCalendar({ id }: pageProps) {
     //dates init
     useEffect(() => {
         const today = new Date();
-        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1); // Primer día del mes actual
-        const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0); // Último día del mes actual
-        setValue("start_date", startOfMonth);
-        setValue("end_date", endOfMonth);
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        const newStartDate = new Date(startOfMonth);
+        newStartDate.setDate(newStartDate.getDate() - 7);
+        const newEndDate = new Date(endOfMonth);
+        newEndDate.setDate(newEndDate.getDate() + 7);
+        setValue("start_date", newStartDate);
+        setValue("end_date", newEndDate);
     }, [setValue]);
     //fetch tasks
     const start_date = watch("start_date");
