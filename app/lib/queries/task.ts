@@ -43,6 +43,21 @@ export async function getProjectTasks(project_id: number, page: number) {
     };
 };
 
+export async function getTaskName(id: number) {
+    try {
+        const text = `
+        SELECT name FROM "task" WHERE id = $1 LIMIT 1
+        `;
+        const values = [id];
+        const result = await client.query(text, values);
+        let response =  result.rows;
+        return response[0].name;
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el nombre");
+    };
+};
+
 export async function getCalendarTasks(id: number, start_date: Date, end_date: Date) {
     try {
         const formatedstart = new Date(start_date).toISOString().split('T')[0];

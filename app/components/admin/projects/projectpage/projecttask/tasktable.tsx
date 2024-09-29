@@ -86,8 +86,8 @@ export default function ProjectTaskTable({ project_id }: projectTaskTableProps) 
     const handleCalendarClick = () => {
         router.push(`/admin/projects/${project_id}/calendar`);
     };
-    const handleCardClick = (id: number) => {
-        router.push(`/admin/projects/${id}`);
+    const handleCardClick = (task_id: number) => {
+        router.push(`/admin/projects/${project_id}/${task_id}`);
     };
     return (
         <div className="flex flex-col w-full h-full gap-4">
@@ -134,7 +134,7 @@ export default function ProjectTaskTable({ project_id }: projectTaskTableProps) 
                                                                 <DeleteIcon />
                                                             </IconButton>
                                                             <IconButton>
-                                                                <InfoIcon color="inherit" onClick={() => handleCardClick(1)} />
+                                                                <InfoIcon color="inherit" onClick={() => handleCardClick(row.id)} />
                                                             </IconButton>
                                                         </div>
                                                     </div>

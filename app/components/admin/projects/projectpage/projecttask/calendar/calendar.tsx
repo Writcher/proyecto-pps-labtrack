@@ -134,8 +134,9 @@ export default function ProjectCalendar({ id }: pageProps) {
     //router init
     const router = useRouter();
     //card click
-    const handleCardClick = (id: number) => {
-        router.push(`/admin/projects/${id}`);
+    const handleCardClick = (task_id: string) => {
+        const taskIdNumber = Number(task_id);
+        router.push(`/admin/projects/${id}/${taskIdNumber}`);
     };
     //change header responsive
     useEffect(() => {
@@ -213,7 +214,7 @@ export default function ProjectCalendar({ id }: pageProps) {
                                     <DeleteIcon />
                                 </IconButton>
                                 <IconButton>
-                                    <InfoIcon color="inherit" onClick={() => handleCardClick(1)} />
+                                    <InfoIcon color="inherit" onClick={() => handleCardClick(eventInfo.event.id)} />
                                 </IconButton>
                             </div>
                         </div>
