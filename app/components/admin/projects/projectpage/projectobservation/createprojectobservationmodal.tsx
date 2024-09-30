@@ -12,11 +12,11 @@ import SaveIcon from '@mui/icons-material/Save';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import CircularProgress from '@mui/material/CircularProgress';
-import { createProjectObservationData, createProjectObservationFormData, createProjectObservationModalProps } from '@/app/lib/dtos/observation';
+import { createProjectObservationData, newProjectObservationFormData, newProjectObservationModalProps } from '@/app/lib/dtos/observation';
 import { createProjectObservation } from '@/app/services/projects/projects.service';
 
-export default function CreateObservationModal({ open, handleClose, project_id, scholar_ids }: createProjectObservationModalProps) {
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<createProjectObservationFormData>();
+export default function CreateObservationModal({ open, handleClose, project_id, scholar_ids }: newProjectObservationModalProps) {
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<newProjectObservationFormData>();
     const mutation = useMutation({
         mutationFn: (data: createProjectObservationData) => createProjectObservation(data),
         onSuccess: (result) => {
@@ -26,7 +26,7 @@ export default function CreateObservationModal({ open, handleClose, project_id, 
             };
         }
     });
-    const onSubmit: SubmitHandler<createProjectObservationFormData> = (data) => {
+    const onSubmit: SubmitHandler<newProjectObservationFormData> = (data) => {
         mutation.mutate({ 
             content: data.content,
             project_id: project_id,

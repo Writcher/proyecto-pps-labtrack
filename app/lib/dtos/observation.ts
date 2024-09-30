@@ -16,14 +16,14 @@ export type projectObservationFormData = {
     page: number;
 };
 
-export type createProjectObservationModalProps = {
+export type newProjectObservationModalProps = {
     scholar_ids: number[];
     open: boolean;
     handleClose: () => void;
     project_id: number;
 };
 
-export type createProjectObservationFormData = {
+export type newProjectObservationFormData = {
     content: string;
 };
 
@@ -33,7 +33,7 @@ export type createProjectObservationData = {
     project_id: number;
 };
 
-export type createProjectObservationQuery = createProjectObservationData;
+export type newProjectObservationQuery = createProjectObservationData;
 
 export type deleteObservationData = {
     id: number
@@ -65,4 +65,4 @@ export type createTaskObservationData = {
     task_id: number;
 };
 
-export type createTaskObservationQuery = createTaskObservationData;
+export type newTaskObservationQuery = createTaskObservationData;

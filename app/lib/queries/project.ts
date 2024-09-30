@@ -1,5 +1,5 @@
 import { db } from "@vercel/postgres";
-import { editProjectQuery, fetchedPageProject, fetchedTableProject, fetchTableProjectData, newProjectQuery } from "../dtos/project";
+import { editProjectQuery, fetchedPageProject, fetchedTableProject, fetchTableProjectsData, newProjectQuery } from "../dtos/project";
 import { addScholarQuery, removeScholarQuery } from "../dtos/scholar";
 
 const client = db;
@@ -19,7 +19,7 @@ export async function getProjectName(id: number) {
     };
 };
 
-export async function getProjectsTable(params: fetchTableProjectData) {
+export async function getTableProjects(params: fetchTableProjectsData) {
     try {
         const offset = (params.page) * params.rowsPerPage;
         const projectsearch = `%${params.projectSearch}%`;
@@ -170,7 +170,7 @@ export async function getProjectById(id: number) {
     };
 };
 
-export async function createProject(params: newProjectQuery) {
+export async function newProject(params: newProjectQuery) {
     try {
         const textbegin = `BEGIN`;
         await client.query(textbegin);
@@ -208,12 +208,12 @@ export async function addScholar(params: addScholarQuery) {
         await client.query(textbegin);
         for (const scholar of params.scholars) {
             const scholarid = scholar.scholar_id;
-            const text2 = `
+            const text = `
             INSERT INTO "projectscholar" (project_id, scholar_id)
             VALUES ($1, $2)
             `;
-            const values2 = [params.project_id, scholarid];
-            await client.query(text2, values2)
+            const values = [params.project_id, scholarid];
+            await client.query(text, values)
         }
         const textcommit = `COMMIT`;
         await client.query(textcommit);
@@ -241,7 +241,7 @@ export async function removeScholar(params: removeScholarQuery) {
     };
 };
 
-export async function editProject(params: editProjectQuery) {
+export async function updateProject(params: editProjectQuery) {
     try {
         const currenttimestamp = new Date().toISOString();
         const text = `

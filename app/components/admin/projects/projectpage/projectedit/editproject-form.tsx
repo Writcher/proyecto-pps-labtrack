@@ -1,7 +1,7 @@
 "use client"
 
 import { editFormData, editFormProps, editProjectData } from "@/app/lib/dtos/project";
-import { editTableData, fetchSelectData } from "@/app/services/projects/projects.service";
+import { editProject, fetchProjectSelectData } from "@/app/services/projects/projects.service";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import MenuItem from "@mui/material/MenuItem";
@@ -22,11 +22,11 @@ export default function EditProjectForm({ project, refetch }: editFormProps) {
     });
     const { data: selectdata, isLoading } = useQuery({
         queryKey: ['fetchSelectData'],
-        queryFn: () => fetchSelectData(),
+        queryFn: () => fetchProjectSelectData(),
         refetchOnWindowFocus: false
     });
     const mutation = useMutation({
-        mutationFn: (data: editProjectData) => editTableData(data),
+        mutationFn: (data: editProjectData) => editProject(data),
         onSuccess: (result) => {
             if (result && result.success) {
                 refetch();

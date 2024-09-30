@@ -1,11 +1,11 @@
 import { db } from "@vercel/postgres";
-import { calendarTasks, createProjectTaskQuery, deleteTaskQuery, dragTaskQuery, editTaskQuery, fetchedPageTask, fetchedTask } from "../dtos/task";
+import { calendarTasks, newProjectTaskQuery, dropTaskQuery, dragTaskQuery, editTaskQuery, fetchedPageTask, fetchedTask } from "../dtos/task";
 import { getTaskStatusPending } from "./taskstatus";
 import dayjs from "dayjs";
 
 const client = db;
 
-export async function getTaskById(task_id: number, project_id: number) {
+export async function getTaskById(id: number, project_id: number) {
     try {
         let text = `
         SELECT
@@ -18,7 +18,7 @@ export async function getTaskById(task_id: number, project_id: number) {
         WHERE id = $1 AND project_id = $2
         LIMIT 1
         `;
-        const values= [task_id, project_id]
+        const values= [id, project_id];
         const result = await client.query(text, values);
         return result.rows[0] as fetchedTask;
     } catch (error) {
@@ -107,7 +107,7 @@ export async function getCalendarTasks(id: number, start_date: Date, end_date: D
     };
 };
 
-export async function createTaskProject(params: createProjectTaskQuery) {
+export async function newProjectTask(params: newProjectTaskQuery) {
     try {
         const statusPending = await getTaskStatusPending() as number;
         const start = dayjs(params.start).tz('America/Argentina/Buenos_Aires').format();
@@ -125,7 +125,7 @@ export async function createTaskProject(params: createProjectTaskQuery) {
     };
 };
 
-export async function dropTask(params: deleteTaskQuery) {
+export async function dropTask(params: dropTaskQuery) {
     try {
         const textbegin = `BEGIN`;
         await client.query(textbegin);
@@ -165,7 +165,7 @@ export async function dropTask(params: deleteTaskQuery) {
     };
 };
 
-export async function editDragTask(params: dragTaskQuery) {
+export async function dragTask(params: dragTaskQuery) {
     try {
         const startDate = new Date(params.start).toISOString();
         const endDate = new Date(params.end).toISOString();

@@ -38,14 +38,14 @@ export type projectTaskFormData = {
     page: number;
 };
 
-export type createProjectTaskModalProps = {
+export type newProjectTaskModalProps = {
     open: boolean;
     handleClose: () => void;
     project_id: number;
     start_date_new?: Date;
 };
 
-export type createProjectTaskFormData = {
+export type newProjectTaskFormData = {
     name: string;
     description: string;
     end: Dayjs | null;
@@ -60,7 +60,7 @@ export type createProjectTaskData = {
     project_id: number;
 };
 
-export type createProjectTaskQuery = {
+export type newProjectTaskQuery = {
     name: string;
     description: string;
     end: Date;
@@ -72,7 +72,7 @@ export type deleteTaskData = {
     id: number
 };
 
-export type  deleteTaskQuery = deleteTaskData;
+export type  dropTaskQuery = deleteTaskData;
 
 export type calendarTasks = {
     id: number;

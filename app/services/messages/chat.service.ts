@@ -2,7 +2,7 @@
 
 import { fetchChatUsersData, fetchedMessages, fetchMessagesData, newMessageQuery, readMessagesData } from "@/app/lib/dtos/message";
 import { countAllUnreadMessages, countUnreadMessages, createMessage, getMessages, readMessage } from "@/app/lib/queries/messages";
-import { getChatScholars } from "@/app/lib/queries/scholar";
+import { getLabScholars } from "@/app/lib/queries/scholar";
 import { getAdmins } from "@/app/lib/queries/user";
 import { getTypeAdmin, getTypeScholar } from "@/app/lib/queries/usertype";
 
@@ -12,7 +12,7 @@ export async function fetchChatUsers(data: fetchChatUsersData) {
         const scholarType = await getTypeScholar();
         if (data.usertype_id === adminType) {
             try {
-                const scholars = await getChatScholars(data.laboratory_id);
+                const scholars = await getLabScholars(data.laboratory_id);
                 const scholarsWithUnreadCount = await Promise.all(scholars.map(async (scholar) => {
                     const unreadCount = await countUnreadMessages(scholar.id, data.current_id);
                     return { ...scholar, unreadCount };

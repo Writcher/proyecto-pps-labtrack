@@ -30,7 +30,7 @@ export async function getScholars(labid: number) {
     };
 };
 
-export async function getChatScholars(labid: number) {
+export async function getLabScholars(labid: number) {
     try {
         const type = await getTypeScholar();
         const text = `

@@ -6,7 +6,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { deleteTask, dragTask, fetchCalendarTasks } from '@/app/services/projects/projects.service';
+import { deleteTask, editCalendarTask, fetchCalendarTasks } from '@/app/services/projects/projects.service';
 import { deleteTaskData, dragTaskData, projectTaskCalendarFormData } from '@/app/lib/dtos/task';
 import Chip from '@mui/material/Chip';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -94,7 +94,7 @@ export default function ProjectCalendar({ id }: pageProps) {
     };
     //handle event drag
     const mutationUpdateDate = useMutation({
-        mutationFn: (data: dragTaskData) => dragTask(data),
+        mutationFn: (data: dragTaskData) => editCalendarTask(data),
         onSuccess: (result) => {
             if (result && result.success) {
                 refetch();

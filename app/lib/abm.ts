@@ -4,8 +4,8 @@ import { createHistoricProjectStatus } from './queries/historicprojectstatus';
 import { createHistoricProjectType } from './queries/historicprojecttype';
 import { createHistoricScholarshipType } from './queries/historicscholarshiptype';
 import { createHistoricUserCareer } from './queries/historicusercareer';
-import { checkProjectStatusesABM, createProjectStatus, getProjectStatusesABM, editProjectStatus } from './queries/projectstatus';
-import { checkProjectTypesABM, createProjectType, getProjectTypesABM, editProjectType } from './queries/projecttype';
+import { checkProjectStatusesABM, newProjectStatus, getProjectStatusesABM, editProjectStatus } from './queries/projectstatus';
+import { checkProjectTypesABM, newProjectType, getProjectTypesABM, editProjectType } from './queries/projecttype';
 import { checkScholarshipTypesABM, createScholarshipType, getScholarshipTypesABM, editScholarshipType } from './queries/scholarshiptype';
 import { checkSupplyStatusesABM, createSupplyStatus, getSupplyStatusesABM, editSupplyStatus } from './queries/supplystatus';
 import { checkSupplyTypesABM, createSupplyType, getSupplyTypesABM, editSupplyType } from './queries/supplytype';
@@ -28,11 +28,11 @@ export async function createInstance(params: createABMQuery) {
                 await createSupplyStatus(query);
                 break;
             case "projecttype":
-                await createProjectType(query);
+                await newProjectType(query);
                 await createHistoricProjectType(query);
                 break;
             case "projectstatus":
-                await createProjectStatus(query);
+                await newProjectStatus(query);
                 await createHistoricProjectStatus(query);
                 break;
             case "scholarshiptype":

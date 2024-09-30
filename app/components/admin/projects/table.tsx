@@ -20,7 +20,7 @@ import { ButtonGroup, Card, CardActionArea, CardContent } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import '@/app/components/globals.css';
-import { fetchTableProjectData, projectFormData, projectsTableProps } from "@/app/lib/dtos/project";
+import { fetchTableProjectsData, projectFormData, projectsTableProps } from "@/app/lib/dtos/project";
 import { fetchTableData } from "@/app/services/projects/projects.service";
 import { CircularProgressWithLabel, MasonrySkeleton } from "./utils";
 import CreateProjectModal from "./createmodal";
@@ -259,7 +259,7 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
         laboratory_id: laboratory_id,
         page: page,
         rowsPerPage: rowsPerPage,
-    } as fetchTableProjectData;
+    } as fetchTableProjectsData;
     const { data, isLoading, refetch } = useQuery({
         queryKey: ['tableData', projectSearch, projectstatus_id, projecttype_id, scholarSearch, usercareer_id, scholarshiptype_id, page, rowsPerPage],
         queryFn: () => fetchTableData(params),

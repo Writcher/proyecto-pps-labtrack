@@ -13,7 +13,7 @@ export async function getTaskStatuses() {
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el taskstatus");
-    }
+    };
 };
 
 

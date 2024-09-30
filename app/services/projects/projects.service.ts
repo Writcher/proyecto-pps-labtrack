@@ -1,18 +1,18 @@
 "use server"
 
 import { createProjectObservationData, createTaskObservationData, deleteObservationData } from "@/app/lib/dtos/observation";
-import { editProjectData, fetchedTableProject, fetchTableProjectData, fetchTableProjectQuery, newProjectData } from "@/app/lib/dtos/project";
+import { editProjectData, fetchedTableProject, fetchTableProjectsData, getTableProjectsQuery, newProjectData } from "@/app/lib/dtos/project";
 import { addScholarData, removeScholarData } from "@/app/lib/dtos/scholar";
 import { createProjectTaskData, deleteTaskData, dragTaskData, editTaskData } from "@/app/lib/dtos/task";
-import { createObservationProject, createObservationTask, dropObservation, getProjectObservations, getTaskObservations } from "@/app/lib/queries/observations";
-import { addScholar, createProject, editProject, getProjectById, getProjectsTable, removeScholar } from "@/app/lib/queries/project";
+import { newProjectObservation, newTaskObservation, dropObservation, getProjectObservations, getTaskObservations } from "@/app/lib/queries/observations";
+import { addScholar, newProject, updateProject, getProjectById, getTableProjects, removeScholar } from "@/app/lib/queries/project";
 import { getProjectStatuses } from "@/app/lib/queries/projectstatus";
 import { getProjectTypes } from "@/app/lib/queries/projecttype";
-import { getAddScholars, getChatScholars } from "@/app/lib/queries/scholar";
-import { createTaskProject, dropTask, editDragTask, editTask, getCalendarTasks, getProjectTasks, getTaskById } from "@/app/lib/queries/task";
+import { getAddScholars, getLabScholars } from "@/app/lib/queries/scholar";
+import { newProjectTask, dropTask, dragTask, editTask, getCalendarTasks, getProjectTasks, getTaskById } from "@/app/lib/queries/task";
 import { getTaskStatuses } from "@/app/lib/queries/taskstatus";
 
-export async function fetchTableData(data: fetchTableProjectData) {
+export async function fetchTableData(data: fetchTableProjectsData) {
     try {
         const params = {
             projectSearch: data.projectSearch,
@@ -24,9 +24,9 @@ export async function fetchTableData(data: fetchTableProjectData) {
             laboratory_id: data.laboratory_id,
             page: data.page,
             rowsPerPage: data.rowsPerPage,
-        } as fetchTableProjectQuery;
+        } as getTableProjectsQuery;
         let response: { projects: fetchedTableProject[]; totalProjects: any; }; 
-        response = await getProjectsTable(params);
+        response = await getTableProjects(params);
         return response;
     } catch (error) {
         console.error("Error en fetchTableData(Projects):", error);
@@ -35,7 +35,7 @@ export async function fetchTableData(data: fetchTableProjectData) {
 
 export async function fetchLabScholars(laboratory_id: number) {
     try {
-        const response = await getChatScholars(laboratory_id);
+        const response = await getLabScholars(laboratory_id);
         return response;
     } catch (error) {
         console.error("Error en fetchLabScholars:", error);
@@ -60,42 +60,42 @@ export async function fetchProjectById(id: number) {
     };
 };
 
-export async function fetchSelectData() {
+export async function fetchProjectSelectData() {
     try {
         const projecttypes = await getProjectTypes();
         const projectstatuses = await getProjectStatuses();
         return { projecttypes: projecttypes, projectstatuses: projectstatuses };
     } catch (error) {
-        console.error("Error en fetchSelectData:", error);
+        console.error("Error en fetchProjectSelectData:", error);
     };
 };
 
-export async function createTableData(data: newProjectData) {
+export async function createProject(data: newProjectData) {
     try {
         try {
-            await createProject(data);
+            await newProject(data);
             return { success: true };
         } catch (error) {
             console.error("Error al crear proyecto:", error);
             return { success: false };
         };
     } catch (error) {
-        console.error("Error en createTableData(Project):", error);
+        console.error("Error en createProject(Project):", error);
         return { success: false };
     };
 };
 
-export async function editTableData(data: editProjectData) {
+export async function editProject(data: editProjectData) {
     try {
         try {
-            await editProject(data);
+            await updateProject(data);
             return { success: true };
         } catch (error) {
             console.error("Error al editar proyecto:", error);
             return { success: false };
         };
     } catch (error) {
-        console.error("Error en editTableData(Project):", error);
+        console.error("Error en editProject(Project):", error);
         return { success: false };
     } ;
 };
@@ -130,9 +130,9 @@ export async function removeProjectScholar(data: removeScholarData) {
     } ;
 };
 
-export async function fetchProjectObservations(project_id: number, page: number)  {
+export async function fetchProjectObservations(id: number, page: number)  {
     try {
-        const response = await getProjectObservations(project_id, page);
+        const response = await getProjectObservations(id, page);
         return response;
     } catch (error) {
         console.error("Error en fetchLabScholars:", error);
@@ -142,7 +142,7 @@ export async function fetchProjectObservations(project_id: number, page: number)
 export async function createProjectObservation(data: createProjectObservationData) {
     try {
         try {
-            await createObservationProject(data);
+            await newProjectObservation(data);
             return { success: true };
         } catch (error) {
             console.error("Error al crear observacion:", error);
@@ -169,9 +169,9 @@ export async function deleteObservation(data: deleteObservationData) {
     };
 };
 
-export async function fetchProjectTasks(project_id: number, page: number) {
+export async function fetchProjectTasks(id: number, page: number) {
     try {
-        const response = await getProjectTasks(project_id, page);
+        const response = await getProjectTasks(id, page);
         return response;
     } catch (error) {
         console.error("Error en fetchProjectTasks:", error);
@@ -181,7 +181,7 @@ export async function fetchProjectTasks(project_id: number, page: number) {
 export async function createProjectTask(data: createProjectTaskData) {
     try {
         try {
-            await createTaskProject(data);
+            await newProjectTask(data);
             return { success: true };
         } catch (error) {
             console.error("Error al crear tarea:", error);
@@ -217,17 +217,17 @@ export async function fetchCalendarTasks(id: number, start_date: Date, end_date:
     };
 };
 
-export async function dragTask(data: dragTaskData) {
+export async function editCalendarTask(data: dragTaskData) {
     try {
         try {
-            await editDragTask(data);
+            await dragTask(data);
             return { success: true };
         } catch (error) {
             console.error("Error al arrastrar tarea:", error);
             return { success: false };
         };
     } catch (error) {
-        console.error("Error en dragTask:", error);
+        console.error("Error en editCalendarTask:", error);
         return { success: false };
     };
 };
@@ -251,14 +251,14 @@ export async function editProjectTask(data: editTaskData) {
             return { success: false };
         };
     } catch (error) {
-        console.error("Error en editTableData(Project):", error);
+        console.error("Error en editProjectTask(Project):", error);
         return { success: false };
     } ;
 };
 
-export async function fetchTaskById(task_id: number, project_id: number) {
+export async function fetchTaskById(id: number, project_id: number) {
     try {
-        const response = await getTaskById(task_id, project_id);
+        const response = await getTaskById(id, project_id);
         return response;
     } catch (error) {
         console.error("Error en fetchTaskById:", error);
@@ -277,7 +277,7 @@ export async function fetchTaskObservations(project_id: number, task_id: number,
 export async function createTaskObservation(data: createTaskObservationData) {
     try {
         try {
-            await createObservationTask(data);
+            await newTaskObservation(data);
             return { success: true };
         } catch (error) {
             console.error("Error al crear observacion:", error);

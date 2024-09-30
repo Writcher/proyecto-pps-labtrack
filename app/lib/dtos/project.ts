@@ -38,7 +38,7 @@ export type projectsTableProps = {
     laboratory_id: number;
 };
 
-export type fetchTableProjectData = {
+export type fetchTableProjectsData = {
     projectSearch: string;
     projectstatus_id: number;
     projecttype_id: number;
@@ -50,7 +50,7 @@ export type fetchTableProjectData = {
     rowsPerPage: number;
 };
 
-export type fetchTableProjectQuery = fetchTableProjectData;
+export type getTableProjectsQuery = fetchTableProjectsData;
 
 export type fetchedTableProject = {
     id: number;

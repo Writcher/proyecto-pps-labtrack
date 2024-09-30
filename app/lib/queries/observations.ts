@@ -1,9 +1,9 @@
 import { db } from "@vercel/postgres";
-import { createProjectObservationQuery, createTaskObservationQuery, deleteObservationQuery, fetchedObservations } from "../dtos/observation";
+import { newProjectObservationQuery, newTaskObservationQuery, deleteObservationQuery, fetchedObservations } from "../dtos/observation";
 
 const client = db;
 
-export async function getTaskObservations(project_id: number, task_id: number, page: number)  {
+export async function getTaskObservations(project_id: number, id: number, page: number)  {
     try {
         const limit = 5;
         const offset = (page - 1) * limit;
@@ -18,7 +18,7 @@ export async function getTaskObservations(project_id: number, task_id: number, p
             ORDER BY created_at DESC
             LIMIT $3 OFFSET $4
         `;
-        const values1 =  [project_id, task_id, limit, offset];
+        const values1 =  [project_id, id, limit, offset];
         const result = await client.query(text1, values1);
         const text2 = `
             SELECT COUNT(*) AS total
@@ -26,7 +26,7 @@ export async function getTaskObservations(project_id: number, task_id: number, p
         WHERE project_id = $1
             AND task_id = $2
         `;
-        const values2 = [project_id, task_id];
+        const values2 = [project_id, id];
         const count = await client.query(text2, values2);
         return {
             observations: result.rows as fetchedObservations[],
@@ -38,8 +38,7 @@ export async function getTaskObservations(project_id: number, task_id: number, p
     };
 };
 
-
-export async function getProjectObservations(project_id: number, page: number)  {
+export async function getProjectObservations(id: number, page: number)  {
     try {
         const limit = 5;
         const offset = (page - 1) * limit;
@@ -54,7 +53,7 @@ export async function getProjectObservations(project_id: number, page: number)  
             ORDER BY created_at DESC
             LIMIT $2 OFFSET $3
         `;
-        const values1 =  [project_id, limit, offset];
+        const values1 =  [id, limit, offset];
         const result = await client.query(text1, values1);
         const text2 = `
             SELECT COUNT(*) AS total
@@ -62,7 +61,7 @@ export async function getProjectObservations(project_id: number, page: number)  
         WHERE project_id = $1
             AND task_id IS NULL
         `;
-        const values2 = [project_id];
+        const values2 = [id];
         const count = await client.query(text2, values2);
         return {
             observations: result.rows as fetchedObservations[],
@@ -74,7 +73,7 @@ export async function getProjectObservations(project_id: number, page: number)  
     };
 };
 
-export async function createObservationProject(params: createProjectObservationQuery) {
+export async function newProjectObservation(params: newProjectObservationQuery) {
     try {
         const textbegin = `BEGIN`;
         await client.query(textbegin);
@@ -105,7 +104,7 @@ export async function createObservationProject(params: createProjectObservationQ
     };
 };
 
-export async function createObservationTask(params: createTaskObservationQuery) {
+export async function newTaskObservation(params: newTaskObservationQuery) {
     try {
         const textbegin = `BEGIN`;
         await client.query(textbegin);
@@ -148,16 +147,16 @@ export async function dropObservation(params: deleteObservationQuery) {
     try {
         const textbegin = `BEGIN`;
         await client.query(textbegin);
-        const text2 = `
-        DELETE FROM "observation_read" WHERE observation_id = $1
-        `;
-        const values2 = [params.id];
-        await client.query(text2, values2);
         const text1 = `
-        DELETE FROM "observation" WHERE id = $1
+        DELETE FROM "observation_read" WHERE observation_id = $1
         `;
         const values1 = [params.id];
         await client.query(text1, values1);
+        const text2 = `
+        DELETE FROM "observation" WHERE id = $1
+        `;
+        const values2 = [params.id];
+        await client.query(text2, values2);
         const textcommit = `COMMIT`;
         await client.query(textcommit);
         return { success: true, message: "Instancia eliminada correctamente" };

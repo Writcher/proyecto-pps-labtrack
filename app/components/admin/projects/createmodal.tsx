@@ -14,7 +14,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import '@/app/components/globals.css';
 import { createFormData, createModalProps, newProjectData } from '@/app/lib/dtos/project';
-import { createTableData, fetchLabScholars } from '@/app/services/projects/projects.service';
+import { createProject, fetchLabScholars } from '@/app/services/projects/projects.service';
 
 export default function CreateProjectModal({ open, handleClose, projecttypes, projectstatuses, laboratory_id  }: createModalProps) {
     const { watch, register, handleSubmit, setValue, reset, formState: { errors } } = useForm<createFormData>({
@@ -25,7 +25,7 @@ export default function CreateProjectModal({ open, handleClose, projecttypes, pr
         },
     });
     const mutation = useMutation({
-        mutationFn: (data: newProjectData) => createTableData(data),
+        mutationFn: (data: newProjectData) => createProject(data),
         onSuccess: (result) => {
             if (result && result.success) {
                 handleClose();

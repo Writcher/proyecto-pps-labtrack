@@ -17,15 +17,15 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
-import { createProjectTaskData, createProjectTaskFormData, createProjectTaskModalProps } from '@/app/lib/dtos/task';
+import { createProjectTaskData, newProjectTaskFormData, newProjectTaskModalProps } from '@/app/lib/dtos/task';
 import { createProjectTask } from '@/app/services/projects/projects.service';
 
 dayjs.locale('es');
 dayjs.extend(localizedFormat);
 
-export default function CreateTaskModal({ open, handleClose, project_id, start_date_new }: createProjectTaskModalProps) {
+export default function CreateTaskModal({ open, handleClose, project_id, start_date_new }: newProjectTaskModalProps) {
     let startDate = null as Dayjs | null;
-    const { register, handleSubmit, reset, formState: { errors }, setValue, setError, clearErrors, watch } = useForm<createProjectTaskFormData>({
+    const { register, handleSubmit, reset, formState: { errors }, setValue, setError, clearErrors, watch } = useForm<newProjectTaskFormData>({
         defaultValues: {
             start: startDate ? startDate : null
         }
@@ -39,7 +39,7 @@ export default function CreateTaskModal({ open, handleClose, project_id, start_d
             };
         }
     });
-    const onSubmit: SubmitHandler<createProjectTaskFormData> = (data) => {
+    const onSubmit: SubmitHandler<newProjectTaskFormData> = (data) => {
         mutation.mutate({ 
             name: data.name,
             description: data.description,
