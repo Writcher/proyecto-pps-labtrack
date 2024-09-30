@@ -1,3 +1,4 @@
+import TaskPageQuery from '@/app/components/admin/projects/projectpage/projecttask/taskpage/taskpageQuery';
 import { getProjectName } from '@/app/lib/queries/project';
 import { getTaskName } from '@/app/lib/queries/task';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
@@ -22,7 +23,10 @@ export default async function TareaDetalle({ params }: { params : { id: number, 
                 </div>
             </div>
             <div className="flex flex-col w-full px-4 py-4 md:px-6 md:py-6 h-[90%]">
-                tu vieja gil
+                <TaskPageQuery 
+                    task_id={params.task_id}
+                    project_id={params.id}
+                />
             </div>
         </main>
     );

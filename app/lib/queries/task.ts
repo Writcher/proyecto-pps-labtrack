@@ -1,9 +1,31 @@
 import { db } from "@vercel/postgres";
-import { calendarTasks, createProjectTaskQuery, deleteTaskQuery, dragTaskQuery, fetchedPageTask } from "../dtos/task";
+import { calendarTasks, createProjectTaskQuery, deleteTaskQuery, dragTaskQuery, editTaskQuery, fetchedPageTask, fetchedTask } from "../dtos/task";
 import { getTaskStatusPending } from "./taskstatus";
 import dayjs from "dayjs";
 
 const client = db;
+
+export async function getTaskById(task_id: number, project_id: number) {
+    try {
+        let text = `
+        SELECT
+            name,
+            description,
+            start_date AS "start",
+            end_date AS "end",
+            taskstatus_id
+        FROM "task"
+        WHERE id = $1 AND project_id = $2
+        LIMIT 1
+        `;
+        const values= [task_id, project_id]
+        const result = await client.query(text, values);
+        return result.rows[0] as fetchedTask;
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener la tarea");
+    };
+};
 
 export async function getProjectTasks(project_id: number, page: number) {
     try {
@@ -105,14 +127,40 @@ export async function createTaskProject(params: createProjectTaskQuery) {
 
 export async function dropTask(params: deleteTaskQuery) {
     try {
-        const text = `
+        const textbegin = `BEGIN`;
+        await client.query(textbegin);
+        const text1 = `
+        SELECT id
+        FROM "observation"
+        WHERE task_id = $1
+        `;
+        const values1 = [params.id];
+        const observations = await client.query(text1, values1);
+        for (const observation of observations.rows) {
+            const observation_id = observation.id;
+            const text2 = `
+            DELETE FROM "observation_read" WHERE observation_id = $1
+            `;
+            const values2 = [observation_id];
+            await client.query(text2, values2);
+        };
+        const text3 = `
+        DELETE FROM "observation" WHERE task_id = $1
+        `;
+        const values3 = [params.id];
+        await client.query(text3, values3);
+        const text4 = `
         DELETE FROM "task" WHERE id = $1
         `;
-        const values = [params.id];
-        await client.query(text, values);
+        const values4 = [params.id];
+        await client.query(text4, values4);
+        const textcommit = `COMMIT`;
+        await client.query(textcommit);
         return { success: true, message: "Instancia eliminada correctamente" };
     } catch (error) {
         console.error("Error de Base de Datos:", error);
+        const textrollback = `ROLLBACK`;
+        await client.query(textrollback);
         throw new Error("No se pudo eliminar la observacion");
     };
 };
@@ -133,5 +181,26 @@ export async function editDragTask(params: dragTaskQuery) {
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo editar la observacion");
+    };
+};
+
+export async function editTask(params: editTaskQuery) {
+    try {
+        const startDate = new Date(params.start).toISOString();
+        const endDate = new Date(params.end).toISOString();
+        const text = `
+        UPDATE "task"
+        SET name = $1,
+            description = $2,
+            taskstatus_id = $3,
+            start_date = $4,
+            end_date = $5
+        WHERE id = $6
+        `;
+        const values = [params.name, params.description, params.taskstatus_id, startDate, endDate, params.id];
+        return client.query(text, values);
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo editar el proyecto");
     };
 };

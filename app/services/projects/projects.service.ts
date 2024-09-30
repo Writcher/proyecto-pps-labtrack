@@ -1,15 +1,16 @@
 "use server"
 
-import { createProjectObservationData, deleteObservationData } from "@/app/lib/dtos/observation";
+import { createProjectObservationData, createTaskObservationData, deleteObservationData } from "@/app/lib/dtos/observation";
 import { editProjectData, fetchedTableProject, fetchTableProjectData, fetchTableProjectQuery, newProjectData } from "@/app/lib/dtos/project";
 import { addScholarData, removeScholarData } from "@/app/lib/dtos/scholar";
-import { createProjectTaskData, deleteTaskData, dragTaskData } from "@/app/lib/dtos/task";
-import { createObservationProject, dropObservation, getProjectObservations } from "@/app/lib/queries/observations";
+import { createProjectTaskData, deleteTaskData, dragTaskData, editTaskData } from "@/app/lib/dtos/task";
+import { createObservationProject, createObservationTask, dropObservation, getProjectObservations, getTaskObservations } from "@/app/lib/queries/observations";
 import { addScholar, createProject, editProject, getProjectById, getProjectsTable, removeScholar } from "@/app/lib/queries/project";
 import { getProjectStatuses } from "@/app/lib/queries/projectstatus";
 import { getProjectTypes } from "@/app/lib/queries/projecttype";
 import { getAddScholars, getChatScholars } from "@/app/lib/queries/scholar";
-import { createTaskProject, dropTask, editDragTask, getCalendarTasks, getProjectTasks } from "@/app/lib/queries/task";
+import { createTaskProject, dropTask, editDragTask, editTask, getCalendarTasks, getProjectTasks, getTaskById } from "@/app/lib/queries/task";
+import { getTaskStatuses } from "@/app/lib/queries/taskstatus";
 
 export async function fetchTableData(data: fetchTableProjectData) {
     try {
@@ -227,6 +228,63 @@ export async function dragTask(data: dragTaskData) {
         };
     } catch (error) {
         console.error("Error en dragTask:", error);
+        return { success: false };
+    };
+};
+
+export async function fetchTaskSelectData() {
+    try {
+        const taskstatuses = await getTaskStatuses();
+        return { taskstatuses: taskstatuses };
+    } catch (error) {
+        console.error("Error en fetchTaskSelectData:", error);
+    };
+};
+
+export async function editProjectTask(data: editTaskData) {
+    try {
+        try {
+            await editTask(data);
+            return { success: true };
+        } catch (error) {
+            console.error("Error al editar proyecto:", error);
+            return { success: false };
+        };
+    } catch (error) {
+        console.error("Error en editTableData(Project):", error);
+        return { success: false };
+    } ;
+};
+
+export async function fetchTaskById(task_id: number, project_id: number) {
+    try {
+        const response = await getTaskById(task_id, project_id);
+        return response;
+    } catch (error) {
+        console.error("Error en fetchTaskById:", error);
+    };
+};
+
+export async function fetchTaskObservations(project_id: number, task_id: number, page: number)  {
+    try {
+        const response = await getTaskObservations(project_id, task_id, page);
+        return response;
+    } catch (error) {
+        console.error("Error en fetchTaskObservations:", error);
+    };
+};
+
+export async function createTaskObservation(data: createTaskObservationData) {
+    try {
+        try {
+            await createObservationTask(data);
+            return { success: true };
+        } catch (error) {
+            console.error("Error al crear observacion:", error);
+            return { success: false };
+        };
+    } catch (error) {
+        console.error("Error en createTaskObservation:", error);
         return { success: false };
     };
 };

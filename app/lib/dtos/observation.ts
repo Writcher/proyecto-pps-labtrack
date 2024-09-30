@@ -40,3 +40,29 @@ export type deleteObservationData = {
 };
 
 export type  deleteObservationQuery = deleteObservationData;
+
+export type taskObservationTableProps = {
+    task_id: number;
+    project_id: number;
+};
+
+export type taskObservationFormData = projectObservationFormData;
+
+export type createTaskObservationModalProps = {
+    open: boolean;
+    handleClose: () => void;
+    project_id: number;
+    task_id: number;
+};
+
+export type createTaskObservationFormData = {
+    content: string;
+};
+
+export type createTaskObservationData = {
+    content: string;
+    project_id: number;
+    task_id: number;
+};
+
+export type createTaskObservationQuery = createTaskObservationData;

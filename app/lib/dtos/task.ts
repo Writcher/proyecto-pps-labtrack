@@ -10,6 +10,23 @@ export type fetchedPageTask = {
     taskstatusname: string;
 };
 
+export type fetchedTask = {
+    name: string;
+    description: string;
+    start: Date;
+    end: Date;
+    taskstatus_id: number;
+};
+
+export type fetchedDetailTask = {
+    id: number;
+    name: string;
+    description: string;
+    start: Date;
+    end: Date;
+    taskstatus_id: number;
+};
+
 export type projectTaskTableProps = {
     project_id: number;
 };
@@ -82,3 +99,34 @@ export type dragTaskData = {
 };
 
 export type dragTaskQuery = dragTaskData;
+
+export type editFormProps = {
+    task: fetchedDetailTask;
+    refetch: () => void;
+};
+
+export type editFormData = {
+    name: string;
+    description: string;
+    taskstatus_id: number | '';
+    start: Dayjs | null;
+    end: Dayjs | null;
+};
+
+export type editTaskData = {
+    id: number;
+    name: string;
+    description: string;
+    taskstatus_id: number;
+    start: any;
+    end: any;
+};
+
+export type editTaskQuery = {
+    id: number;
+    name: string;
+    description: string;
+    taskstatus_id: number;
+    start: Date;
+    end: Date;
+};

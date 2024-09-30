@@ -12,13 +12,13 @@ import SaveIcon from '@mui/icons-material/Save';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import CircularProgress from '@mui/material/CircularProgress';
-import { createProjectObservationData, createProjectObservationFormData, createProjectObservationModalProps } from '@/app/lib/dtos/observation';
-import { createProjectObservation } from '@/app/services/projects/projects.service';
+import { createTaskObservationData, createTaskObservationFormData, createTaskObservationModalProps } from '@/app/lib/dtos/observation';
+import { createTaskObservation } from '@/app/services/projects/projects.service';
 
-export default function CreateObservationModal({ open, handleClose, project_id, scholar_ids }: createProjectObservationModalProps) {
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<createProjectObservationFormData>();
+export default function CreateObservationModal({ open, handleClose, project_id, task_id }: createTaskObservationModalProps) {
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<createTaskObservationFormData>();
     const mutation = useMutation({
-        mutationFn: (data: createProjectObservationData) => createProjectObservation(data),
+        mutationFn: (data: createTaskObservationData) => createTaskObservation(data),
         onSuccess: (result) => {
             if (result && result.success) {
                 handleClose();
@@ -26,11 +26,11 @@ export default function CreateObservationModal({ open, handleClose, project_id, 
             };
         }
     });
-    const onSubmit: SubmitHandler<createProjectObservationFormData> = (data) => {
+    const onSubmit: SubmitHandler<createTaskObservationFormData> = (data) => {
         mutation.mutate({ 
             content: data.content,
             project_id: project_id,
-            scholar_ids: scholar_ids
+            task_id: task_id
         });
     };
     const handleExit = () => {
