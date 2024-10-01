@@ -99,7 +99,7 @@ export default function ChatScholar({ laboratory_id, current_id, usertype_id }: 
                     className="h-16 md:h-20 items-center"
                 >
                     {isLoading ? (
-                        Array.from({ length: 5 }).map((_, index) => (
+                        Array.from({ length: 3 }).map((_, index) => (
                             <Tab
                                 key={index}
                                 label={<Skeleton variant="rectangular" width={200} height={30} />}

@@ -16,7 +16,7 @@ export async function createInstance(params: createABMQuery) {
         const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade", "usercareer"];
         if (!allowedTables.includes(params.table)) {
             throw new Error(`Tabla no valida: ${params.table}`);
-        }
+        };
         const query = {
             name: params.name,
         } as createABMItemQuery;
@@ -41,6 +41,7 @@ export async function createInstance(params: createABMQuery) {
                 break;
             case "grade":
                 await createGrade(query);
+                break;
             case "usercareer":
                 await createUserCareer(query);
                 await createHistoricUserCareer(query);
@@ -52,7 +53,7 @@ export async function createInstance(params: createABMQuery) {
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo crear instancia (profundo)");
-    }
+    };
 };
 
 export async function editInstance(params: editABMQuery) {
@@ -96,12 +97,12 @@ export async function editInstance(params: editABMQuery) {
                 break;
             default:
                 throw new Error(`No se puede manejar la tabla: ${params.table}`);
-        }
+        };
         return { success: true };
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo editar instancia (profundo)");
-    }
+    };
 };
 
 export async function getInstances(params: fetchABMQuery) {  
@@ -110,7 +111,7 @@ export async function getInstances(params: fetchABMQuery) {
         const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade", "usercareer"];
         if (!allowedTables.includes(params.table)) {
             throw new Error(`Tabla no valida: ${params.table}`);
-        }
+        };
         const query = {
             name: params.name,
             page: params.page,
@@ -140,12 +141,12 @@ export async function getInstances(params: fetchABMQuery) {
                 break;
             default:
                 throw new Error(`No se puede manejar la tabla: ${params.table}`);
-        }
+        };
         return data;
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener la instancia (profundo)");
-    }
+    };
 };
 
 export async function checkInstanceExistance(params: checkExistanceQuery) {
@@ -154,7 +155,7 @@ export async function checkInstanceExistance(params: checkExistanceQuery) {
         const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade", "usercareer"];
         if (!allowedTables.includes(params.table)) {
             throw new Error(`Tabla no valida: ${params.table}`);
-        }
+        };
         const query = {
             name: params.name,
         } as checkItemExistanceQuery;
@@ -182,10 +183,10 @@ export async function checkInstanceExistance(params: checkExistanceQuery) {
                 break;
             default:
                 throw new Error(`No se puede manejar la tabla: ${params.table}`);
-        }
+        };
         return data;
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener la instancia (profundo)");
-    }
+    };
 };

@@ -53,7 +53,7 @@ export async function getSupplyTypesABM(params: fetchABMItemQuery) {
 
 export async function checkSupplyTypesABM(params: checkItemExistanceQuery) {
     try {
-        const text = `SELECT * FROM "suppltype" WHERE name = $1 LIMIT 1
+        const text = `SELECT * FROM "supplytype" WHERE name = $1 LIMIT 1
         `;
         const values = [params.name];
         const result = await client.query(text, values);
