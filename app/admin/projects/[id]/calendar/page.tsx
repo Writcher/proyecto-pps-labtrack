@@ -7,7 +7,7 @@ export default async function ProyectoCalendario({ params }: { params : { id: nu
     const name = await getProjectName(params.id);
     return (
         <main className="flex flex-col w-full h-full">
-            <div className="flex flex-row h-[10%] bg-gray-700 md:bg-gradient-to-l md:from-gray-800 md:to-gray-700 border-b-4 border-orange-500 md:border-transparent md:hover:bg-gradient-to-r md:hover:from-orange-500 md:hover:to-gray-800 text-white items-center">
+            <div className="flex flex-row h-20 md:h-[10%] bg-gray-700 md:bg-gradient-to-l md:from-gray-800 md:to-gray-700 border-b-4 border-orange-500 md:border-transparent md:hover:bg-gradient-to-r md:hover:from-orange-500 md:hover:to-gray-800 text-white items-center">
                 <Link href={`/admin/projects/${params.id}`} className="flex flex-row w-[25%]">
                     <KeyboardArrowLeftIcon className="ml-4"/>
                     <p className="ml-2">
@@ -20,7 +20,7 @@ export default async function ProyectoCalendario({ params }: { params : { id: nu
                     </p>
                 </div>
             </div>
-            <div className="flex flex-col w-full px-4 py-4 md:px-6 md:py-6 h-[90%]">
+            <div className="flex flex-col w-full px-4 py-4 md:px-6 md:py-6 md:h-[90%]">
                 <ProjectCalendarQuery id={params.id} />
             </div>
         </main>

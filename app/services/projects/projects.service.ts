@@ -1,11 +1,11 @@
 "use server"
 
 import { createProjectObservationData, createTaskObservationData, deleteObservationData } from "@/app/lib/dtos/observation";
-import { editProjectData, fetchedTableProject, fetchTableProjectsData, getTableProjectsQuery, newProjectData } from "@/app/lib/dtos/project";
+import { deleteProjectData, editProjectData, fetchedTableProject, fetchTableProjectsData, getTableProjectsQuery, newProjectData } from "@/app/lib/dtos/project";
 import { addScholarData, removeScholarData } from "@/app/lib/dtos/scholar";
 import { createProjectTaskData, deleteTaskData, dragTaskData, editTaskData } from "@/app/lib/dtos/task";
 import { newProjectObservation, newTaskObservation, dropObservation, getProjectObservations, getTaskObservations } from "@/app/lib/queries/observations";
-import { addScholar, newProject, updateProject, getProjectById, getTableProjects, removeScholar } from "@/app/lib/queries/project";
+import { addScholar, newProject, updateProject, getProjectById, getTableProjects, removeScholar, dropProject } from "@/app/lib/queries/project";
 import { getProjectStatuses } from "@/app/lib/queries/projectstatus";
 import { getProjectTypes } from "@/app/lib/queries/projecttype";
 import { getAddScholars, getLabScholars } from "@/app/lib/queries/scholar";
@@ -197,6 +197,21 @@ export async function deleteTask(data: deleteTaskData) {
     try {
         try {
             await dropTask(data);
+            return { success: true };
+        } catch (error) {
+            console.error("Error al eliminar tarea:", error);
+            return { success: false };
+        };
+    } catch (error) {
+        console.error("Error en deleteTask:", error);
+        return { success: false };
+    };
+};
+
+export async function deleteProject(data: deleteProjectData) {
+    try {
+        try {
+            await dropProject(data);
             return { success: true };
         } catch (error) {
             console.error("Error al eliminar tarea:", error);

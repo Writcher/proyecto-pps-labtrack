@@ -10,7 +10,7 @@ import IconButton from "@mui/material/IconButton";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Masonry from "@mui/lab/Masonry";
-import { CardActionArea, Chip, Skeleton } from "@mui/material";
+import { Chip, Skeleton } from "@mui/material";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import Gray800Tooltip from "../../utils";
 import { deleteTaskData, projectTaskFormData, projectTaskTableProps } from "@/app/lib/dtos/task";
@@ -105,7 +105,7 @@ export default function ProjectTaskTable({ project_id }: projectTaskTableProps) 
                     </div>
                 </div>
             </div>
-            <div className="flex flex-grow overflow-y-auto custom-scrollbar">
+            <div className="flex flex-grow h-[300px] overflow-y-auto custom-scrollbar">
                 {isLoading ?
                     (
                         <div className="flex flex-col gap-2 w-full h-full mr-2">
@@ -113,7 +113,7 @@ export default function ProjectTaskTable({ project_id }: projectTaskTableProps) 
                             <Skeleton variant="rectangular" width="100%" height="50%" className="rounded" />
                         </div>
                     ) : (
-                        <Masonry columns={1} spacing={1}>
+                        <Masonry columns={{xs: 1, md: 2}} spacing={1}>
                             {tasks && tasks.length > 0 ? (
                                 tasks.map((row: any) => (
                                     <React.Fragment key={row.id}>

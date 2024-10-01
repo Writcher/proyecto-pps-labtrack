@@ -16,17 +16,18 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 import Masonry from '@mui/lab/Masonry';
-import { ButtonGroup, Card, CardActionArea, CardContent } from "@mui/material";
+import { ButtonGroup, Card, CardActionArea, CardContent, IconButton } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import '@/app/components/globals.css';
-import { fetchTableProjectsData, projectFormData, projectsTableProps } from "@/app/lib/dtos/project";
-import { fetchTableData } from "@/app/services/projects/projects.service";
+import { deleteProjectData, fetchTableProjectsData, projectFormData, projectsTableProps } from "@/app/lib/dtos/project";
+import { deleteProject, fetchTableData } from "@/app/services/projects/projects.service";
 import { CircularProgressWithLabel, MasonrySkeleton } from "./utils";
 import CreateProjectModal from "./createmodal";
 import { useRouter } from "next/navigation";
+import DeleteIcon from '@mui/icons-material/Delete';
 
-export default function ABMProjectTable({ usercareers, scholarships, projecttypes, projectstatuses, laboratory_id }: projectsTableProps ) {
+export default function ABMProjectTable({ usercareers, scholarships, projecttypes, projectstatuses, laboratory_id }: projectsTableProps) {
     const { watch, setValue, getValues } = useForm<projectFormData>({
         defaultValues: {
             //filters
@@ -58,7 +59,7 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
     //filters
     const filterAnchor = watch("filterAnchor") as any;
     const filterMenuOpen = Boolean(filterAnchor);
-    const activeFilters = watch("activeFilters") as { [key: string ]: any };
+    const activeFilters = watch("activeFilters") as { [key: string]: any };
     const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setValue("filterAnchor", event.currentTarget);
     };
@@ -66,7 +67,7 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
         setValue("filterAnchor", null);
     };
     const handleClearFilters = () => {
-            //reset values
+        //reset values
         setValue("projectSearch", "");
         setValue("normalProjectSearch", "");
         setValue("projectStatusFilter", 0);
@@ -75,18 +76,18 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
         setValue("normalScholarSearch", "");
         setValue("scholarshipTypeFilter", 0);
         setValue("userCareerFilter", 0);
-            //reset default filter show
+        //reset default filter show
         setValue("showProjectSearchForm", true);
         setValue("showProjectStatusFilter", false);
         setValue("showProjectTypeFilter", false);
         setValue("showScholarSearchForm", false);
         setValue("showScholarshipTypeFilter", false);
         setValue("showUserCareerFilter", false);
-            //reset active filters and close
+        //reset active filters and close
         setValue("activeFilters", {});
         handleFilterClose();
     };
-        //project search
+    //project search
     const projectSearch = watch("projectSearch") as string;
     const normalProjectSearch = watch("normalProjectSearch") as string;
     const showProjectSearchForm = watch("showProjectSearchForm") as boolean;
@@ -112,7 +113,7 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
     const handleProjectSearch = useCallback(debounce((searchTerm: string) => {
         setValue("projectSearch", searchTerm);
     }, 500), []);
-        //projecttype filter
+    //projecttype filter
     const projecttype_id = watch("projectTypeFilter") as number;
     const showProjectTypeFilter = watch("showProjectTypeFilter") as boolean;
     const handleProjectTypeFilterSelect = () => {
@@ -137,7 +138,7 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
         const projecttype = projecttypes.find(sch => sch.id === id);
         return projecttype ? projecttype.name : 'Desconocida';
     };
-        //projecttype filter
+    //projecttype filter
     const projectstatus_id = watch("projectStatusFilter") as number;
     const showProjectStatusFilter = watch("showProjectStatusFilter") as boolean;
     const handleProjectStatusFilterSelect = () => {
@@ -162,7 +163,7 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
         const projectstatus = projectstatuses.find(sch => sch.id === id);
         return projectstatus ? projectstatus.name : 'Desconocida';
     };
-        //scholar search
+    //scholar search
     const scholarSearch = watch("scholarSearch") as string;
     const normalScholarSearch = watch("normalScholarSearch") as string;
     const showScholarSearchForm = watch("showScholarSearchForm") as boolean;
@@ -188,7 +189,7 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
     const handleScholarSearch = useCallback(debounce((searchTerm: string) => {
         setValue("scholarSearch", searchTerm);
     }, 500), []);
-        //scholarshiptype filter
+    //scholarshiptype filter
     const scholarshiptype_id = watch("scholarshipTypeFilter") as number;
     const showScholarshipTypeFilter = watch("showScholarshipTypeFilter") as boolean;
     const handleScholarshipTypeFilterSelect = () => {
@@ -213,7 +214,7 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
         const scholarship = scholarships.find(sch => sch.id === id);
         return scholarship ? scholarship.name : 'Desconocida';
     };
-        //usercareer filter
+    //usercareer filter
     const usercareer_id = watch("userCareerFilter") as number;
     const showUserCareerFilter = watch("showUserCareerFilter") as boolean;
     const handleUserCareerFilterSelect = () => {
@@ -270,37 +271,51 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
         router.push(`/admin/projects/${id}`);
     };
     //modals
-        //create
+    //create
     const modalOpenCreate = watch("modalOpenCreate");
     const handleOpenCreateModal = () => setValue("modalOpenCreate", true);
     const handleCloseCreateModal = () => {
         setValue("modalOpenCreate", false);
         refetch();
     };
+    //delete
+    const mutation = useMutation({
+        mutationFn: (data: deleteProjectData) => deleteProject(data),
+        onSuccess: (result) => {
+            if (result && result.success) {
+                refetch();
+            };
+        }
+    });
+    const handleDelete = (id: number) => {
+        mutation.mutate({
+            id: id
+        })
+    };
     return (
         <main className="flex flex-col gap-2 w-full h-full">
             <div className="flex flex-col md:flex-row justify-center text-gray-700">
                 <div className="flex flex-row gap-2 h-14">
                     <ButtonGroup variant="outlined" color="inherit">
-                        <Button 
-                            variant="outlined" 
+                        <Button
+                            variant="outlined"
                             color="inherit"
-                            disableElevation 
+                            disableElevation
                             endIcon={<FilterAltIcon />}
-                            onClick={handleFilterClick} 
+                            onClick={handleFilterClick}
                         >
                             Filtros
                         </Button>
-                        <Button 
-                            variant="outlined" 
+                        <Button
+                            variant="outlined"
                             color="error"
-                            disableElevation 
+                            disableElevation
                             onClick={handleClearFilters}
                         >
-                            <FilterAltOffIcon/>
+                            <FilterAltOffIcon />
                         </Button>
                     </ButtonGroup>
-                    <div className="flex grow"/>
+                    <div className="flex grow" />
                     <div className="flex block md:hidden">
                         <Button
                             variant="contained"
@@ -327,7 +342,7 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
                 </Menu>
                 <form className="flex items-center justify-start mt-4 md:mt-0 md:w-2/6">
                     {showProjectSearchForm && (
-                        <TextField 
+                        <TextField
                             id="projectsearch"
                             name="projectsearch"
                             label="Buscar por Nombre de Proyecto"
@@ -340,7 +355,7 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
                         />
                     )}
                     {showScholarSearchForm && (
-                        <TextField 
+                        <TextField
                             id="scholarsearch"
                             name="scholarsearch"
                             label="Buscar por Nombre de Becario"
@@ -353,34 +368,34 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
                         />
                     )}
                     {showScholarshipTypeFilter && (
-                        <TextField 
-                            id="scholarship" 
-                            name="scholarship" 
-                            label="Filtrar por Beca" 
-                            type="text" 
-                            variant="outlined" 
+                        <TextField
+                            id="scholarship"
+                            name="scholarship"
+                            label="Filtrar por Beca"
+                            type="text"
+                            variant="outlined"
                             color="warning"
-                            select 
-                            fullWidth 
-                            value={scholarshiptype_id} 
+                            select
+                            fullWidth
+                            value={scholarshiptype_id}
                             onChange={handleScholarshipTypeFilterChange}
-                        > 
+                        >
                             {scholarships.map(scholarshipprop => (
                                 <MenuItem key={scholarshipprop.id} value={scholarshipprop.id}>{scholarshipprop.name}</MenuItem>
                             ))}
                         </TextField>
                     )}
                     {showUserCareerFilter && (
-                        <TextField 
-                            id="career" 
-                            name="career" 
+                        <TextField
+                            id="career"
+                            name="career"
                             label="Filtrar por Carrera"
                             type="text"
                             variant="outlined"
                             color="warning"
-                            select 
+                            select
                             fullWidth
-                            value={usercareer_id} 
+                            value={usercareer_id}
                             onChange={handleUserCareerFilterChange}
                         >
                             {usercareers.map(usercareerprop => (
@@ -389,40 +404,40 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
                         </TextField>
                     )}
                     {showProjectStatusFilter && (
-                        <TextField 
-                        id="projectstatus" 
-                        name="projectstatus" 
-                        label="Filtrar por Estado de Proyecto"
-                        type="text"
-                        variant="outlined"
-                        color="warning"
-                        select 
-                        fullWidth
-                        value={projectstatus_id} 
-                        onChange={handleProjectStatusFilterChange}
-                    >
-                        {projectstatuses.map(projectstatusprop => (
-                            <MenuItem key={projectstatusprop.id} value={projectstatusprop.id}>{projectstatusprop.name}</MenuItem>
-                        ))}
-                    </TextField>
+                        <TextField
+                            id="projectstatus"
+                            name="projectstatus"
+                            label="Filtrar por Estado de Proyecto"
+                            type="text"
+                            variant="outlined"
+                            color="warning"
+                            select
+                            fullWidth
+                            value={projectstatus_id}
+                            onChange={handleProjectStatusFilterChange}
+                        >
+                            {projectstatuses.map(projectstatusprop => (
+                                <MenuItem key={projectstatusprop.id} value={projectstatusprop.id}>{projectstatusprop.name}</MenuItem>
+                            ))}
+                        </TextField>
                     )}
                     {showProjectTypeFilter && (
-                        <TextField 
-                        id="projecttype" 
-                        name="projecttype" 
-                        label="Filtrar por Tipo de Proyecto"
-                        type="text"
-                        variant="outlined"
-                        color="warning"
-                        select 
-                        fullWidth
-                        value={projecttype_id} 
-                        onChange={handleProjectTypeFilterChange}
-                    >
-                        {projecttypes.map(projecttypeprop => (
-                            <MenuItem key={projecttypeprop.id} value={projecttypeprop.id}>{projecttypeprop.name}</MenuItem>
-                        ))}
-                    </TextField>
+                        <TextField
+                            id="projecttype"
+                            name="projecttype"
+                            label="Filtrar por Tipo de Proyecto"
+                            type="text"
+                            variant="outlined"
+                            color="warning"
+                            select
+                            fullWidth
+                            value={projecttype_id}
+                            onChange={handleProjectTypeFilterChange}
+                        >
+                            {projecttypes.map(projecttypeprop => (
+                                <MenuItem key={projecttypeprop.id} value={projecttypeprop.id}>{projecttypeprop.name}</MenuItem>
+                            ))}
+                        </TextField>
                     )}
                 </form>
                 <div className="flex grow" />
@@ -455,7 +470,7 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
             <div className="flex flex-grow custom-scrollbar overflow-y-auto">
                 <TableContainer>
                     <Table stickyHeader>
-                        {isLoading ? (
+                        {isLoading || mutation.isPending ? (
                             <TableBody>
                                 <TableRow>
                                     <MasonrySkeleton />
@@ -464,46 +479,56 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
                         ) : (
                             <TableBody>
                                 <TableRow>
-                                    <Masonry columns={{xs: 1, md: 3}} spacing={1}>
+                                    <Masonry columns={{ xs: 1, md: 3 }} spacing={1}>
                                         {data && data.projects && data.projects.length > 0 ? (
                                             data.projects.map((row: any) => {
                                                 let projectprogress;
-                                                if (row.projecttaskcount && typeof row.projecttaskcount === "number" && 
+                                                if (row.projecttaskcount && typeof row.projecttaskcount === "number" &&
                                                     typeof row.completedprojecttaskcount === "number") {
                                                     projectprogress = (row.completedprojecttaskcount / row.projecttaskcount) * 100;
                                                 } else {
                                                     projectprogress = 0;
-                                                };                                 
+                                                };
                                                 return (
-                                                <React.Fragment key={row.id}>                     
-                                                    <Card className="flex flex-col bg-gray-100 shadow-none border border-gray-400">
-                                                        <CardActionArea onClick={() => handleCardClick(row.id)}>
-                                                            <CardContent>
-                                                                <div className="flex flex-col gap-2">
-                                                                    <div className="flex flex-row items-center">
-                                                                        <div className="flex text-gray-700 font-medium md:font-bold text-[17px] md:text-lg">
-                                                                            {row.name}
+                                                    <React.Fragment key={row.id}>
+                                                        <Card className="flex flex-col bg-gray-100 shadow-none border border-gray-400">
+                                                            <CardActionArea onClick={() => handleCardClick(row.id)}>
+                                                                <CardContent>
+                                                                    <div className="flex flex-col gap-2">
+                                                                        <div className="flex flex-row items-center">
+                                                                            <div className="flex text-gray-700 font-medium md:font-bold text-[17px] md:text-lg">
+                                                                                {row.name}
+                                                                            </div>
+                                                                            <div className="flex flex-grow" />
+                                                                            <CircularProgressWithLabel value={projectprogress} color="warning" />
+                                                                            <IconButton 
+                                                                                color="error" 
+                                                                                onClick={(event) => {
+                                                                                    event.stopPropagation();
+                                                                                    handleDelete(row.id);
+                                                                                }}
+                                                                            >
+                                                                                <DeleteIcon />
+                                                                            </IconButton>
                                                                         </div>
-                                                                        <div className="flex flex-grow" />
-                                                                        <CircularProgressWithLabel value={projectprogress} color="warning"/>
+                                                                        <div className="flex flex-row gap-6">
+                                                                            <div className="flex gap-1 text-gray-700 font-medium text-[15px] md:text-lg">
+                                                                                <strong>Tipo: </strong>{row.projecttypename}
+                                                                            </div>
+                                                                            <div className="flex gap-1 text-gray-700 font-medium text-[15px] md:text-lg">
+                                                                                <strong>Estado: </strong>{row.projectstatusname}
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="flex flex-grow text-gray-700 font-medium text-[15px] md:text-lg">
+                                                                            {row.description}
+                                                                        </div>
                                                                     </div>
-                                                                    <div className="flex flex-row gap-6">
-                                                                        <div className="flex gap-1 text-gray-700 font-medium text-[15px] md:text-lg">
-                                                                            <strong>Tipo: </strong>{row.projecttypename}
-                                                                        </div>
-                                                                        <div className="flex gap-1 text-gray-700 font-medium text-[15px] md:text-lg">
-                                                                            <strong>Estado: </strong>{row.projectstatusname}
-                                                                        </div>
-                                                                    </div>                                                                    
-                                                                    <div className="flex flex-grow text-gray-700 font-medium text-[15px] md:text-lg">
-                                                                        {row.description}
-                                                                    </div>
-                                                                </div>
-                                                            </CardContent>
-                                                        </CardActionArea>
-                                                    </Card>
-                                                </React.Fragment>
-                                            )})
+                                                                </CardContent>
+                                                            </CardActionArea>
+                                                        </Card>
+                                                    </React.Fragment>
+                                                )
+                                            })
                                         ) : (
                                             <TableRow>
                                                 <TableCell colSpan={4} align="center" />
@@ -525,7 +550,7 @@ export default function ABMProjectTable({ usercareers, scholarships, projecttype
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
+                />
             </div>
             <CreateProjectModal
                 open={modalOpenCreate}

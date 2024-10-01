@@ -36,7 +36,7 @@ export default async function SideNav() {
           <LabTrackLogoWhite/>
         </div>
       </Link>
-      <div className="flex flex-row grow justify-between md:flex-col">
+      <div className="flex flex-row grow justify-between md:flex-col overflow-auto custom-scrollbar h-full">
       <SideNavQuery current_id_number={current_id_number}/>
         <div className="hidden h-auto w-full grow md:block"/>
         <div className="flex flex-col items-center justify-center w-full md:py-6">

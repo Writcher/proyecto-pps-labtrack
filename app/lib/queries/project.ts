@@ -1,5 +1,5 @@
 import { db } from "@vercel/postgres";
-import { editProjectQuery, fetchedPageProject, fetchedTableProject, fetchTableProjectsData, newProjectQuery } from "../dtos/project";
+import { deleteProjectData, editProjectQuery, fetchedPageProject, fetchedTableProject, fetchTableProjectsData, newProjectQuery } from "../dtos/project";
 import { addScholarQuery, removeScholarQuery } from "../dtos/scholar";
 
 const client = db;
@@ -258,5 +258,55 @@ export async function updateProject(params: editProjectQuery) {
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo editar el proyecto");
+    };
+};
+
+export async function dropProject(params: deleteProjectData) {
+    try {
+        const textbegin = `BEGIN`;
+        await client.query(textbegin);
+        const text1 = `
+        SELECT id
+        FROM "observation"
+        WHERE project_id = $1
+        `;
+        const values1 = [params.id];
+        const observations = await client.query(text1, values1);
+        for (const observation of observations.rows) {
+            const observation_id = observation.id;
+            const text2 = `
+            DELETE FROM "observation_read" WHERE observation_id = $1
+            `;
+            const values2 = [observation_id];
+            await client.query(text2, values2);
+        };
+        const text3 = `
+        DELETE FROM "observation" WHERE project_id = $1
+        `;
+        const values3 = [params.id];
+        await client.query(text3, values3);
+        const text4 = `
+        DELETE FROM "task" WHERE project_id = $1
+        `;
+        const values4 = [params.id];
+        await client.query(text4, values4);
+        const text5 = `
+        DELETE FROM "projectscholar" WHERE project_id = $1
+        `;
+        const values5 = [params.id];
+        await client.query(text5, values5);
+        const text6 = `
+        DELETE FROM "project" WHERE id = $1
+        `;
+        const values6 = [params.id];
+        await client.query(text6, values6);
+        const textcommit = `COMMIT`;
+        await client.query(textcommit);
+        return { success: true, message: "Instancia eliminada correctamente" };
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        const textrollback = `ROLLBACK`;
+        await client.query(textrollback);
+        throw new Error("No se pudo eliminar la observacion");
     };
 };

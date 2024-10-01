@@ -31,7 +31,7 @@ export default function LoginForm({ admin, guest, scholar }: loginFormProps ) {
                         router.push("/scholar/dashboard");
                         break;
                     case admin:
-                        router.push("/admin/dashboard");
+                        router.push("/admin/projects");
                         break;
                     case guest:
                         router.push("/guest/dashboard");

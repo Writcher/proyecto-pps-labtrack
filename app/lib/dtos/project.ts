@@ -128,3 +128,7 @@ export type editProjectData = {
 };
 
 export type editProjectQuery = editProjectData;
+
+export type deleteProjectData = {
+    id: number;
+};

@@ -89,7 +89,7 @@ export default function ProjectObservationTable({ project_id, scholar_ids }: pro
                     <Button variant="contained" color="success" disableElevation endIcon={<AddIcon />} onClick={handleOpenCreateModal}>AÑADIR</Button>
                 </div>
             </div>
-            <div className="flex flex-grow overflow-y-auto custom-scrollbar">
+            <div className="flex flex-grow h-[300px] overflow-y-auto custom-scrollbar">
                 {isLoading ?
                     (
                         <div className="flex flex-col gap-2 w-full h-full mr-2">
@@ -97,7 +97,7 @@ export default function ProjectObservationTable({ project_id, scholar_ids }: pro
                             <Skeleton variant="rectangular" width="100%" height="50%" className="rounded"/>
                         </div>
                     ) : (
-                        <Masonry columns={1} spacing={1}>
+                        <Masonry columns={{xs: 1, md: 2}} spacing={1}>
                             {observations && observations.length > 0 ? (
                                 observations.map((row: any) => (
                                     <React.Fragment key={row.id}>
