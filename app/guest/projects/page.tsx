@@ -1,4 +1,4 @@
-import ProjectQuery from "@/app/components/admin/projects/projectQuery";
+import GuestProjectQuery from "@/app/components/guest/projects/projectQuery";
 import { auth } from "@/app/lib/auth";
 import { getProjectStatuses } from "@/app/lib/queries/projectstatus";
 import { getProjectTypes } from "@/app/lib/queries/projecttype";
@@ -7,7 +7,7 @@ import { getUserCareers } from "@/app/lib/queries/usercareer";
 import { redirect } from "next/navigation";
 
 
-export default async function Proyectos() {
+export default async function ProyectosInvitado() {
     const session = await auth();
     if (!session?.user) redirect("/");
 
@@ -25,7 +25,7 @@ export default async function Proyectos() {
                 </p>
             </div>
             <div className="flex flex-col items-center justify-center h-[90%]">
-                <ProjectQuery
+                <GuestProjectQuery
                     laboratory_id={laboratory_id}
                     usercareers={ussercareers}
                     scholarships={scholarships}

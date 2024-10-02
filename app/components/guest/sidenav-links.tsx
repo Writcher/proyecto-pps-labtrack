@@ -5,8 +5,10 @@ import clsx from 'clsx';//Para aplicar estilos condicionalmente. Los dos se usan
 import Link from 'next/link';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import HistoryIcon from '@mui/icons-material/History';
+import WorkIcon from '@mui/icons-material/Work';
 
 const linksguest = [
+  { name: 'Proyectos', href: '/guest/projects', icon: WorkIcon },
   { name: 'Historico', href: '/guest/historic', icon: HistoryIcon },
   { name: 'Inventario', href: '/guest/inventory', icon: InventoryIcon },
   

@@ -34,7 +34,7 @@ export default function LoginForm({ admin, guest, scholar }: loginFormProps ) {
                         router.push("/admin/projects");
                         break;
                     case guest:
-                        router.push("/guest/dashboard");
+                        router.push("/guest/projects");
                 };
             } else if (result) {
                 if (result.apiError) {
