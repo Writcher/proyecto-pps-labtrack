@@ -40,7 +40,7 @@ export type registerFormProps = {
 };
 
 export type registerFormData = {
-    laboratory_id: number;
+    laboratory_id: number | '';
     name: string;
     email: string;
     password: string;

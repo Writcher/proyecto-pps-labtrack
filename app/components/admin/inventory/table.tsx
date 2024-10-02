@@ -127,9 +127,9 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
         refetch();
     };
     return (
-        <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
-            <div className="flex flex-row w-full mb-4">
-                <form className="flew items-center justify-start w-2/6">
+        <main className="flex flex-col gap-2 w-full h-full">
+            <div className="flex flex-row justify-center text-gray-700">
+                <form className="flex items-center justify-start md:w-2/6">
                     <TextField 
                         id="search"
                         name="search"
@@ -153,7 +153,7 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
                     AÑADIR
                 </Button>
             </div>
-            <div className="flex flex-col custom-scrollbar overflow-y-auto h-full">
+            <div className="flex flex-grow custom-scrollbar overflow-y-auto">
                 <TableContainer>
                     <Table stickyHeader>
                         <TableBody>
@@ -162,7 +162,7 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
                                     align="left" 
                                     onClick={() => handleSort('s.name')}
                                     style={{ cursor: 'pointer' }}
-                                    width="30%"
+                                    width="40%"
                                 >
                                     <div className={`text-gray-700 font-medium md:font-bold text-[17px] md:text-lg ${sortColumn === 's.name' ? (sortDirection === 'ASC' ? 'text-orange-500' : 'text-red-500') : ''}`}>
                                         Nombre
@@ -212,7 +212,7 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
                             <TableBody>
                                 {Array.from({ length: rowsPerPage }).map((_, index) => (
                                     <TableRow key={index}>
-                                        <TableCell align="left" size="small" width="30%">
+                                        <TableCell align="left" size="small" width="40%">
                                             <div className="flex items-center justify-start">
                                                 <Skeleton variant="text" width={300} />
                                             </div>
@@ -248,29 +248,29 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
                                         <React.Fragment key={row.id}>
                                                 <TableRow 
                                                     onClick={() => toggleRowExpansion(row.id)}
-                                                    className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-100' : ''}`}
+                                                    className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-200' : ''}`}
                                                 >
-                                                    <TableCell align="left" size="small">
+                                                    <TableCell align="left" size="small" width="40%">
                                                         <div className="text-gray-700 font-medium text-[15px] md:text-lg">
                                                             {row.name}
                                                         </div>
                                                     </TableCell>
-                                                    <TableCell align="center" size="small">
+                                                    <TableCell align="center" size="small" width="15%">
                                                         <div className="text-gray-700 font-medium text-[15px] md:text-lg">
                                                             {row.supplytype}
                                                         </div>
                                                     </TableCell>
-                                                    <TableCell align="center" size="small">
+                                                    <TableCell align="center" size="small" width="15%">
                                                         <div className="text-gray-700 font-medium text-[15px] md:text-lg">
                                                             {row.year}
                                                         </div>
                                                     </TableCell>
-                                                    <TableCell align="center" size="small">
+                                                    <TableCell align="center" size="small" width="15%">
                                                         <div className="text-gray-700 font-medium text-[15px] md:text-lg">
                                                             {row.supplystatus}
                                                         </div>
                                                     </TableCell>
-                                                    <TableCell align="right" size="small">
+                                                    <TableCell align="right" size="small" width="15%">
                                                         <div className="flex flex-row justify-end gap-5 text-gray-700">
                                                             <IconButton color="inherit" onClick={() => handleOpenEditModal(row)}>
                                                                 <EditIcon />
@@ -282,7 +282,7 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
                                                     </TableCell>
                                                 </TableRow>
                                                 {expandedRowId === row.id && (
-                                                    <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-100">
+                                                    <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-200">
                                                         <TableCell colSpan={5}>
                                                             <div className="flex flex-col w-full">
                                                                 <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">
@@ -308,17 +308,17 @@ export default function ABMInventoryTable({ laboratory_id, supplystatuses, suppl
                         )}
                     </Table>
                 </TableContainer>
-                <div className="flex justify-end items-end grow overflow-x-hide">
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 15, 20]}
-                        component="div"
-                        count={data?.totalSupplies || 0}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                </div>
+            </div>
+            <div className="flex justify-end items-end overflow-x-hide">
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 15, 20]}
+                    component="div"
+                    count={data?.totalSupplies || 0}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
             </div>
             <CreateSupplyModal
                 open={modalOpenCreate}

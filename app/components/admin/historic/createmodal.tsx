@@ -9,7 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
-import { Divider, MenuItem } from '@mui/material';
+import { CircularProgress, Divider, MenuItem } from '@mui/material';
 import { createFormData, createModalProps, newHistoricProjectData } from '@/app/lib/dtos/historicproject';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
@@ -169,10 +169,15 @@ export default function CreateHistoricProjectModal({ open, handleClose, historic
                                 variant="outlined" 
                                 color="warning" 
                                 multiline 
-                                rows={6} 
-                                inputProps={{ maxLength: 255 }} 
+                                rows={4} 
                                 fullWidth 
-                                {...register("description", { required: "Este campo es requerido" })}
+                                {...register("description", { 
+                                    required: "Este campo es requerido", 
+                                    maxLength: {
+                                        value: 255, 
+                                        message: "Máximo 255 caracteres"
+                                    }, 
+                                })}
                                 error={!!errors.description}
                                 helperText={errors.description ? errors.description.message : "Ingrese Descripción"}
                             />
@@ -394,16 +399,10 @@ export default function CreateHistoricProjectModal({ open, handleClose, historic
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <div className='flex flex-row m-4 hidden md:block'>
-                        <div className='flex flex-row gap-4'>
-                            <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
-                            <Button variant="contained" size="large" color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
-                        </div>
-                    </div>
-                    <div className='flex flex-row m-3 block md:hidden'>
-                        <div className='flex flex-row justify-center gap-10'>
+                    <div className='flex flex-row m-3'>
+                        <div className='flex flex-row justify-center gap-4'>
                             <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
-                            <Button variant="contained"  color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
+                            <Button variant="contained"  color="success" disableElevation endIcon={mutation.isPending ? <CircularProgress color="warning" size={26}/> : <SaveIcon />} type="submit" disabled={mutation.isPending}>GUARDAR</Button>
                         </div>
                     </div>
                 </DialogActions>

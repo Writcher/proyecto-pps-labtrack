@@ -14,7 +14,7 @@ export async function getHistoricUserCareers() {
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el historicusercareer");
-    }
+    };
 };
 
 export async function createHistoricUserCareer(params: createABMItemQuery) {
@@ -29,5 +29,21 @@ export async function createHistoricUserCareer(params: createABMItemQuery) {
     } catch(error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo crear el historicusercareer");
-    }
+    };
+};
+
+export async function getHistoricUserCareerByName(name: string) {
+    try {
+        const text = `
+        SELECT * FROM "historicusercareer"
+        WHERE name = $1
+        LIMIT 1
+        `;
+        const values = [name];
+        const result = await client.query(text, values);
+        return result.rows[0] as userCareer;
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el historicusercareer");
+    };
 };

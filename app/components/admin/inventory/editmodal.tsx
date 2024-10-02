@@ -1,6 +1,6 @@
 "use client"
 
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -9,7 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
-import { MenuItem } from '@mui/material';
+import { CircularProgress, MenuItem } from '@mui/material';
 import { editFormData, editModalProps, editSupplyData } from '@/app/lib/dtos/supply';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
@@ -66,7 +66,7 @@ export default function EditSupplyModal({ open, handleClose, supplytypes, supply
             supplytype_id: row?.supplytype_id,
             year: row?.year
         });
-    }, [row, reset])
+    }, [row, reset]);
     return (
         <Dialog 
             open={open} 
@@ -136,10 +136,15 @@ export default function EditSupplyModal({ open, handleClose, supplytypes, supply
                                 variant="outlined" 
                                 color="warning" 
                                 multiline 
-                                rows={6} 
-                                inputProps={{ maxLength: 255 }} 
+                                rows={4}  
                                 fullWidth
-                                {...register("description", { required: "Este campo es requerido" })}
+                                {...register("description", { 
+                                    required: "Este campo es requerido", 
+                                    maxLength: {
+                                        value: 255, 
+                                        message: "Máximo 255 caracteres"
+                                    },
+                                })}
                                 error={!!errors.description}
                                 helperText={errors.description ? errors.description.message : "Ingrese Descripción"}
                             />
@@ -187,20 +192,14 @@ export default function EditSupplyModal({ open, handleClose, supplytypes, supply
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <div className='flex flex-row m-4 hidden md:block'>
-                        <div className='flex flex-row gap-4'>
-                            <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
-                            <Button variant="contained" size="large" color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
-                        </div>
-                    </div>
-                    <div className='flex flex-row m-3 block md:hidden'>
-                        <div className='flex flex-row justify-center gap-1'>
+                    <div className='flex flex-row m-3'>
+                        <div className='flex flex-row justify-center gap-4'>
                             <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
-                            <Button variant="contained"  color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
+                            <Button variant="contained"  color="success" disableElevation endIcon={mutation.isPending ? <CircularProgress color="warning" size={26}/> : <SaveIcon />} type="submit" disabled={mutation.isPending}>GUARDAR</Button>
                         </div>
                     </div>
                 </DialogActions>
             </div>
         </Dialog>
     );
-}
+};

@@ -78,9 +78,9 @@ export default function GuestInventoryTable({ laboratory_id }: guestInventoryTab
         setValue("expandedRowId", expandedRowId === id ? null : id);
     };
     return (
-        <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
-            <div className="flex flex-row w-full mb-4">
-                <form className="flew items-center justify-start w-2/6">
+        <main className="flex flex-col gap-2 w-full h-full">
+            <div className="flex flex-row justify-center text-gray-700">
+                <form className="flex items-center justify-start md:w-2/6">
                     <TextField 
                         id="search"
                         name="search"
@@ -94,7 +94,7 @@ export default function GuestInventoryTable({ laboratory_id }: guestInventoryTab
                 </form>
                 <div className="flex grow" />
             </div>
-            <div className="flex flex-col custom-scrollbar overflow-y-auto h-full">
+            <div className="flex flex-grow custom-scrollbar overflow-y-auto">
                 <TableContainer>
                     <Table stickyHeader>
                         <TableBody>
@@ -175,7 +175,7 @@ export default function GuestInventoryTable({ laboratory_id }: guestInventoryTab
                                         <React.Fragment key={row.id}>
                                                 <TableRow 
                                                     onClick={() => toggleRowExpansion(row.id)}
-                                                    className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-100' : ''}`}
+                                                    className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-200' : ''}`}
                                                 >
                                                     <TableCell align="left" size="small">
                                                         <div className="text-gray-700 font-medium text-[15px] md:text-lg">
@@ -199,7 +199,7 @@ export default function GuestInventoryTable({ laboratory_id }: guestInventoryTab
                                                     </TableCell>
                                                 </TableRow>
                                                 {expandedRowId === row.id && (
-                                                    <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-100">
+                                                    <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-200">
                                                         <TableCell colSpan={5}>
                                                             <div className="flex flex-col w-full">
                                                                 <div className="flex gap-1 text-gray-700 font-medium md:text-[17px]">
@@ -225,17 +225,17 @@ export default function GuestInventoryTable({ laboratory_id }: guestInventoryTab
                         )}
                     </Table>
                 </TableContainer>
-                <div className="flex justify-end items-end grow overflow-x-hide">
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 15, 20]}
-                        component="div"
-                        count={data?.totalSupplies || 0}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                </div>
+            </div>
+            <div className="flex justify-end items-end overflow-x-hide">
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 15, 20]}
+                    component="div"
+                    count={data?.totalSupplies || 0}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
             </div>
         </main>
     );

@@ -9,7 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
-import { MenuItem } from '@mui/material';
+import { CircularProgress, MenuItem } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { editTableData } from '@/app/services/admin/usermanagement/scholar.service';
@@ -241,16 +241,10 @@ export default function EditScholarModal({ open, handleClose, row, usercareers, 
                     </div>
                     </DialogContent>
                     <DialogActions>
-                        <div className='flex flex-row m-4 hidden md:block'>
-                            <div className='flex flex-row gap-4'>
-                                <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
-                                <Button variant="contained" size="large" color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
-                            </div>
-                        </div>
-                        <div className='flex flex-row m-3 block md:hidden'>
-                            <div className='flex flex-row justify-center gap-1'>
+                        <div className='flex flex-row m-3'>
+                            <div className='flex flex-row justify-center gap-4'>
                                 <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
-                                <Button variant="contained"  color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
+                                <Button variant="contained"  color="success" disableElevation endIcon={mutation.isPending ? <CircularProgress color="warning" size={26}/> : <SaveIcon />} type="submit" disabled={mutation.isPending}>GUARDAR</Button>
                             </div>
                         </div>
                     </DialogActions>

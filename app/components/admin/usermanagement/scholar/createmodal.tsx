@@ -14,6 +14,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { createTableData } from '@/app/services/admin/usermanagement/scholar.service';
 import { createFormData, createModalPorps, createScholarData } from '@/app/lib/dtos/scholar';
+import CircularProgress from '@mui/material/CircularProgress';
 
 interface APIErrors {
     dni?: string,
@@ -272,16 +273,10 @@ export default function CreateScholarModal({ open, handleClose, usercareers, sch
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <div className='flex flex-row m-4 hidden md:block'>
-                        <div className='flex flex-row gap-4'>
-                            <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
-                            <Button variant="contained" size="large" color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
-                        </div>
-                    </div>
-                    <div className='flex flex-row m-3 block md:hidden'>
-                        <div className='flex flex-row justify-center gap-1'>
+                    <div className='flex flex-row m-3'>
+                        <div className='flex flex-row justify-center gap-4'>
                             <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
-                            <Button variant="contained"  color="success" disableElevation endIcon={<SaveIcon />} type="submit">GUARDAR</Button>
+                            <Button variant="contained"  color="success" disableElevation endIcon={mutation.isPending ? <CircularProgress color="warning" size={26}/> : <SaveIcon />} type="submit" disabled={mutation.isPending}>GUARDAR</Button>
                         </div>
                     </div>
                 </DialogActions>

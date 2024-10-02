@@ -12,7 +12,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { createAdminData, registerFormData } from '@/app/lib/dtos/user';
 import { createAdmin, fetchLaboratories } from '@/app/services/register/register.service';
 import { laboratory } from '@/app/lib/dtos/laboratory';
-import { IconButton } from '@mui/material';
+import { CircularProgress, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CreateLaboratoryModal from './createmodal';
 
@@ -24,7 +24,7 @@ interface APIErrors {
 export default function RegisterForm() {
     const { watch, register, handleSubmit, getValues, formState: { errors }, setValue } = useForm<registerFormData>({
         defaultValues: {
-            laboratory_id: 0,
+            laboratory_id: '',
             modalOpenCreate: false,
         }
     });
@@ -54,7 +54,7 @@ export default function RegisterForm() {
     });
     const onSubmit: SubmitHandler<registerFormData> = (data) => {
         registerUser.mutate({
-            laboratory_id: data.laboratory_id,
+            laboratory_id: data.laboratory_id as number,
             name: data.name,
             password: data.password,
             email: data.email,
@@ -96,11 +96,12 @@ export default function RegisterForm() {
                                 select 
                                 fullWidth 
                                 value={watch("laboratory_id")}
-                                {...register("laboratory_id", { required: "Este campo es requerido", validate: value => value !== 0 || "Este campo es requerido" })}
+                                {...register("laboratory_id", { required: "Este campo es requerido", validate: value => value !== '' || "Este campo es requerido" })}
                                 error={!!errors.laboratory_id}
                                 helperText={errors.laboratory_id ? errors.laboratory_id.message : isLoading ? "Cargando Laboratorios" : "Seleccionar Laboratorio"}
                                 disabled={isLoading}
                             >
+                                {isLoading && <MenuItem value=''></MenuItem>}
                                 {laboratories && laboratories.length > 0 && laboratories.map((Laboratory: laboratory) => (
                                     <MenuItem key={Laboratory.id} value={Laboratory.id}>{Laboratory.name}</MenuItem>
                                 ))}
@@ -173,8 +174,17 @@ export default function RegisterForm() {
                             helperText={errors.confirmPassword ? errors.confirmPassword.message : "Confirme Contraseña"}
                         />
                     </div>
-                    <Button variant="contained" size="large" color="warning" disableElevation endIcon={<KeyboardArrowRightIcon />} fullWidth type="submit">
-                        REGISTRARSE
+                    <Button 
+                        variant="contained" 
+                        size="large" 
+                        color="warning" 
+                        disableElevation 
+                        endIcon={registerUser.isPending ? <CircularProgress color="warning" size={26}/> : <KeyboardArrowRightIcon />} 
+                        fullWidth 
+                        type="submit"
+                        disabled={registerUser.isPending}
+                        >
+                            REGISTRARSE
                     </Button>
                 </div>
             </form>

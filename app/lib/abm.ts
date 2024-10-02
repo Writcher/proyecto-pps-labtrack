@@ -4,8 +4,8 @@ import { createHistoricProjectStatus } from './queries/historicprojectstatus';
 import { createHistoricProjectType } from './queries/historicprojecttype';
 import { createHistoricScholarshipType } from './queries/historicscholarshiptype';
 import { createHistoricUserCareer } from './queries/historicusercareer';
-import { checkProjectStatusesABM, createProjectStatus, getProjectStatusesABM, editProjectStatus } from './queries/projectstatus';
-import { checkProjectTypesABM, createProjectType, getProjectTypesABM, editProjectType } from './queries/projecttype';
+import { checkProjectStatusesABM, newProjectStatus, getProjectStatusesABM, editProjectStatus } from './queries/projectstatus';
+import { checkProjectTypesABM, newProjectType, getProjectTypesABM, editProjectType } from './queries/projecttype';
 import { checkScholarshipTypesABM, createScholarshipType, getScholarshipTypesABM, editScholarshipType } from './queries/scholarshiptype';
 import { checkSupplyStatusesABM, createSupplyStatus, getSupplyStatusesABM, editSupplyStatus } from './queries/supplystatus';
 import { checkSupplyTypesABM, createSupplyType, getSupplyTypesABM, editSupplyType } from './queries/supplytype';
@@ -16,7 +16,7 @@ export async function createInstance(params: createABMQuery) {
         const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade", "usercareer"];
         if (!allowedTables.includes(params.table)) {
             throw new Error(`Tabla no valida: ${params.table}`);
-        }
+        };
         const query = {
             name: params.name,
         } as createABMItemQuery;
@@ -28,11 +28,11 @@ export async function createInstance(params: createABMQuery) {
                 await createSupplyStatus(query);
                 break;
             case "projecttype":
-                await createProjectType(query);
+                await newProjectType(query);
                 await createHistoricProjectType(query);
                 break;
             case "projectstatus":
-                await createProjectStatus(query);
+                await newProjectStatus(query);
                 await createHistoricProjectStatus(query);
                 break;
             case "scholarshiptype":
@@ -41,6 +41,7 @@ export async function createInstance(params: createABMQuery) {
                 break;
             case "grade":
                 await createGrade(query);
+                break;
             case "usercareer":
                 await createUserCareer(query);
                 await createHistoricUserCareer(query);
@@ -52,7 +53,7 @@ export async function createInstance(params: createABMQuery) {
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo crear instancia (profundo)");
-    }
+    };
 };
 
 export async function editInstance(params: editABMQuery) {
@@ -96,12 +97,12 @@ export async function editInstance(params: editABMQuery) {
                 break;
             default:
                 throw new Error(`No se puede manejar la tabla: ${params.table}`);
-        }
+        };
         return { success: true };
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo editar instancia (profundo)");
-    }
+    };
 };
 
 export async function getInstances(params: fetchABMQuery) {  
@@ -110,7 +111,7 @@ export async function getInstances(params: fetchABMQuery) {
         const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade", "usercareer"];
         if (!allowedTables.includes(params.table)) {
             throw new Error(`Tabla no valida: ${params.table}`);
-        }
+        };
         const query = {
             name: params.name,
             page: params.page,
@@ -140,12 +141,12 @@ export async function getInstances(params: fetchABMQuery) {
                 break;
             default:
                 throw new Error(`No se puede manejar la tabla: ${params.table}`);
-        }
+        };
         return data;
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener la instancia (profundo)");
-    }
+    };
 };
 
 export async function checkInstanceExistance(params: checkExistanceQuery) {
@@ -154,7 +155,7 @@ export async function checkInstanceExistance(params: checkExistanceQuery) {
         const allowedTables = ["supplytype", "supplystatus", "projecttype", "projectstatus", "scholarshiptype", "grade", "usercareer"];
         if (!allowedTables.includes(params.table)) {
             throw new Error(`Tabla no valida: ${params.table}`);
-        }
+        };
         const query = {
             name: params.name,
         } as checkItemExistanceQuery;
@@ -182,10 +183,10 @@ export async function checkInstanceExistance(params: checkExistanceQuery) {
                 break;
             default:
                 throw new Error(`No se puede manejar la tabla: ${params.table}`);
-        }
+        };
         return data;
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener la instancia (profundo)");
-    }
+    };
 };

@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { deleteTableData } from '@/app/services/inventory/inventory.service';
 import { deleteSupplyModalProps } from '@/app/lib/dtos/supply';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function DeleteSupplyModal({ open, handleClose, id, name }: deleteSupplyModalProps) {
     const { handleSubmit, reset } = useForm();
@@ -59,16 +60,10 @@ export default function DeleteSupplyModal({ open, handleClose, id, name }: delet
                         </div>
                     </DialogContent>
                     <DialogActions>
-                        <div className='flex flex-row m-4 hidden md:block'>
-                            <div className='flex flex-row gap-4'>
-                                <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
-                                <Button variant="contained" size="large" color="success" disableElevation endIcon={<DeleteForeverIcon />} type="submit">BORRAR</Button>
-                            </div>
-                        </div>
-                        <div className='flex flex-row m-3 block md:hidden'>
+                        <div className='flex flex-row m-3'>
                             <div className='flex flex-row justify-center gap-4'>
                                 <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleClose}>CANCELAR</Button>
-                                <Button variant="contained"  color="success" disableElevation endIcon={<DeleteForeverIcon />} type="submit">BORRAR</Button>
+                                <Button variant="contained"  color="success" disableElevation endIcon={mutation.isPending ? <CircularProgress color="warning" size={26}/> : <DeleteForeverIcon />} type="submit" disabled={mutation.isPending}>BORRAR</Button>
                             </div>
                         </div>
                     </DialogActions>

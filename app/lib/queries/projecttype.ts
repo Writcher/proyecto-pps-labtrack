@@ -64,7 +64,7 @@ export async function checkProjectTypesABM(params: checkItemExistanceQuery) {
     }
 };
 
-export async function createProjectType(params: createABMItemQuery) {
+export async function newProjectType(params: createABMItemQuery) {
     try {
         const text = `
         INSERT INTO "projecttype" (name)

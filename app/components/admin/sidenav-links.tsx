@@ -5,7 +5,6 @@ import clsx from 'clsx';//Para aplicar estilos condicionalmente. Los dos se usan
 import Link from 'next/link';
 import GroupIcon from '@mui/icons-material/Group';
 import BuildIcon from '@mui/icons-material/Build';
-import HomeIcon from '@mui/icons-material/Home';
 import WorkIcon from '@mui/icons-material/Work';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import ChatIcon from '@mui/icons-material/Chat';
@@ -17,7 +16,6 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchUnreadCount } from '@/app/services/messages/chat.service';
 
 const linksadmin = [
-    { name: 'Inicio', href: '/admin/dashboard', icon: HomeIcon },
     { name: 'Proyectos', href: '/admin/projects', icon: WorkIcon },
     { name: 'Historico', href: '/admin/historic', icon: HistoryIcon },
     { name: 'Inventario', href: '/admin/inventory', icon: InventoryIcon },

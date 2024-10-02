@@ -57,7 +57,6 @@ export async function checkUserCareersABM(params: checkItemExistanceQuery) {
         `;
         const values = [params.name];
         const result = await client.query(text, values);
-        console.log(result.rows)
         return result;
     } catch (error) {
         console.error("Error de Base de Datos:", error);

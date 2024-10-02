@@ -21,6 +21,7 @@ import Skeleton from "@mui/material/Skeleton";
 import { fetchTableData } from "@/app/services/admin/usermanagement/guest.service";
 import { guestFormData, guestTableProps } from "@/app/lib/dtos/guest";
 import '@/app/components/globals.css';
+import Chip from "@mui/material/Chip";
 
 export default function ABMGuestTable({ laboratory_id }: guestTableProps ) {
     const { watch, setValue } = useForm<guestFormData>({
@@ -105,9 +106,9 @@ export default function ABMGuestTable({ laboratory_id }: guestTableProps ) {
         refetch();
     }
     return (
-        <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
-            <div className="flex flex-row w-full mb-4">
-                <form className="flew items-center justify-start w-2/6">
+        <main className="flex flex-col gap-2 w-full h-full">
+            <div className="flex flex-row justify-center text-gray-700">
+                <form className="flex items-center justify-start md:w-2/6">
                     <TextField 
                         id="search"
                         name="search"
@@ -130,7 +131,7 @@ export default function ABMGuestTable({ laboratory_id }: guestTableProps ) {
                     AÑADIR
                 </Button>
             </div>
-            <div className="flex flex-col custom-scrollbar overflow-y-auto h-full">
+            <div className="flex flex-grow custom-scrollbar overflow-y-auto">
                 <TableContainer>
                     <Table stickyHeader>
                         <TableBody>
@@ -191,7 +192,7 @@ export default function ABMGuestTable({ laboratory_id }: guestTableProps ) {
                                         <React.Fragment key={row.id}>
                                             <TableRow 
                                                 onClick={() => toggleRowExpansion(row.id)}
-                                                className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-100' : ''}`}
+                                                className={`cursor-pointer ${expandedRowId === row.id ? 'bg-gradient-to-r from-transparent to-transparent via-gray-200' : ''}`}
                                             >
                                                 <TableCell align="left" size="small" width="40%">
                                                     <div className="text-gray-700 font-medium text-[15px] md:text-lg">
@@ -199,13 +200,17 @@ export default function ABMGuestTable({ laboratory_id }: guestTableProps ) {
                                                     </div>
                                                 </TableCell>
                                                 <TableCell align="center" size="small" width="30%">
-                                                    <div className={`
-                                                        md:max-w-[50%] flex justify-center items-center mx-auto text-center  text-white font-medium text-[15px] md:text-lg py-2 px-2 rounded-3xl
-                                                        ${row.userstatus === 'Activo' ? 'bg-green-600' : ''}
-                                                        ${row.userstatus === 'Expirado' ? 'bg-red-500' : ''}
-                                                        ${row.userstatus === 'Pendiente' ? 'bg-yellow-500' : ''}
-                                                    `}>
-                                                        {row.userstatus}
+                                                    <div className="flex text-gray-700 font-medium md:font-bold text-[15px] items-center justify-center">
+                                                        <Chip 
+                                                            label={row.userstatus} 
+                                                            color={
+                                                                row.taskstatusname === "Expirado"
+                                                                ? "error"
+                                                                : row.taskstatusname === "Pendiente"
+                                                                ? "warning"
+                                                                : "success"
+                                                            } 
+                                                        />
                                                     </div>
                                                 </TableCell>
                                                 <TableCell align="right" size="small" width="30%">
@@ -217,7 +222,7 @@ export default function ABMGuestTable({ laboratory_id }: guestTableProps ) {
                                                 </TableCell>
                                             </TableRow>
                                             {expandedRowId === row.id && (
-                                                <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-100">
+                                                <TableRow className="bg-gradient-to-r from-transparent to-transparent via-gray-200">
                                                     <TableCell colSpan={3}>
                                                         <div className="flex flex-col w-full">
                                                             <div className="flex flex-col md:flex-row gap-4">
@@ -263,17 +268,17 @@ export default function ABMGuestTable({ laboratory_id }: guestTableProps ) {
                         )}
                     </Table>
                 </TableContainer>
-                <div className="flex justify-end items-end grow overflow-x-hide">
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 15, 20]}
-                        component="div"
-                        count={data?.totalGuests || 0}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                </div>
+            </div>
+            <div className="flex justify-end items-end overflow-x-hide">
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 15, 20]}
+                    component="div"
+                    count={data?.totalGuests || 0}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
             </div>
             <CreateGuestModal
                 open={modalOpenCreate}

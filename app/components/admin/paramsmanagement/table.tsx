@@ -87,9 +87,9 @@ export default function ABMTable({ table }: ABMTableProps) {
         refetch();
     };
     return (
-        <main className="flex flex-col gap-2 px-6 pb-10 w-full h-full">
-            <div className="flex flex-row w-full mb-4">
-                <form className="flew items-center justify-start w-2/6">
+        <main className="flex flex-col gap-2 w-full h-full">
+            <div className="flex flex-row justify-center text-gray-700">
+                <form className="flex items-center justify-start md:w-2/6">
                     <TextField 
                         id="search"
                         label="Buscar por Nombre"
@@ -112,19 +112,19 @@ export default function ABMTable({ table }: ABMTableProps) {
                     AÑADIR
                 </Button>
             </div>
-            <div className="flex flex-col custom-scrollbar overflow-y-auto h-full">
+            <div className="flex flex-grow custom-scrollbar overflow-y-auto">
                 <TableContainer>
                     <Table stickyHeader>
                         <TableBody>
                             <TableRow>
-                                <TableCell align="center" size="small" width="40%">
+                                <TableCell align="center" width="40%">
                                     <div className="text-gray-700 font-medium md:font-bold text-lg">
                                         Nombre
                                     </div>
                                 </TableCell>
-                                <TableCell align="left" size="small" width="40%">
+                                <TableCell align="left" width="40%">
                                 </TableCell>
-                                <TableCell align="center" size="small" width="20%">
+                                <TableCell align="center" width="20%">
                                     <div className="mr-5 text-gray-700 font-medium md:font-bold text-lg">
                                         Acciones
                                     </div>
@@ -140,9 +140,9 @@ export default function ABMTable({ table }: ABMTableProps) {
                                                 <Skeleton variant="text" width={300} />
                                             </div>
                                         </TableCell>
-                                        <TableCell align="left" size="small" width="20%">
+                                        <TableCell align="left" size="small" width="40%">
                                         </TableCell>
-                                        <TableCell align="center" size="small" width="40%">
+                                        <TableCell align="center" size="small" width="20%">
                                             <div className="flex items-center mr-2 justify-center">
                                                 <Skeleton variant="circular" width={25} height={25} />
                                             </div>
@@ -160,9 +160,9 @@ export default function ABMTable({ table }: ABMTableProps) {
                                                     {row.name}
                                                 </div>
                                             </TableCell>
-                                            <TableCell align="center" size="small" width="20%">
-                                            </TableCell>
                                             <TableCell align="center" size="small" width="40%">
+                                            </TableCell>
+                                            <TableCell align="center" size="small" width="20%">
                                                 <div className="flex flex-row justify-center mr-5 items-center text-gray-700">
                                                     <IconButton color="inherit" onClick={() => handleOpenEditModal(row.id, row.name)}>
                                                         <EditIcon />
@@ -185,17 +185,17 @@ export default function ABMTable({ table }: ABMTableProps) {
                         )}
                     </Table>
                 </TableContainer>
-                <div className="flex justify-end items-end grow overflow-x-hide">
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 15, 20]}
-                        component="div"
-                        count={data?.totalItems || 0}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                </div>
+            </div>
+            <div className="flex justify-end items-end overflow-x-hide">
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 15, 20]}
+                    component="div"
+                    count={data?.totalItems || 0}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
             </div>
             <EditModal
                 open={modalOpenEdit}

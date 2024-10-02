@@ -17,6 +17,7 @@
     "@fullcalendar/react": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
     "@mui/icons-material": "^5.16.7",
+    "@mui/lab": "6.0.0-beta.10",
     "@mui/material": "^5.16.7",
     "@mui/x-date-pickers": "^7.12.1",
     "@sendgrid/mail": "^8.1.3",

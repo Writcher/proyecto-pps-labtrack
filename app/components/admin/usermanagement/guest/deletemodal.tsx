@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { deleteTableData } from '@/app/services/admin/usermanagement/guest.service';
 import { deleteModalProps } from '@/app/lib/dtos/guest';
+import CircularProgress from '@mui/material/CircularProgress';
 
 interface APIError {
     message?: string,
@@ -79,16 +80,10 @@ export default function DeleteGuestModal({ open, handleClose, id, name }: delete
                         </div>
                     </DialogContent>
                     <DialogActions>
-                        <div className='flex flex-row m-4 hidden md:block'>
-                            <div className='flex flex-row gap-4'>
-                                <Button variant="contained" size="large" color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
-                                <Button variant="contained" size="large" color="success" disableElevation endIcon={<DeleteForeverIcon />} type="submit">BORRAR</Button>
-                            </div>
-                        </div>
-                        <div className='flex flex-row m-3 block md:hidden'>
+                        <div className='flex flex-row m-3'>
                             <div className='flex flex-row justify-center gap-4'>
                                 <Button variant="contained"  color="error" disableElevation endIcon={<CloseIcon />} onClick={handleExit}>CANCELAR</Button>
-                                <Button variant="contained"  color="success" disableElevation endIcon={<DeleteForeverIcon />} type="submit">BORRAR</Button>
+                                <Button variant="contained"  color="success" disableElevation endIcon={mutation.isPending ? <CircularProgress color="warning" size={26}/> : <DeleteForeverIcon />} type="submit" disabled={mutation.isPending}>BORRRAR</Button>
                             </div>
                         </div>
                     </DialogActions>

@@ -39,7 +39,6 @@ export default function ChatScholar({ laboratory_id, current_id, usertype_id }: 
         queryFn: () => fetchChatUsers(params),
         refetchInterval: 5000,
     });
-    console.log(usersQuery)
     useEffect(() => {
         if (usersQuery) {
             setValue("users", usersQuery);
@@ -90,7 +89,7 @@ export default function ChatScholar({ laboratory_id, current_id, usertype_id }: 
     };
     return (
         <main className="flex flex-col h-screen w-full">
-            <div className="flex h-[8%] bg-gray-700 border-b-4 border-orange-500 md:border-transparent text-white items-center">
+            <div className="flex h-[10%] bg-gray-700 border-b-4 border-orange-500 md:border-transparent text-white items-center justify-center">
                 <Tabs
                     value={tabValue}
                     onChange={handleTabChange} 
@@ -100,7 +99,7 @@ export default function ChatScholar({ laboratory_id, current_id, usertype_id }: 
                     className="h-16 md:h-20 items-center"
                 >
                     {isLoading ? (
-                        Array.from({ length: 5 }).map((_, index) => (
+                        Array.from({ length: 3 }).map((_, index) => (
                             <Tab
                                 key={index}
                                 label={<Skeleton variant="rectangular" width={200} height={30} />}

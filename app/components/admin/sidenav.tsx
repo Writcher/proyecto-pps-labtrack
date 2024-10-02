@@ -8,6 +8,7 @@ import { getLabById } from "@/app/lib/queries/laboratory";
 import { getTypeAdmin } from "@/app/lib/queries/usertype";
 import SideNavQuery from "./sidenavQuery";
 import { doLogout } from "@/app/services/login/login.service";
+import IconButton from "@mui/material/IconButton";
 
 export default async function SideNav() {
   const session = await auth();
@@ -34,7 +35,7 @@ export default async function SideNav() {
           <LabTrackLogoWhite/>
         </div>
       </Link>
-      <div className="flex flex-row grow justify-between md:flex-col">
+      <div className="flex flex-row grow justify-between md:flex-col overflow-auto custom-scrollbar h-full">
         <SideNavQuery current_id_number={current_id_number}/>
         <div className="hidden h-auto w-full grow md:block"/>
         <div className="flex flex-col items-center justify-center w-full md:py-6 hidden md:block">
@@ -53,6 +54,11 @@ export default async function SideNav() {
             <Button variant="text" size="large" color="inherit" type="submit" disableElevation endIcon={<LogoutIcon />} fullWidth>
               CERRAR SESIÓN
             </Button>
+          </div>
+          <div className="flex h-16 grow items-center justify-center gap-2 block md:hidden text-white">
+            <IconButton color="inherit" type="submit">
+              <LogoutIcon/>
+            </IconButton>
           </div>
         </form>
       </div>

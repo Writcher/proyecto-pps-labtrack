@@ -9,8 +9,8 @@ export default async function MessagePageScholar() {
     const laboratory_id = session?.user?.laboratory_id;
     const current_id = session?.user?.id;
     return (
-        <div>
+        <main className="flex flex-col w-full h-full">
             <ChatQuery laboratory_id={laboratory_id} current_id={current_id} usertype_id={usertype_id}/>
-        </div>
+        </main>
     );
 };

@@ -1,3 +1,4 @@
+import { fetchedTableProject } from "./project";
 import { scholarshipType } from "./scholarshiptype";
 import { newUserQuery, userSchema } from "./user";
 import { userCareer } from "./usercareer";
@@ -182,3 +183,59 @@ export type Scholar = userSchema & {
     usercareer_id: number;
     scholarshiptype_id: number;
 };
+
+export type fetchedProjectPageScholar = {
+    id: number;
+    name: string;
+    file: number;
+    email: string;
+};
+
+export type projectScholarTableProps = {
+    project_id: number;
+    laboratory_id: number;
+    scholars: fetchedProjectPageScholar[];
+    refetch: () => void;
+};
+
+export type projectScholarFormData = {
+    modalOpenCreate: boolean;
+    modalOpenDelete: boolean;
+    selectedRowId: number | '';
+    selectedRowName: string;
+    expandedRowId: number | null;
+};
+
+export type addScholarModalProps = {
+    open: boolean;
+    handleClose: () => void;
+    laboratory_id: number;
+    project_id: number;
+    scholar_ids: number[];
+};
+
+export type addScholarFormData = {
+    scholars: { scholar_id: number }[];
+};
+
+export type addScholarData = {
+    scholars: { scholar_id: number }[];
+    project_id: number;
+};
+
+export type addScholarQuery = addScholarData;
+
+export type removeScholarModalProps = {
+    open: boolean;
+    handleClose: () => void;
+    scholarname: string;
+    project_id: number;
+    scholar_id: number;
+};
+
+export type removeScholarData =  {
+    project_id: number;
+    scholar_id: number; 
+};
+
+export type removeScholarQuery = removeScholarData;

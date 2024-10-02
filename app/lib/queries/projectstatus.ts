@@ -64,7 +64,7 @@ export async function checkProjectStatusesABM(params: checkItemExistanceQuery) {
     }
 };
 
-export async function createProjectStatus(params: createABMItemQuery) {
+export async function newProjectStatus(params: createABMItemQuery) {
     try {
         const text = `
         INSERT INTO "projectstatus" (name)
