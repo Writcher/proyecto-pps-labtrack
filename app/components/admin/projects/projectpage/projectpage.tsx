@@ -12,9 +12,10 @@ import { useEffect, useState } from "react";
 
 interface pageProps {
     id: number  
+    current_id: number
 };
 
-export default function ProjectPage({ id }: pageProps) {
+export default function ProjectPage({ id, current_id }: pageProps) {
     //more content arrow
     const [isEndReached, setIsEndReached] = useState(false);
     useEffect(() => {
@@ -82,7 +83,7 @@ export default function ProjectPage({ id }: pageProps) {
                     <Divider className="flex w-full"></Divider>
                     <div className="flex flex-col md:flex-row w-full gap-4">
                         <div className="flex flex-grow">
-                            {isLoading ? <Skeleton variant="rectangular" width="100%" height="100%" className="rounded"/> : <ProjectObservationTable project_id={id} scholar_ids={scholar_ids!}/>}
+                            {isLoading ? <Skeleton variant="rectangular" width="100%" height="100%" className="rounded"/> : <ProjectObservationTable project_id={id} scholar_ids={scholar_ids!} current_id={current_id}/>}
                         </div>
                     </div>
                     <Divider className="flex w-full"></Divider>

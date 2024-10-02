@@ -118,7 +118,9 @@ export default function EditTaskForm({ task, refetch }: editFormProps) {
                         value={watch("taskstatus_id")}
                         {...register("taskstatus_id", { required: "Este campo es requerido" })}
                         error={!!errors.taskstatus_id}
-                        disabled={true}
+                        inputProps={{
+                            readOnly: true,
+                        }}
                     >
                         {isLoading && <MenuItem value=''></MenuItem>}
                         {selectdata && selectdata.taskstatuses && selectdata.taskstatuses.length > 0 && selectdata.taskstatuses.map((type: any) => (

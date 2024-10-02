@@ -2,11 +2,13 @@ export type fetchedObservations = {
     id: number;
     content: string;
     created_at: Date;
+    author_name: string;
 };
 
 export type projectObservationTableProps = {
     scholar_ids: number[];
     project_id: number;
+    current_id: number;
 };
 
 export type projectObservationFormData = {
@@ -21,6 +23,7 @@ export type newProjectObservationModalProps = {
     open: boolean;
     handleClose: () => void;
     project_id: number;
+    current_id: number;
 };
 
 export type newProjectObservationFormData = {
@@ -31,6 +34,7 @@ export type createProjectObservationData = {
     scholar_ids: number[];
     content: string;
     project_id: number;
+    current_id: number;
 };
 
 export type newProjectObservationQuery = createProjectObservationData;
@@ -44,6 +48,7 @@ export type  deleteObservationQuery = deleteObservationData;
 export type taskObservationTableProps = {
     task_id: number;
     project_id: number;
+    current_id: number;
 };
 
 export type taskObservationFormData = projectObservationFormData;
@@ -53,6 +58,7 @@ export type createTaskObservationModalProps = {
     handleClose: () => void;
     project_id: number;
     task_id: number;
+    current_id: number;
 };
 
 export type createTaskObservationFormData = {
@@ -63,6 +69,7 @@ export type createTaskObservationData = {
     content: string;
     project_id: number;
     task_id: number;
+    current_id: number;
 };
 
 export type newTaskObservationQuery = createTaskObservationData;

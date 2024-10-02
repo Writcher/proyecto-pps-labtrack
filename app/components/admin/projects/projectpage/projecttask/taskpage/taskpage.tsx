@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import EditTaskForm from "./taskedit/taskedit-form";
 import TaskObservationTable from "./taskobservation/observationtable";
 
-export default function TaskPage({ task_id, project_id }: { task_id: number, project_id: number }) {
+export default function TaskPage({ task_id, project_id, current_id }: { task_id: number, project_id: number, current_id: number }) {
     //fetch task data
     const { data, isLoading, refetch } = useQuery({
         queryKey: ['fetchProjectById'],
@@ -33,7 +33,7 @@ export default function TaskPage({ task_id, project_id }: { task_id: number, pro
                         {isLoading ? <Skeleton variant="rectangular" width="100%" height="100%" className="rounded"/> : <EditTaskForm refetch={refetch} task={editParams!} /> }
                     </div>
                     <div className="flex flex-grow md:w-[48%]">
-                        {isLoading ? <Skeleton variant="rectangular" width="100%" height="100%" className="rounded"/> : <TaskObservationTable project_id={project_id} task_id={task_id}/> }
+                        {isLoading ? <Skeleton variant="rectangular" width="100%" height="100%" className="rounded"/> : <TaskObservationTable project_id={project_id} task_id={task_id} current_id={current_id}/> }
                     </div>
                 </div>
             </div>

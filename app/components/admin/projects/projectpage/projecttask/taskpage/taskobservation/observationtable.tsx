@@ -16,7 +16,7 @@ import { Skeleton } from "@mui/material";
 import Gray800Tooltip from "../../../../utils";
 import CreateObservationModal from "./createtaskobservationmodal";
 
-export default function TaskObservationTable({ project_id, task_id }: taskObservationTableProps) {
+export default function TaskObservationTable({ project_id, task_id, current_id }: taskObservationTableProps) {
     const { watch, setValue, getValues, reset } = useForm<taskObservationFormData>({
         defaultValues: {
             observations: [],
@@ -93,8 +93,8 @@ export default function TaskObservationTable({ project_id, task_id }: taskObserv
                 {isLoading ?
                     (
                         <div className="flex flex-col gap-2 w-full h-full mr-2">
-                            <Skeleton variant="rectangular" width="100%" height="50%" className="rounded"/>
-                            <Skeleton variant="rectangular" width="100%" height="50%" className="rounded"/>
+                            <Skeleton variant="rectangular" width="100%" height="50%" className="rounded" />
+                            <Skeleton variant="rectangular" width="100%" height="50%" className="rounded" />
                         </div>
                     ) : (
                         <Masonry columns={1} spacing={1}>
@@ -103,10 +103,13 @@ export default function TaskObservationTable({ project_id, task_id }: taskObserv
                                     <React.Fragment key={row.id}>
                                         <Card className="bg-gray-100 shadow-none border border-gray-400">
                                             <CardContent>
-                                                <div className="flex flex-col gap-2">
-                                                    <div className="flex flex-row items-center justify-center">
+                                                <div className="flex flex-col gap-1">
+                                                    <div className="flex flex-row items-center justify-center gap-1">
                                                         <div className="flex text-gray-700 font-medium md:font-bold text-[15px]">
-                                                            {new Date(row.created_at).toLocaleDateString('es-AR', {
+                                                            {row.author_name}
+                                                        </div>
+                                                        <div className="flex text-gray-700 font-medium md:font-bold text-[15px]">
+                                                            el  {new Date(row.created_at).toLocaleDateString('es-AR', {
                                                                 year: 'numeric',
                                                                 month: 'long',
                                                                 day: 'numeric'
@@ -147,6 +150,7 @@ export default function TaskObservationTable({ project_id, task_id }: taskObserv
                 handleClose={handleCloseCreateModal}
                 project_id={project_id}
                 task_id={task_id}
+                current_id={current_id}
             />
         </div>
     );

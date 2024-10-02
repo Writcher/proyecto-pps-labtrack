@@ -16,7 +16,7 @@ import { Skeleton } from "@mui/material";
 import CreateObservationModal from "./createprojectobservationmodal";
 import Gray800Tooltip from "../../utils";
 
-export default function ProjectObservationTable({ project_id, scholar_ids }: projectObservationTableProps) {
+export default function ProjectObservationTable({ project_id, scholar_ids, current_id }: projectObservationTableProps) {
     const { watch, setValue, getValues, reset } = useForm<projectObservationFormData>({
         defaultValues: {
             observations: [],
@@ -103,10 +103,13 @@ export default function ProjectObservationTable({ project_id, scholar_ids }: pro
                                     <React.Fragment key={row.id}>
                                         <Card className="bg-gray-100 shadow-none border border-gray-400">
                                             <CardContent>
-                                                <div className="flex flex-col gap-2">
-                                                    <div className="flex flex-row items-center justify-center">
+                                                <div className="flex flex-col gap-1">
+                                                    <div className="flex flex-row items-center justify-center gap-1">
                                                         <div className="flex text-gray-700 font-medium md:font-bold text-[15px]">
-                                                            {new Date(row.created_at).toLocaleDateString('es-AR', {
+                                                             {row.author_name}
+                                                        </div>
+                                                        <div className="flex text-gray-700 font-medium md:font-bold text-[15px]">
+                                                            el  {new Date(row.created_at).toLocaleDateString('es-AR', {
                                                                 year: 'numeric',
                                                                 month: 'long',
                                                                 day: 'numeric'
@@ -147,6 +150,7 @@ export default function ProjectObservationTable({ project_id, scholar_ids }: pro
                 handleClose={handleCloseCreateModal}
                 project_id={project_id}
                 scholar_ids={scholar_ids}
+                current_id={current_id}
             />
         </div>
     );

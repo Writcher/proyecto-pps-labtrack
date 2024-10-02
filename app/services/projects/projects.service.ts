@@ -4,6 +4,7 @@ import { createProjectObservationData, createTaskObservationData, deleteObservat
 import { deleteProjectData, editProjectData, fetchedTableProject, fetchTableProjectsData, getTableProjectsQuery, newProjectData } from "@/app/lib/dtos/project";
 import { addScholarData, removeScholarData } from "@/app/lib/dtos/scholar";
 import { createProjectTaskData, deleteTaskData, dragTaskData, editTaskData } from "@/app/lib/dtos/task";
+import { recordHistoricProject } from "@/app/lib/queries/historicproject";
 import { newProjectObservation, newTaskObservation, dropObservation, getProjectObservations, getTaskObservations } from "@/app/lib/queries/observations";
 import { addScholar, newProject, updateProject, getProjectById, getTableProjects, removeScholar, dropProject } from "@/app/lib/queries/project";
 import { getProjectStatuses } from "@/app/lib/queries/projectstatus";
@@ -300,6 +301,21 @@ export async function createTaskObservation(data: createTaskObservationData) {
         };
     } catch (error) {
         console.error("Error en createTaskObservation:", error);
+        return { success: false };
+    };
+};
+
+export async function recordNewHistoricProject(id: number) {
+    try {
+        try {
+            await recordHistoricProject(id);
+            return { success: true };
+        } catch (error) {
+            console.error("Error al crear record:", error);
+            return { success: false };
+        };
+    } catch (error) {
+        console.error("Error en recordNewHistoricProject:", error);
         return { success: false };
     };
 };

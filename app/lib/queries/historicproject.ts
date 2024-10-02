@@ -1,5 +1,10 @@
 import { db } from '@vercel/postgres';
 import { fetchedHistoricProject, fetchHistoricProjectData, newHistoricProjectQuery } from '../dtos/historicproject';
+import { getHistoricProjectStatusByName } from './historicprojectstatus';
+import { getHistoricProjectTypeByName } from './historicprojecttype';
+import { getHistoricUserCareerByName } from './historicusercareer';
+import { getHistoricScholarshipTypeByName } from './historicscholarshiptype';
+import { dropProject } from './project';
 
 const client = db;
 
@@ -187,6 +192,87 @@ export async function createHistoricProject(historicProject: newHistoricProjectQ
         await client.query(textcommit);
         return { success: true, message: "Instancia creada correctamente" };
     } catch(error) {
+        console.error("Error de Base de Datos:", error);
+        const textrollback = `ROLLBACK`;
+        await client.query(textrollback);
+        throw new Error("No se pudo crear el historico");
+    };
+};
+
+export async function recordHistoricProject(id: number) {
+    try {
+        const textbegin = `BEGIN`;
+        await client.query(textbegin);
+        const text1 = `
+        SELECT
+            p.name,
+            p.description,
+            EXTRACT(YEAR FROM p.created_at) AS year,
+            ps.name AS projectstatus,
+            pt.name AS projecttype,
+            p.laboratory_id,
+            COALESCE(
+                json_agg(
+                    json_build_object(
+                        'name', u.name,
+                        'email', u.email,
+                        'file', s.file,
+                        'dni', s.dni,
+                        'phone', s.phone,
+                        'careerlevel', s.careerlevel,
+                        'usercareer', uc.name,
+                        'scholarshiptype', st.name
+                    )
+                ) FILTER (WHERE s.id IS NOT NULL), '[]'
+            ) AS scholars
+            FROM "project" p
+            JOIN "projecttype" pt ON p.projecttype_id = pt.id
+            JOIN "projectstatus" ps ON p.projectstatus_id = ps.id
+            LEFT JOIN "projectscholar" psc ON p.id = psc.project_id
+            LEFT JOIN "scholar" s ON s.id = psc.scholar_id
+            LEFT JOIN "user" u ON u.id = s.id
+            LEFT JOIN "usercareer" uc ON s.usercareer_id = uc.id
+            LEFT JOIN "scholarshiptype" st ON s.scholarshiptype_id = st.id
+            WHERE p.id = $1
+            GROUP BY 
+                p.id, pt.name, ps.name
+            LIMIT 1
+        `;
+        const values1 = [id];
+        const project = await client.query(text1, values1);
+        const projectstatus = await getHistoricProjectStatusByName(project.rows[0].projectstatus);
+        const projecttype = await getHistoricProjectTypeByName(project.rows[0].projecttype);
+        const scholars = project.rows[0].scholars;
+        const scholarPromises = scholars.map(async (scholar: any) => {
+            const usercareer = await getHistoricUserCareerByName(scholar.usercareer);
+            const scholarshiptype = await getHistoricScholarshipTypeByName(scholar.scholarshiptype);
+            return {
+                name: scholar.name,
+                email: scholar.email,
+                dni: scholar.dni,
+                file: scholar.file,
+                phone: scholar.phone,
+                careerlevel: scholar.careerlevel,
+                historicscholarshiptype_id: scholarshiptype.id,
+                historicusercareer_id: usercareer.id,
+            };
+        });
+        const formattedScholarsResult = await Promise.all(scholarPromises);
+        const params = {
+            name: project.rows[0].name,
+            description: project.rows[0].description,
+            year: project.rows[0].year,
+            laboratory_id: project.rows[0].laboratory_id,
+            projectstatus_id: projectstatus.id,
+            projecttype_id: projecttype.id,
+            scholars: formattedScholarsResult
+        } as newHistoricProjectQuery;
+        await createHistoricProject(params);
+        await dropProject({id});
+        const textcommit = `COMMIT`;
+        await client.query(textcommit);
+        return { success: true, message: "Instancia creada correctamente" };
+    } catch (error) {
         console.error("Error de Base de Datos:", error);
         const textrollback = `ROLLBACK`;
         await client.query(textrollback);

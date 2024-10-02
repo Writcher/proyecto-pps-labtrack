@@ -57,6 +57,7 @@ export default function LoginForm({ admin, guest, scholar }: loginFormProps ) {
                         id="email" 
                         label="Email" 
                         type="text" 
+                        className="!text-orange-500"
                         variant="outlined" 
                         color="warning" 
                         fullWidth

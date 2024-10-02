@@ -14,7 +14,7 @@ export async function getHistoricScholarshipTypes() {
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el historicscholarshiptype");
-    }
+    };
 };
 
 export async function createHistoricScholarshipType(params: createABMItemQuery) {
@@ -29,5 +29,21 @@ export async function createHistoricScholarshipType(params: createABMItemQuery) 
     } catch(error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo crear el historicscholarshiptype");
-    }
+    };
+};
+
+export async function getHistoricScholarshipTypeByName(name: string) {
+    try {
+        const text = `
+        SELECT * FROM "historicscholarshiptype"
+        WHERE name = $1
+        LIMIT 1
+        `;
+        const values = [name];
+        const result = await client.query(text, values);
+        return result.rows[0] as scholarshipType;
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el historicscholarshiptype");
+    };
 };

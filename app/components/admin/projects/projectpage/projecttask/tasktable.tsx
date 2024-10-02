@@ -122,11 +122,7 @@ export default function ProjectTaskTable({ project_id }: projectTaskTableProps) 
                                                 <div className="flex flex-col gap-2">
                                                     <div className="flex flex-row items-center justify-center">
                                                         <div className="flex text-gray-700 font-medium md:font-bold text-[15px]">
-                                                            {new Date(row.created_at).toLocaleDateString('es-AR', {
-                                                                year: 'numeric',
-                                                                month: 'long',
-                                                                day: 'numeric'
-                                                            })}
+                                                            {row.name}
                                                         </div>
                                                         <div className="flex flex-grow" />
                                                         <div className="flex flex-row items-center justify-center">
@@ -139,8 +135,12 @@ export default function ProjectTaskTable({ project_id }: projectTaskTableProps) 
                                                         </div>
                                                     </div>
                                                     <div className="flex flex-row items-center justify-center gap-6">
-                                                        <div className="flex text-gray-700 font-medium md:font-bold text-[15px]">
-                                                            {row.name}
+                                                        <div className="flex text-gray-700 font-medium text-[15px] gap-1">
+                                                            <strong>Inicio: </strong>{new Date(row.start).toLocaleDateString('es-AR', {
+                                                                year: 'numeric',
+                                                                month: 'long',
+                                                                day: 'numeric'
+                                                            })}
                                                         </div>
                                                         <div className="flex grow" />
                                                         <div className="flex text-gray-700 font-medium md:font-bold text-[15px]">
@@ -157,13 +157,6 @@ export default function ProjectTaskTable({ project_id }: projectTaskTableProps) 
                                                         </div>
                                                     </div>
                                                     <div className="flex flex-col justify-center gap-2">
-                                                        <div className="flex text-gray-700 font-medium text-[15px] gap-1">
-                                                            <strong>Inicio: </strong>{new Date(row.start).toLocaleDateString('es-AR', {
-                                                                year: 'numeric',
-                                                                month: 'long',
-                                                                day: 'numeric'
-                                                            })}
-                                                        </div>
                                                         <div className="flex text-gray-700 font-medium text-[15px] gap-1">
                                                             <strong>Final: </strong>{new Date(row.end).toLocaleDateString('es-AR', {
                                                                 year: 'numeric',

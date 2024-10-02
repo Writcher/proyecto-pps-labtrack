@@ -10,7 +10,7 @@ export type fetchedHistoricScholar = {
     historicusercareername: string;
     historicscholarshiptype_id: number;
     historicscholarshiptypename: string;
-}
+};
 
 export type newHistoricScholarQuery = {
     name: string;
@@ -21,4 +21,4 @@ export type newHistoricScholarQuery = {
     careerlevel?: number;
     historicusercareer_id?: number;
     historicscholarshiptype_id?: number;
-}
+};

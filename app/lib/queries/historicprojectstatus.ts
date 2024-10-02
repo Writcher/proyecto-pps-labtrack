@@ -14,7 +14,7 @@ export async function getHistoricProjectStatuses() {
     } catch (error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo obtener el historicprojectstatus");
-    }
+    };
 };
 
 export async function createHistoricProjectStatus(params: createABMItemQuery) {
@@ -29,5 +29,22 @@ export async function createHistoricProjectStatus(params: createABMItemQuery) {
     } catch(error) {
         console.error("Error de Base de Datos:", error);
         throw new Error("No se pudo crear el historicprojectstatus");
-    }
+    };
+};
+
+export async function getHistoricProjectStatusByName(name: string) {
+    try {
+        console.log("AAAAAAAAAAAAAAAAAAAAA", name)
+        const text = `
+        SELECT * FROM "historicprojectstatus"
+        WHERE name = $1
+        LIMIT 1
+        `;
+        const values = [name];
+        const result = await client.query(text, values);
+        return result.rows[0] as projectStatus;
+    } catch (error) {
+        console.error("Error de Base de Datos:", error);
+        throw new Error("No se pudo obtener el historicprojectstatus");
+    };
 };

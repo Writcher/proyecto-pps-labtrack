@@ -117,6 +117,7 @@ export type editFormData = {
     description: string;
     projectstatus_id: number | '';
     projecttype_id: number | '';
+    modalOpenHistoric: boolean;
 };
 
 export type editProjectData = {
@@ -131,4 +132,11 @@ export type editProjectQuery = editProjectData;
 
 export type deleteProjectData = {
     id: number;
+};
+
+export type historicModalProps = {
+    open: boolean;
+    handleClose: () => void;
+    id: number;
+    name: string;
 };

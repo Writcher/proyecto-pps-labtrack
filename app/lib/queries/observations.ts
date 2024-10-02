@@ -9,10 +9,12 @@ export async function getTaskObservations(project_id: number, id: number, page: 
         const offset = (page - 1) * limit;
         const text1 = `
             SELECT 
-                id,
-                content,
-                created_at
-            FROM "observation" 
+                o.id,
+                o.content,
+                o.created_at,
+                u.name AS author_name
+            FROM "observation" o
+            JOIN "user" u ON o.author_id = u.id
             WHERE project_id = $1
                 AND task_id = $2
             ORDER BY created_at DESC
@@ -44,10 +46,12 @@ export async function getProjectObservations(id: number, page: number)  {
         const offset = (page - 1) * limit;
         const text1 = `
             SELECT 
-                id,
-                content,
-                created_at
-            FROM "observation" 
+                o.id,
+                o.content,
+                o.created_at,
+                u.name AS author_name
+            FROM "observation" o
+            JOIN "user" u ON o.author_id = u.id
             WHERE project_id = $1
                 AND task_id IS NULL
             ORDER BY created_at DESC
@@ -78,11 +82,11 @@ export async function newProjectObservation(params: newProjectObservationQuery) 
         const textbegin = `BEGIN`;
         await client.query(textbegin);
         const text1 = `
-        INSERT INTO "observation" (content, project_id)
-        VALUES ($1, $2)
+        INSERT INTO "observation" (content, project_id, author_id)
+        VALUES ($1, $2, $3)
         RETURNING id
         `;
-        const values1 = [params.content, params.project_id];
+        const values1 = [params.content, params.project_id, params.current_id];
         const response = await client.query(text1, values1);
         const observationid = response.rows[0].id;
         for (const scholar_id of params.scholar_ids) {
@@ -109,11 +113,11 @@ export async function newTaskObservation(params: newTaskObservationQuery) {
         const textbegin = `BEGIN`;
         await client.query(textbegin);
         const text1 = `
-        INSERT INTO "observation" (content, project_id, task_id)
-        VALUES ($1, $2, $3)
+        INSERT INTO "observation" (content, project_id, task_id, author_id)
+        VALUES ($1, $2, $3, $4)
         RETURNING id
         `;
-        const values1 = [params.content, params.project_id , params.task_id];
+        const values1 = [params.content, params.project_id , params.task_id, params.current_id];
         const response = await client.query(text1, values1);
         const observationid = response.rows[0].id;
         const text2 = `
